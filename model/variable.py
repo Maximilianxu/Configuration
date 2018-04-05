@@ -10,7 +10,9 @@ class Variable:
     def is_valid(self, val_ind):
         return self.dom.is_valid(val_ind)
     
-    # 反转某个值的有效性
-    def reverse(self, val_ind):
-        self.dom.reverse(val_ind)
+    def set_valid(self, val_ind):
+        self.dom.set_valid(val_ind)
+    
+    def set_invalid(self, val_ind):
+        self.dom.set_invalid(val_ind)
     
