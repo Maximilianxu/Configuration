@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 # mac算法
 # 目前的可优化部分：
-# 1. self.vars.index(var)可以用variable_cdr来实现，用id做index，避免查询
-# 2. seek_support的部分，总是set_false之后再set_true回来，思考其他方法
-# 3. 回溯部分的优化，已赋值变量相关的元组可以不用添加到栈里面
-# 4. 残余支持查询，提供哈希函数
+
 import sys
 sys.path.append("../")
 
@@ -25,7 +22,7 @@ class Solver:
         self.vars = task.vars
         self.con_cdrs = []
         for con in task.cons:
-            self.con_cdrs.append(ConstraintCoder(con))
+            self.con_cdrs.append(ConstraintCoder(con))     
         self.rslt = Result([], None)
         # 变量是否已被赋值
         self.is_assigned = [False] * len(self.vars)
@@ -39,62 +36,68 @@ class Solver:
         self.supp = dict()
         # 传播队列
         self.queue = set()
-    
+        # 变量与其下标映射
+        self.var_ind_map = dict()
+        for var_ind, var in enumerate(self.vars):
+            self.var_ind_map[var] = var_ind  
 
     def search_solution(self):
         return self.__solve__(0)
-
     
     def __next_var__(self, lev):
-        # 这里需要用variable_coder才能快速实现，现在缺少id
-        # for var_ind, var_cdr in enumerate(self.vars):
-        #     if not self.is_assigned[var_ind]:
-        #         return var_ind
-        # return -1  
-        return lev
+        min_dom_wdeg = 0xFFFFFFFF
+        next_var_ind = -1
+        for ind, assigned in enumerate(self.is_assigned):
+            if assigned:
+                continue
+            tmp = self.vars[ind].dom.dom_size()/self.wdegs[ind]
+            if tmp < min_dom_wdeg:
+                min_dom_wdeg = tmp
+                next_var_ind = ind
+        return next_var_ind
+
+    # 一个基本操作
+    def __prop_operations__(self, cur_var, cur_con_cdr = None, add_queue = True):
+        for con_cdr in self.con_cdrs:
+            con_vars = con_cdr.con.vars
+            if len(con_vars) > 0 and cur_var in con_vars and (con_cdr is not cur_con_cdr):
+                for var in con_vars:
+                    var_ind = self.var_ind_map[var]
+                    if (var is not cur_var) and (not self.is_assigned[var_ind]):
+                        if add_queue:
+                            self.queue.add((con_cdr, var))
+                        else:
+                            self.wdegs[var_ind] += 1
 
     # gac3rm算法
     def __mac__(self, cur_var):
-        for con_cdr in self.con_cdrs:
-            if cur_var in con_cdr.con.vars:
-                for var in con_cdr.con.vars:
-                    if (var is not cur_var) and (not self.is_assigned[self.vars.index(var)]):
-                        self.queue.add((con_cdr, var))
+        self.__prop_operations__(cur_var)
         while len(self.queue)>0:
             cur_con_cdr, var = self.queue.pop()
             if self.__revise__(cur_con_cdr, var):
                 if var.dom.dom_size() == 0:
+                    self.__prop_operations__(cur_var, add_queue=False)
                     return False
-                for con_cdr in self.con_cdrs:
-                    con_vars = con_cdr.con.vars
-                    if len(con_vars) > 0 and cur_var in con_vars\
-                        and (con_cdr is not cur_con_cdr):
-                        for var in con_vars:
-                            if var is not cur_var:
-                                self.queue.add((con_cdr, var))
+                self.__prop_operations__(var, cur_con_cdr=cur_con_cdr)           
         return True
 
-    def __seek_support__(self, con_cdr, cur_var, val_ind, end_point = 0xFFFFFFFF):
-        cur_var_ind = con_cdr.con.vars.index(cur_var)
-        tup = con_cdr.get_last_set(end_point)
-        tup_dels = []
-        while tup != -1:
-            valinds = con_cdr.get_valinds_from_code(tup)
-            if valinds[cur_var_ind] == val_ind:
-                if con_cdr.is_valid_tuple(tup):
-                    break
-            con_cdr.set_false(tup)
-            tup_dels.append(tup)
-            tup = con_cdr.get_last_set(tup)
-        for del_tup in tup_dels:
-            con_cdr.set_true(del_tup)    
-        return tup   
-
+    def __seek_support__(self, con_cdr, cur_var, val_ind):
+        cur_var_ind = self.var_ind_map[cur_var]
+        pos = -1
+        while True:
+            pos = con_cdr.next_set_tuple.get(pos, -1)
+            if pos == -1:
+                return pos
+            if con_cdr.get_value(pos) and \
+                con_cdr.get_valinds_from_code(pos)[cur_var_ind] == val_ind and \
+                con_cdr.is_valid_tuple(pos):
+                    return pos
+        return -1
 
     def __revise__(self, con_cdr, cur_var):
         dom_size = cur_var.dom.dom_size()
         for val_ind in range(len(cur_var.dom.vals_list)):
-            if not cur_var.dom.is_valid(val_ind):
+            if not cur_var.is_valid(val_ind):
                 continue
             pos = self.supp.get((con_cdr, cur_var, val_ind), None)
             if pos is not None and con_cdr.is_valid_tuple(pos) :
@@ -111,7 +114,7 @@ class Solver:
 
     def __assign_val__(self, var, val_ind):
         for ind in range(len(var.dom.vals_list)):
-            if ind != val_ind:
+            if ind != val_ind and var.is_valid(ind):
                 var.dom.set_invalid(ind)
                 self.del_vals[-1].append((var, ind))
     
@@ -151,7 +154,7 @@ class Solver:
 
 v1 = Variable(1, Domain([1, 2, 3]))
 v2 = Variable(1, Domain([1, 2, 3]))
-v3 = Variable(1, Domain([1, 2, 3]))
+v3 = Variable(2, Domain([2, 3, 4]))
 # 'x < y <= z'
 c1 = Constraint('? < ? <= ?', [v1, v2, v3])
 task = Task([v1, v2, v3], [c1])
