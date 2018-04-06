@@ -23,6 +23,7 @@ class ConstraintCoder:
             self.__map_cache__[len(con.vars)-ind-1] = code_len
             code_len *= len(var.dom.vals_list)
         self.code_list = [0] * ((int)(code_len/32) + 1)
+        self.next_set_tuple = dict()
         self.__coding_con__()
     
     def __next__vals__(self):
@@ -37,14 +38,18 @@ class ConstraintCoder:
         return False
 
     def __coding_con__(self):
-        ind = 1
+        pos = 1
+        last_set_tuple = -1
         while True:
             if self.con.is_sat():
-                self.set_true(ind)
+                self.set_true(pos)
+                self.next_set_tuple[last_set_tuple] = pos
+                last_set_tuple = pos
             if self.__next__vals__():
-                ind += 1
+                pos += 1
             else:
                 break
+        self.next_set_tuple[last_set_tuple] = -1
 
     def set_true(self, pos):
         ind = (int)(pos / 32)
@@ -104,17 +109,6 @@ class ConstraintCoder:
             valinds.append(val_ind)
             pre_num %= self.__map_cache__[i]
         return valinds
-    
-    # 元组是否有效，即元组的各个成分是否为有效值
-    def is_valid_tuple(self, pos, valinds=None):
-        if valinds == None:
-            valinds = self.get_valinds_from_code(pos)
-        is_valid = True
-        for ind, val_ind in enumerate(valinds):
-            if not self.con.vars[ind].is_valid(val_ind):
-                is_valid = False
-                break
-        return is_valid
 
 
 '''
