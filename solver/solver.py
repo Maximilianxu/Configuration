@@ -24,6 +24,7 @@ class Solver:
         for con in task.cons:
             self.con_cdrs.append(ConstraintCoder(con))     
         self.rslt = Result([], None)
+        self.is_solvable = False
         # 变量是否已被赋值
         self.is_assigned = [False] * len(self.vars)
         # 启发式
@@ -42,7 +43,10 @@ class Solver:
             self.var_ind_map[var] = var_ind  
 
     def search_solution(self):
-        return self.__solve__(0)
+        self.del_vals.append([])
+        solvable = self.__solve__(0)
+        self.__end_solve__()
+        return solvable
     
     def __next_var__(self, lev):
         min_dom_wdeg = 0xFFFFFFFF
@@ -69,7 +73,7 @@ class Solver:
                         else:
                             self.wdegs[var_ind] += 1
 
-        # 元组是否有效，即元组的各个成分是否为有效值
+    # 元组是否有效，即元组的各个成分是否为有效值
     def is_valid_tuple(self, con_cdr, valinds):
         is_valid = True
         for ind, val_ind in enumerate(valinds):
@@ -134,6 +138,13 @@ class Solver:
             var, val_ind = cur_del_vals.pop()
             var.dom.set_valid(val_ind)
 
+    # 回复状态
+    def __end_solve__(self):
+        self.supp.clear()
+        self.del_vals.clear()
+        for var in self.vars:
+            var.val = var.dom.vals_list[0]
+
     def __solve__(self, lev):
         if lev == len(self.vars):
             self.sol_num += 1
@@ -142,35 +153,84 @@ class Solver:
                 vals_list.append(var.val)
             sol = Solution(vals_list)
             self.rslt.solutions.append(sol)
+            self.is_solvable = True
             return True    
         cur_var_ind = self.__next_var__(lev)
         cur_var = self.vars[cur_var_ind]
         cur_dom = cur_var.dom
-        is_solvable = False
+        solvable = False
         for val_ind, val in enumerate(cur_dom.vals_list):
             if cur_dom.is_valid(val_ind):
                 cur_var.val = val
                 self.is_assigned[cur_var_ind] = True
                 self.del_vals.append([])  
                 if self.__mac__(cur_var) and self.__solve__(lev + 1):
-                    self.is_assigned[cur_var_ind] = False
-                    is_solvable = True
+                    solvable = True
                     if self.sol_num >= self.MAX_SOLS_NUM:
-                        return is_solvable
-                self.__trace_back__(self.del_vals.pop())
-        return is_solvable
+                        self.is_assigned[cur_var_ind] = False
+                        self.__trace_back__(self.del_vals.pop())
+                        return solvable
+                self.is_assigned[cur_var_ind] = False
+                self.__trace_back__(self.del_vals.pop())  
+        return solvable
+    
+    def __is_consistent__(self, con_cdrs):
+        pre_con_cdrs = self.con_cdrs
+        explain_con_cdrs = []
+        self.con_cdrs = explain_con_cdrs
+        pre_max_sols_num = self.MAX_SOLS_NUM
+        self.MAX_SOLS_NUM = 1
+        is_consistent = self.search_solution()
+        self.MAX_SOLS_NUM = pre_max_sols_num
+        self.con_cdrs = pre_con_cdrs
+        return is_consistent
+
+    # cons均为Constraint的列表
+    def __quickxplain__(self, basic_cons, delta_cons, custom_cons):
+        if len(delta_cons) > 0 and not self.__is_consistent__(basic_cons):
+            return []
+        if len(custom_cons) == 1:
+            return custom_cons
+        splt_k = (int)(len(custom_cons) / 2)
+        C1 = custom_cons[:splt_k]
+        C2 = custom_cons[splt_k:]
+        delta2 = self.__quickxplain__(basic_cons+C1, C1, C2)
+        delta1 = self.__quickxplain__(basic_cons+delta2, delta2, C1)
+        return delta1 + delta2
+
+    def __quick_explain__(self, basic_cons, custom_cons):
+        if self.is_solvable or len(custom_cons) == 0:
+            return []
+        con_cdrs = self.__quickxplain__(basic_cons, basic_cons, custom_cons)
+        return list(map(lambda x: x.con, con_cdrs))
+    
+    # 模型检测时，不用给参数即可; 否则，第一个参数意即self.con_cdrs列表中，start之前的为basic_cons
+    def compute_explanation(self, custom_cons_start = 0):
+        return self.__quick_explain__(self.con_cdrs[:custom_cons_start], self.con_cdrs[custom_cons_start:])
+
 
 
 v1 = Variable(1, Domain([1, 2, 3]))
 v2 = Variable(1, Domain([1, 2, 3]))
 v3 = Variable(2, Domain([2, 3, 4]))
 # 'x < y <= z'
+# bug here
 c1 = Constraint('? < ? <= ?', [v1, v2, v3])
-task = Task([v1, v2, v3], [c1])
+c2 = Constraint('? >= ?', [v1, v2])
+task = Task([v1, v2, v3], [c1, c2])
 solver = Solver(task)
+
 is_solvable = solver.search_solution()
-# print(is_solvable)
+print('====> has any solutions? ', is_solvable)
 sols = solver.rslt.solutions
 for sol in sols:
     print(sol.vals_list)
+
+if not is_solvable:
+    print('====> the conflict constraints including:')
+    rslt = solver.compute_explanation()
+    for ind, con in enumerate(rslt):
+        print(str(ind+1)+'. '+con.expr)
+
+print('====================')
                     
