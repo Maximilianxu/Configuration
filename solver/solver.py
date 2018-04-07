@@ -48,6 +48,10 @@ class Solver:
         self.__end_solve__()
         return solvable
     
+      # 模型检测时，不用给参数即可; 否则，第一个参数意即self.con_cdrs列表中，start之前的为basic_cons
+    def compute_explanation(self, custom_cons_start = 0):
+        return self.__quick_explain__(self.con_cdrs[:custom_cons_start], self.con_cdrs[custom_cons_start:])
+    
     def __next_var__(self, lev):
         min_dom_wdeg = 0xFFFFFFFF
         next_var_ind = -1
@@ -84,7 +88,6 @@ class Solver:
 
                 is_valid = False
                 break
-
         return is_valid
 
     # gac3rm算法
@@ -100,7 +103,7 @@ class Solver:
         return True
 
     def __seek_support__(self, con_cdr, cur_var, val_ind):
-        cur_var_ind = self.var_ind_map[cur_var]
+        cur_var_ind = con_cdr.con.vars.index(cur_var)
         pos = -1
         while True:
             pos = con_cdr.next_set_tuple.get(pos, -1)
@@ -129,8 +132,7 @@ class Solver:
                 self.del_vals[-1].append((cur_var, val_ind))
             else:
                 for (prop_var, prop_valind) in zip(con_cdr.con.vars, con_cdr.get_valinds_from_code(tup)):
-                    self.supp[(con_cdr, prop_var, prop_valind)] = tup
-            
+                    self.supp[(con_cdr, prop_var, prop_valind)] = tup           
         return dom_size != cur_var.dom.dom_size()
     
     def __trace_back__(self, cur_del_vals):
@@ -185,7 +187,7 @@ class Solver:
         self.con_cdrs = pre_con_cdrs
         return is_consistent
 
-    # cons均为Constraint的列表
+    # cons均为ConstraintCoder的列表
     def __quickxplain__(self, basic_cons, delta_cons, custom_cons):
         if len(delta_cons) > 0 and not self.__is_consistent__(basic_cons):
             return []
@@ -203,21 +205,18 @@ class Solver:
             return []
         con_cdrs = self.__quickxplain__(basic_cons, basic_cons, custom_cons)
         return list(map(lambda x: x.con, con_cdrs))
-    
-    # 模型检测时，不用给参数即可; 否则，第一个参数意即self.con_cdrs列表中，start之前的为basic_cons
-    def compute_explanation(self, custom_cons_start = 0):
-        return self.__quick_explain__(self.con_cdrs[:custom_cons_start], self.con_cdrs[custom_cons_start:])
-
 
 
 v1 = Variable(1, Domain([1, 2, 3]))
 v2 = Variable(1, Domain([1, 2, 3]))
 v3 = Variable(2, Domain([2, 3, 4]))
 # 'x < y <= z'
-# bug here
 c1 = Constraint('? < ? <= ?', [v1, v2, v3])
-c2 = Constraint('? >= ?', [v1, v2])
-task = Task([v1, v2, v3], [c1, c2])
+#  v3 == 4 -> v2=2
+# 蕴含约束转换成逻辑表达式，等价约束表达成两个蕴含约束
+c2 = Constraint('? != 4 or ? == 2', [v3, v2])
+c3 = Constraint('? + ? < 4', [v1, v2])
+task = Task([v1, v2, v3], [c1, c2, c3])
 solver = Solver(task)
 
 is_solvable = solver.search_solution()
