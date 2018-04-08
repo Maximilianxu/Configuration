@@ -18,19 +18,30 @@ class ConstraintCoder:
     def __init__(self, con):
         self.con = con
         code_len = 1
-        self.__map_cache__ = [1] * len(con.vars)
+        self.__map_cache__ = dict()
         for ind, var in enumerate(reversed(con.vars)):
-            self.__map_cache__[len(con.vars)-ind-1] = code_len
-            code_len *= len(var.dom.vals_list)
+            if self.__map_cache__.get(var, None) is None:
+                self.__map_cache__[var] = code_len
+            is_skip = False
+            for i in range(len(con.vars) - ind, len(con.vars)):
+                if con.vars[i] == var:
+                    is_skip = True
+                    break
+            if not is_skip:
+                code_len *= len(var.dom.vals_list)
         self.code_list = [0] * ((int)(code_len/32) + 1)
         self.next_set_tuple = dict()
         self.__coding_con__()
     
     def __next__vals__(self):
+        rotate_over = dict()
         for var in reversed(self.con.vars):
             tmp = var.dom.vals_list
-            if var.val == tmp[-1]:
+            if var.val == tmp[-1] and not rotate_over.get(var, False):
                 var.val = tmp[0]
+                rotate_over[var] = True
+                continue
+            elif rotate_over.get(var, False):
                 continue
             else:
                 var.val = tmp[tmp.index(var.val)+1]
@@ -102,30 +113,30 @@ class ConstraintCoder:
     # 从二级制编码位置获取值下标的元组
     def get_valinds_from_code(self, pos):
         pre_num = pos - 1
-        valinds = []
+        valinds = [-1]*len(self.con.vars)
+        map_over = dict()
         for i in range(len(self.con.vars)):
-            tmp = self.__map_cache__[i]
-            val_ind = (int)(pre_num/self.__map_cache__[i])
-            valinds.append(val_ind)
-            pre_num %= self.__map_cache__[i]
+            var = self.con.vars[i]
+            if map_over.get(var, False):
+                continue
+            tmp = self.__map_cache__[var]
+            val_ind = (int)(pre_num/self.__map_cache__[var])
+            if val_ind < len(var.dom.vals_list):
+                valinds[i] = val_ind
+                for j in range(len(self.con.vars)):
+                    if j!= i and self.con.vars[j] == var:
+                        valinds[j] = val_ind
+                        map_over[var] = True
+                pre_num %= self.__map_cache__[var]
         return valinds
 
 
-'''
-v1 = Variable(1, Domain([1, 2, 3]))
-v2 = Variable(1, Domain([1, 2, 3]))
-v3 = Variable(1, Domain([1, 2, 3]))
 
-c1 = Constraint('? < ? <= ?', [v1, v2, v3])
+# v1 = Variable(1, Domain([1, 2, 3]))
+# v2 = Variable(1, Domain([1, 2]))
 
-cc = ConstraintCoder(c1)
-print(cc.get_last_set())
-print(cc.get_first_set())
-print(cc.get_last_set(19))
-print(cc.get_value(4), cc.get_value(5))
-cc.set_false(5)
-print(cc.get_first_set())
-cc.set_true(19)
-print(cc.get_last_set())
-print(cc.get_vals_from_code(5))
-'''
+# c1 = Constraint('? + ? + ? > 3', [v2, v1, v1])
+
+# cc = ConstraintCoder(c1)
+# print(cc.get_valinds_from_code(6))
+

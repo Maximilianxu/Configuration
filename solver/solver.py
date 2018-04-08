@@ -43,15 +43,24 @@ class Solver:
             self.var_ind_map[var] = var_ind  
 
     def search_solution(self):
-        self.del_vals.append([])
+        if not self.__initialize__():
+            self.__end_solve__()
+            return False
         solvable = self.__solve__(0)
         self.__end_solve__()
         return solvable
     
-      # 模型检测时，不用给参数即可; 否则，第一个参数意即self.con_cdrs列表中，start之前的为basic_cons
+    # 模型检测时，不用给参数即可; 否则，第一个参数意即self.con_cdrs列表中，start之前的为basic_cons
     def compute_explanation(self, custom_cons_start = 0):
         return self.__quick_explain__(self.con_cdrs[:custom_cons_start], self.con_cdrs[custom_cons_start:])
     
+    def __initialize__(self):
+        for con_cdr in self.con_cdrs:
+            for var in con_cdr.con.vars:
+                self.queue.add((con_cdr, var))
+        self.del_vals.append([])
+        return self.__mac__()
+
     def __next_var__(self, lev):
         min_dom_wdeg = 0xFFFFFFFF
         next_var_ind = -1
@@ -85,19 +94,17 @@ class Solver:
             if not cur_var.is_valid(val_ind) or \
                 (self.is_assigned[self.var_ind_map[cur_var]] and \
                 cur_var.val != cur_var.dom.vals_list[val_ind]):
-
                 is_valid = False
                 break
         return is_valid
 
     # gac3rm算法
-    def __mac__(self, cur_var):
-        self.__prop_operations__(cur_var)
+    def __mac__(self):
         while len(self.queue)>0:
             cur_con_cdr, var = self.queue.pop()
             if self.__revise__(cur_con_cdr, var):
                 if var.dom.dom_size() == 0:
-                    self.__prop_operations__(cur_var, add_queue=False)
+                    self.__prop_operations__(var, add_queue=False)
                     return False
                 self.__prop_operations__(var, cur_con_cdr=cur_con_cdr)           
         return True
@@ -110,8 +117,7 @@ class Solver:
             if pos == -1:
                 return pos
             valinds = con_cdr.get_valinds_from_code(pos)
-            if con_cdr.get_value(pos) and \
-                valinds[cur_var_ind] == val_ind and \
+            if valinds[cur_var_ind] == val_ind and \
                 self.is_valid_tuple(con_cdr, valinds):
                     return pos
         return -1
@@ -166,7 +172,8 @@ class Solver:
                 cur_var.val = val
                 self.is_assigned[cur_var_ind] = True
                 self.del_vals.append([])  
-                if self.__mac__(cur_var) and self.__solve__(lev + 1):
+                self.__prop_operations__(cur_var)
+                if self.__mac__() and self.__solve__(lev + 1):
                     solvable = True
                     if self.sol_num >= self.MAX_SOLS_NUM:
                         self.is_assigned[cur_var_ind] = False
@@ -215,7 +222,7 @@ c1 = Constraint('? < ? <= ?', [v1, v2, v3])
 #  v3 == 4 -> v2=2
 # 蕴含约束转换成逻辑表达式，等价约束表达成两个蕴含约束
 c2 = Constraint('? != 4 or ? == 2', [v3, v2])
-c3 = Constraint('? + ? < 4', [v1, v2])
+c3 = Constraint('? * ? > 1', [v1, v1])
 task = Task([v1, v2, v3], [c1, c2, c3])
 solver = Solver(task)
 
