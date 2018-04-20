@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- <link rel="icon" type="image/png" href="/static/images/yk-icon.png"> -->
+    <link rel="stylesheet" href="/static/css/index.css?ver=0.1.5"> {% block style%} {%endblock style%}
+    <title>
+        {%block title%} Config--Order {%endblock title%}
+    </title>
+</head>
+
+<body>
+    {%block navbar%}
+    <div id="nav_wrapper" class="nav-wrapper">
+        <nav class="navbar">
+            <div class="nav-links">
+                <a href="/" class="nav-link">
+                    Home
+                </a>
+                <a href="/products" class="nav-link">
+                    Products
+                </a>
+                <a href="/model" class="nav-link">
+                    Model
+                </a>
+                <a class="nav-link active" href="/order">
+                    Order
+                </a>
+                <a href="/about" class="nav-link">
+                    About
+                </a>
+            </div>
+        </nav>
+        <div class="dropdown">
+            <div class="menu_bars" onclick="toggle_menu(this)">
+                <div class="menu_bar1"></div>
+                <div class="menu_bar2"></div>
+                <div class="menu_bar3"></div>
+            </div>
+            <a href="/" class="nav-link">Home</a>
+            <a href="/products" class="nav-link">Products</a>
+            <a href="/model" class="nav-link">Model</a>
+            <a href="/order" class="nav-link active">Order</a>
+            <a href="/about" class="nav-link">About</a>
+        </div>
+    </div>
+    {%endblock navbar%}
+    <div class="side-wrapper">
+        <p>Model components tree</p>
+
+    </div>
+    <div class="main-wrapper">
+        <div class="opreq-wrapper">
+            <p class="opreq-desp">Add Custom Constraints:</p>
+            <div class="comp-wrapper">
+                <div class="tips">
+                    <ul>
+                        <li>component desp</li>
+                        <li>property desp</li>
+                        <li>property domain</li>
+                    </ul>
+                </div>
+                <form id="opreq" action="">
+                    <input id="cons_inp" type="text" placeholder="custom constraint ...">
+                    <input id="cons_sub" type="submit" value="ENTER +">
+                </form>
+            </div>
+            <div class="comp-stand"></div>
+            <div class="comp-base"></div>
+            <div class="comp-circle"></div>
+            <div class="operation-bar">
+                <ul class="operation-list">
+                    <li class="operation">+</li>
+                    <li class="operation">-</li>
+                    <li class="operation">*</li>
+                    <li class="operation">/</li>
+                    <li class="operation">&gt;</li>
+                    <li class="operation">&lt;</li>
+                    <li class="operation">&gt;=</li>
+                    <li class="operation">&lt;=</li>
+                    <li class="operation">==</li>
+                    <br/>
+                    <li class="operation">=&gt;</li>
+                    <li class="operation">&lt;=&gt;</li>
+                    <li class="operation">||</li>
+                    <li class="operation">&amp;&amp;</li>
+                </ul>
+            </div>
+        </div>
+        <div class="reqs-wrapper">
+            <p class="req-desp">Custom Requirements</p>
+            <div class="short-line"></div>
+            <div class="reqs-list">
+                <ol id="cons_list" class="reqs"></ol>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/static/js/jquery-3.2.1.min.js"></script>
+<script>
+
+    function toggle_menu(x) {
+        x.classList.toggle("change");
+        if (x.className == "menu_bars") {
+            $('.dropdown a').css("display", "none");
+        }
+        else {
+            $('.dropdown a').css("display", "block");
+        }
+    }
+
+    function add_cons(evt) {
+        evt.preventDefault();
+        var cons_expr = $('#cons_inp').val();
+        var li_str = "<li>" + cons_expr + "</li>";
+        $('#cons_list').append(li_str);
+    }
+
+    $('#cons_sub').click(add_cons);
+</script> {%block script%} {%endblock script%}
+
+</html>
