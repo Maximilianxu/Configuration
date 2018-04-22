@@ -11,7 +11,7 @@
     </title>
 </head>
 
-<body>
+<body class="modal-fade">
     {%block navbar%}
     <div id="nav_wrapper" class="nav-wrapper">
         <nav class="navbar">
@@ -90,12 +90,28 @@
             </div>
         </div>
         <div class="reqs-wrapper">
-            <p class="req-desp">Custom Requirements</p>
+            <p class="req-desp">Custom Requirements:</p>
             <div class="short-line"></div>
             <div class="reqs-list">
                 <ol id="cons_list" class="reqs"></ol>
+                <button id="sub_reqs" class="reqs-sub">SUBMIT</button>
             </div>
         </div>
+    </div>
+    <div id="prod_modal" class="prod-modal modal-fade" draggable="true">
+        <p class="prod-desp">Available Products:</p>
+        <button id="clo_modal" class="clo-modal">×</button>
+        <form id="prods_list" action="#" class="prods-list">
+            <input id= "prod1" class="prod" type="checkbox" name="prod1" value="prod1" data-price="10">
+            <label for="prod1"> a = 1, b = 2, c = 3 </label> price: 10<br>
+            <input id= "prod2" class="prod" type="checkbox" name="prod2" value="prod2" data-price="20">
+            <label for="prod2"> a = 2, b = 2, c = 3 </label> price: 20 <br>
+            <div class="bill-wrapper">
+                <span id="total_price_desp">Total Price:   </span>
+                <label id="total_price" for="total_price_desp">0</label>
+                <input id="sub_prod" class="sub-prod" type="submit" value="SUBMIT">
+            </div>
+        </form>
     </div>
 </body>
 <script src="/static/js/jquery-3.2.1.min.js"></script>
@@ -111,14 +127,86 @@
         }
     }
 
+    var reqs = [];
+
     function add_cons(evt) {
         evt.preventDefault();
         var cons_expr = $('#cons_inp').val();
-        var li_str = "<li>" + cons_expr + "</li>";
+        var li_str = "<li>" + cons_expr + "<button class='mdreqd'>D</button>\
+                <button class='mdreqm'>M</button></li>";
         $('#cons_list').append(li_str);
+        cons_expr = cons_expr;//要把property id替换成占位符
+        reqs.push({
+            expr: cons_expr,
+            vars: ""//要等构模器才能做，前台直接在cons_expr中存储property id
+        });
     }
 
     $('#cons_sub').click(add_cons);
+
+    function sub_reqs(evt){
+        $.ajax({
+            url: '/order/reqs',
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify(reqs),
+            success: function(resp){
+                $('#prod_modal').css('display', 'block');
+                $('body').attr('class', 'modal-open');
+            }
+        })
+    }
+
+    $("#sub_reqs").click(sub_reqs);
+
+    function clo_modal(){
+        $('#prod_modal').css('display', 'none');
+        $('body').attr('class', 'modal-fade');
+    }
+    $('#clo_modal').click(clo_modal);
+    var assignments = [];
+    var total_price = 0;
+    function modify_total_price(){
+        if($(this).is(':checked')){
+            total_price += $(this).data('price');
+            assignments.push($(this).next().text());
+        }else{
+            total_price -= $(this).data('price');
+            var ind = assignments.indexOf($(this).next().text());
+            assignments.splice(ind, 1);
+        }
+        $('#total_price').html(total_price);
+    }
+    $('#prods_list .prod').on('click', modify_total_price);
+
+    function modify_constraint(){
+        var expr = $(this).parent().contents().get(0).nodeValue;
+        $('#cons_inp').val(expr);
+        $(this).parent().remove();
+    }
+
+    function delete_constraint(){
+        $(this).parent().remove();
+    }
+    $('#cons_list').on('click', '.mdreqd', delete_constraint);//bug here
+    $('#cons_list').on('click', '.mdreqm', modify_constraint);
+
+    function sub_prod(){
+        $.ajax({
+            url: '/order/new',
+            method: 'post',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                assignments: assignments.join('\n'),
+                price: total_price.toString()
+            }),
+            success: function(resp){
+                alert('success');
+                clo_modal();
+            }
+        })
+    }
+    $('#sub_prod').on('click', sub_prod);
 </script> {%block script%} {%endblock script%}
 
 </html>
