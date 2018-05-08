@@ -1,131 +1,119 @@
-<!DOCTYPE html>
-<html>
+{%extends "home.html"%} 
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- <link rel="icon" type="image/png" href="/static/images/yk-icon.png"> -->
-    <link rel="stylesheet" href="/static/css/index.css?ver=0.1.5"> {% block style%} {%endblock style%}
-    <title>
-        {%block title%} Config--Order {%endblock title%}
-    </title>
-</head>
+{%block style%}
+<link rel="stylesheet" href="/static/css/index.css"> 
+{%endblock%}
 
-<body class="modal-fade">
-    {%block navbar%}
-    <div id="nav_wrapper" class="nav-wrapper">
-        <nav class="navbar">
-            <div class="nav-links">
-                <a href="/" class="nav-link">
-                    Home
-                </a>
-                <a href="/products" class="nav-link">
-                    Products
-                </a>
-                <a href="/model" class="nav-link">
-                    Model
-                </a>
-                <a class="nav-link active" href="/order">
-                    Order
-                </a>
-                <a href="/about" class="nav-link">
-                    About
-                </a>
-            </div>
-        </nav>
-        <div class="dropdown">
-            <div class="menu_bars" onclick="toggle_menu(this)">
-                <div class="menu_bar1"></div>
-                <div class="menu_bar2"></div>
-                <div class="menu_bar3"></div>
-            </div>
-            <a href="/" class="nav-link">Home</a>
-            <a href="/products" class="nav-link">Products</a>
-            <a href="/model" class="nav-link">Model</a>
-            <a href="/order" class="nav-link active">Order</a>
-            <a href="/about" class="nav-link">About</a>
+{%block title%} 
+    Config--Order 
+{%endblock%} 
+
+{%block navbar%}
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="/" class="nav-link">
+                Home
+            </a>
+            <a href="/products" class="nav-link">
+                Products
+            </a>
+            <a href="/model" class="nav-link">
+                Model
+            </a>
+            <a class="nav-link active" href="/order">
+                Order
+            </a>
+            <a href="/about" class="nav-link">
+                About
+            </a>
         </div>
+    </nav>
+    <div class="dropdown">
+        <div class="menu_bars" onclick="toggle_menu(this)">
+            <div class="menu_bar1"></div>
+            <div class="menu_bar2"></div>
+            <div class="menu_bar3"></div>
+        </div>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/products" class="nav-link">Products</a>
+        <a href="/model" class="nav-link">Model</a>
+        <a href="/order" class="nav-link active">Order</a>
+        <a href="/about" class="nav-link">About</a>
     </div>
-    {%endblock navbar%}
-    <div class="side-wrapper">
-        <p>Model components tree</p>
+{%endblock navbar%}
 
-    </div>
-    <div class="main-wrapper">
-        <div class="opreq-wrapper">
-            <p class="opreq-desp">Add Custom Constraints:</p>
-            <div class="comp-wrapper">
-                <div class="tips">
-                    <ul>
-                        <li>component desp</li>
-                        <li>property desp</li>
-                        <li>property domain</li>
-                    </ul>
-                </div>
-                <form id="opreq" action="">
-                    <input id="cons_inp" type="text" placeholder="custom constraint ...">
-                    <input id="cons_sub" type="submit" value="ENTER +">
-                </form>
-            </div>
-            <div class="comp-stand"></div>
-            <div class="comp-base"></div>
-            <div class="comp-circle"></div>
-            <div class="operation-bar">
-                <ul class="operation-list">
-                    <li class="operation">+</li>
-                    <li class="operation">-</li>
-                    <li class="operation">*</li>
-                    <li class="operation">/</li>
-                    <li class="operation">&gt;</li>
-                    <li class="operation">&lt;</li>
-                    <li class="operation">&gt;=</li>
-                    <li class="operation">&lt;=</li>
-                    <li class="operation">==</li>
-                    <br/>
-                    <li class="operation">=&gt;</li>
-                    <li class="operation">&lt;=&gt;</li>
-                    <li class="operation">||</li>
-                    <li class="operation">&amp;&amp;</li>
+{%block side%}
+    <p>Model components tree</p>
+{%endblock%}
+
+{%block main%}
+    <div class="opreq-wrapper">
+        <p class="opreq-desp">Add Custom Constraints:</p>
+        <div class="comp-wrapper">
+            <div class="tips">
+                <ul>
+                    <li>component desp</li>
+                    <li>property desp</li>
+                    <li>property domain</li>
                 </ul>
             </div>
+            <form id="opreq" action="">
+                <input id="cons_inp" type="text" placeholder="custom constraint ...">
+                <input id="cons_sub" type="submit" value="ENTER +">
+            </form>
         </div>
-        <div class="reqs-wrapper">
-            <p class="req-desp">Custom Requirements:</p>
-            <div class="short-line"></div>
-            <div class="reqs-list">
-                <ol id="cons_list" class="reqs"></ol>
-                <button id="sub_reqs" class="reqs-sub">SUBMIT</button>
-            </div>
+        <div class="comp-stand"></div>
+        <div class="comp-base"></div>
+        <div class="comp-circle"></div>
+        <div class="operation-bar">
+            <ul class="operation-list">
+                <li class="operation">+</li>
+                <li class="operation">-</li>
+                <li class="operation">*</li>
+                <li class="operation">/</li>
+                <li class="operation">&gt;</li>
+                <li class="operation">&lt;</li>
+                <li class="operation">&gt;=</li>
+                <li class="operation">&lt;=</li>
+                <li class="operation">==</li>
+                <br/>
+                <li class="operation">=&gt;</li>
+                <li class="operation">&lt;=&gt;</li>
+                <li class="operation">||</li>
+                <li class="operation">&amp;&amp;</li>
+            </ul>
         </div>
     </div>
-    <div id="prod_modal" class="prod-modal modal-fade" draggable="true">
-        <p class="prod-desp">Available Products:</p>
-        <button id="clo_modal" class="clo-modal">×</button>
-        <form id="prods_list" action="#" class="prods-list">
-            <input id= "prod1" class="prod" type="checkbox" name="prod1" value="prod1" data-price="10">
-            <label for="prod1"> a = 1, b = 2, c = 3 </label> price: 10<br>
-            <input id= "prod2" class="prod" type="checkbox" name="prod2" value="prod2" data-price="20">
-            <label for="prod2"> a = 2, b = 2, c = 3 </label> price: 20 <br>
-            <div class="bill-wrapper">
-                <span id="total_price_desp">Total Price:   </span>
-                <label id="total_price" for="total_price_desp">0</label>
-                <input id="sub_prod" class="sub-prod" type="submit" value="SUBMIT">
-            </div>
-        </form>
+    <div class="reqs-wrapper">
+        <p class="req-desp">Custom Requirements:</p>
+        <div class="short-line"></div>
+        <div class="reqs-list">
+            <ol id="cons_list" class="reqs"></ol>
+            <button id="sub_reqs" class="reqs-sub">SUBMIT</button>
+        </div>
     </div>
-</body>
-<script src="/static/js/jquery-3.2.1.min.js"></script>
-<script>
+</div>
+<div id="prod_modal" class="prod-modal modal-fade" draggable="true">
+    <p class="prod-desp">Available Products:</p>
+    <button id="clo_modal" class="clo-modal">×</button>
+    <form id="prods_list" action="#" class="prods-list">
+        <input id="prod1" class="prod" type="checkbox" name="prod1" value="prod1" data-price="10">
+        <label for="prod1"> a = 1, b = 2, c = 3 </label> price: 10
+        <br>
+        <input id="prod2" class="prod" type="checkbox" name="prod2" value="prod2" data-price="20">
+        <label for="prod2"> a = 2, b = 2, c = 3 </label> price: 20
+        <br>
+        <div class="bill-wrapper">
+            <span id="total_price_desp">Total Price: </span>
+            <label id="total_price" for="total_price_desp">0</label>
+            <input id="sub_prod" class="sub-prod" type="submit" value="SUBMIT">
+        </div>
+    </form>
+</div>
+{%endblock%}
 
-    function toggle_menu(x) {
-        x.classList.toggle("change");
-        if (x.className == "menu_bars") {
-            $('.dropdown a').css("display", "none");
-        }
-        else {
-            $('.dropdown a').css("display", "block");
-        }
-    }
+{%block script%}
+<script>
 
     var reqs = [];
 
@@ -144,13 +132,13 @@
 
     $('#cons_sub').click(add_cons);
 
-    function sub_reqs(evt){
+    function sub_reqs(evt) {
         $.ajax({
             url: '/order/reqs',
             method: 'post',
             contentType: 'application/json',
             data: JSON.stringify(reqs),
-            success: function(resp){
+            success: function (resp) {
                 $('#prod_modal').css('display', 'block');
                 $('body').attr('class', 'modal-open');
             }
@@ -159,18 +147,18 @@
 
     $("#sub_reqs").click(sub_reqs);
 
-    function clo_modal(){
+    function clo_modal() {
         $('#prod_modal').css('display', 'none');
         $('body').attr('class', 'modal-fade');
     }
     $('#clo_modal').click(clo_modal);
     var assignments = [];
     var total_price = 0;
-    function modify_total_price(){
-        if($(this).is(':checked')){
+    function modify_total_price() {
+        if ($(this).is(':checked')) {
             total_price += $(this).data('price');
             assignments.push($(this).next().text());
-        }else{
+        } else {
             total_price -= $(this).data('price');
             var ind = assignments.indexOf($(this).next().text());
             assignments.splice(ind, 1);
@@ -179,19 +167,19 @@
     }
     $('#prods_list .prod').on('click', modify_total_price);
 
-    function modify_constraint(){
+    function modify_constraint() {
         var expr = $(this).parent().contents().get(0).nodeValue;
         $('#cons_inp').val(expr);
         $(this).parent().remove();
     }
 
-    function delete_constraint(){
+    function delete_constraint() {
         $(this).parent().remove();
     }
     $('#cons_list').on('click', '.mdreqd', delete_constraint);//bug here
     $('#cons_list').on('click', '.mdreqm', modify_constraint);
 
-    function sub_prod(){
+    function sub_prod() {
         $.ajax({
             url: '/order/new',
             method: 'post',
@@ -200,13 +188,23 @@
                 assignments: assignments.join('\n'),
                 price: total_price.toString()
             }),
-            success: function(resp){
+            success: function (resp) {
                 alert('success');
                 clo_modal();
             }
         })
     }
     $('#sub_prod').on('click', sub_prod);
-</script> {%block script%} {%endblock script%}
+
+    function op_keyboard(e){
+        e.preventDefault();
+        var op = $(this).text();
+        $('#cons_inp').val($('#cons_inp').val() + ' ' + op + ' ');
+    }
+
+    $('.operation').on('click', op_keyboard);
+</script> 
+
+{%endblock script%}
 
 </html>
