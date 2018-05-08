@@ -9,3 +9,14 @@ CREATE TABLE c_order(
     order_state VARCHAR(4),
     PRIMARY KEY(id)
 );
+
+DROP TABLE IF EXISTS expert;
+CREATE TABLE expert(
+    id INT NOT NULL AUTO_INCREMENT,
+    email VARCHAR(20) NOT NULL,
+    password VARCHAR(20) NOT NULL,
+    name VARCHAR(20) NOT NULL,
+    company VARCHAR(20),
+    profession VARCHAR(20),
+    PRIMARY KEY(id)
+);
