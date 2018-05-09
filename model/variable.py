@@ -16,3 +16,5 @@ class Variable:
     def set_invalid(self, val_ind):
         self.dom.set_invalid(val_ind)
     
+    def __str__(self):
+        return ' '.join(['%s:%s' % item for item in self.__dict__.items()])    

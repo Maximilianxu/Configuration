@@ -1,3 +1,6 @@
+import sys
+sys.path.append("..")
+
 from flask import Flask, render_template, request
 from Configuration.controller.order_generator import order_generator
 from Configuration.controller.home import home
@@ -14,3 +17,5 @@ def index():
         return render_template('home.html', login=False)
     else:
         return render_template('home.html', login=False)
+
+app.run(debug=True)
