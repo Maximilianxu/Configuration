@@ -2,9 +2,9 @@
 from flask import Blueprint, render_template, request
 order_generator = Blueprint('order_generator', __name__, template_folder='templates')
 
-@order_generator.route('/order')
+@order_generator.route('/config')
 def order():
-    return render_template('order.html')
+    return render_template('config.html')
 
 @order_generator.route('/order/reqs', methods=['POST'])
 def sub_reqs():
