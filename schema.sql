@@ -3,12 +3,9 @@ CREATE TABLE c_user(
     email VARCHAR(64),
     name VARCHAR(16) UNIQUE,
     password VARCHAR(32),
-<<<<<<< HEAD
     role TINYINT,
     company VARCHAR(64),
     profession VARCHAR(64),
-=======
->>>>>>> 7fdf485f57dd54cab85c4483fb5ec7eb230e0597
     PRIMARY KEY(email)
 );
 
@@ -24,7 +21,6 @@ CREATE TABLE c_order(
     PRIMARY KEY(id),
     FOREIGN KEY (user_email) REFERENCES c_user(email)
 );
-<<<<<<< HEAD
 
 DROP TABLE IF EXISTS product;
 CREATE TABLE product(
@@ -78,5 +74,3 @@ CREATE TABLE con_include_p(
     constraint_id INT,
     property_id INT
 );
-=======
->>>>>>> 7fdf485f57dd54cab85c4483fb5ec7eb230e0597
