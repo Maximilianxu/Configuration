@@ -224,16 +224,14 @@ a.ext-link:hover{
     border-radius: 0.5rem;
 }
 
+.log-reg-wrapper label{
+    display: inline-block;
+    width: 10rem;
+}
 .log-reg-wrapper .inactive{
     display: none;
 }
-.log-reg-wrapper #log_name{
-    margin-left: 3.5rem;
-}
 
-.log-reg-wrapper #log_pswd{
-    margin-left: 4.25rem;
-}
 
 .log-reg-ch{
     text-align: center;
@@ -292,9 +290,9 @@ a.ext-link:hover{
     }
 }
 
-@media screen  and (max-width: 1400px){
+@media screen  and (max-device-width: 1400px){
     .nav-link{
-        margin-left: 5rem;
+        margin-left: 5rem; 
     }
 
     .log-reg-wrapper #log_email{
