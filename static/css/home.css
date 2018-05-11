@@ -276,7 +276,7 @@ a.ext-link:hover{
     color: #006d00;
 }
 
-@media screen and (max-width: 60rem /* 960/16 */) {
+@media screen and (max-width: 60rem ) {
     .dropdown {
         display: inline-block;
     }
@@ -284,10 +284,32 @@ a.ext-link:hover{
         display: none;
     }
     .nav-wrapper {
-        height:4.5rem /* 100/16 */;
+        height:4.5rem;
     }
 
     .main {
-        padding: 5.25rem /* 100/16 */ 0;
+        padding: 5.25rem 0;
+    }
+}
+
+@media screen  and (max-width: 1400px){
+    .nav-link{
+        margin-left: 5rem;
+    }
+
+    .log-reg-wrapper #log_email{
+        margin-left: 4.4rem;
+    }
+
+    .log-reg-wrapper #log_name{
+        margin-left: 0.8rem;
+    }
+    
+    .log-reg-wrapper #log_pswd{
+        margin-left: 1.7rem;
+    }
+    
+    .log-reg-wrapper .sub-inp{
+        width: 100%;
     }
 }

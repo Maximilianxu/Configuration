@@ -1,3 +1,9 @@
+<<<<<<< HEAD
+import sys
+sys.path.append("..")
+
+=======
+>>>>>>> 7fdf485f57dd54cab85c4483fb5ec7eb230e0597
 from flask import Flask, render_template, request
 from Configuration.controller.order_generator import order_generator
 from Configuration.controller.home import home
@@ -13,4 +19,10 @@ def index():
         print('=====> ', phone_num, 'logged in')
         return render_template('home.html', login=False)
     else:
+<<<<<<< HEAD
         return render_template('home.html', login=False)
+
+app.run(debug=True)
+=======
+        return render_template('home.html', login=False)
+>>>>>>> 7fdf485f57dd54cab85c4483fb5ec7eb230e0597

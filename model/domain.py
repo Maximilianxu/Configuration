@@ -25,3 +25,6 @@ class Domain:
     def dom_size(self):
         return self.__valid_size__
     
+    
+    def __str__(self):
+        return ','.join(str(i) for i in self.vals_list)

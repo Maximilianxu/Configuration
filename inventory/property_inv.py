@@ -1,0 +1,65 @@
+import sys
+sys.path.append("../..")
+import mysql.connector as sql
+from Configuration.model.domain import Domain
+from Configuration.model.variable import Variable
+from Configuration.model.property import Property
+
+db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
+cursor = db.cursor()
+
+def add_property(component_id, property):
+    vals_str_list = [str(i) for i in property.dom.vals_list]
+    domin = ','.join(vals_str_list)
+    domin_display = ','.join(property.domin_display)
+    cursor.execute("""INSERT INTO property
+                    (component_id, name, introduction, datatype, dataunit, domin, domin_display)
+                    VALUES
+                    (%s, %s, %s, %s, %s, %s, %s)""",
+                    (component_id, property.name, property.introduction, property.datatype, property.dataunit, domin, domin_display))
+    db.commit()
+    cursor.execute("SELECT LAST_INSERT_ID()")
+    row = cursor.fetchone()
+    return row[0]
+
+def delete_property(id):
+    cursor.execute("""DELETE FROM property WHERE id = %s""",
+                    (id, ))
+    db.commit()
+
+def update_property(property):
+    vals_str_list = [str(i) for i in property.dom.vals_list]
+    domin = ','.join(vals_str_list)
+    cursor.execute("""UPDATE property
+                    SET name = %s, introduction = %s, dataunit = %s, domin = %s, domin_display = %s
+                    WHERE id = %s """,
+                    (property.name, property.introduction, property.dataunit, domin, property.domin_display, property.id))
+    db.commit()
+
+def find_all_propertys(component_id):
+    props = []
+    cursor.execute("""SELECT * FROM property
+                    WHERE component_id = %s""",
+                    (component_id, ))
+    for row in cursor.fetchall():
+        vals_str_list = row[6].split(',')
+        dom = [int(i) for i in vals_str_list]
+        domin_display = row[7].split(',')
+        prop = Property(dom[0], dom, row[0], row[2], row[3], row[4], row[5], domin_display)
+        props.append(prop)
+    return props
+
+# dom = Domain([10, 50, 100])
+# domin_display = [str(i) for i in dom.vals_list]
+# pro = Property(dom.vals_list[0], dom, 2, '面积', '莲花因为念佛人的愿力大小、精进程度等而有不同的面积。', '整型', '由旬', domin_display)
+# pro.id = add_property(6,pro)
+# pro.prn_obj()
+
+
+# delete_property(1)
+
+# update_property(pro)
+
+props = find_all_propertys(6)
+for prop in props:
+    prop.prn_obj()

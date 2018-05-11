@@ -32,7 +32,7 @@ def register():
     reg_email = request.form.get('log_email')
     name = request.form.get('log_name')
     password = request.form.get('log_pswd')
-    user = User(reg_email, name, password)
+    user = User(reg_email, name, password, 1, '', '')
     server.connect('smtp.qq.com', 465)
     server.login("193559882", "idhqibmcwajmbjgb")
     mail_text = '''<body>欢迎您注册Config，请单击如下链接验证邮箱，以完成注册，谢谢！

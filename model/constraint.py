@@ -6,7 +6,8 @@ class Constraint:
     # expr应当为以下形式（由于去掉了id属性）：每一个变量以特殊字符作为占位符，
     # 顺序为vars列表顺序
     # 比如expr: ? < ?, vars: [A, B]，即表示约束A.val<B.val
-    def __init__(self, expr, vars):
+    def __init__(self, id, expr, vars):
+        self.id = id
         self.expr = expr
         self.vars = vars
     
@@ -20,3 +21,5 @@ class Constraint:
                 var_ind += 1
         return eval(tmp_expr)
 
+    def __str__(self):
+        return ' '.join(['%s:%s' % item for item in self.__dict__.items()]) + ' ' + ' '.join(str(item) for item in self.vars)

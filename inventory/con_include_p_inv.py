@@ -1,0 +1,59 @@
+import sys
+sys.path.append("../..")
+import mysql.connector as sql
+
+db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
+cursor = db.cursor()
+
+def add_constraint_property(constraint_id, property_ids):
+    for property_id in property_ids:
+        cursor.execute("""INSERT INTO con_include_p
+                        (constraint_id, property_id)
+                        VALUES
+                        (%s, %s)""",
+                        (constraint_id, property_id))
+    db.commit()
+
+def delete_property(property_id):
+    cursor.execute("""DELETE FROM con_include_p WHERE property_id = %s""",
+                    (property_id, ))
+    db.commit()
+
+def delete_constraint(constraint_id):
+    cursor.execute("""DELETE FROM con_include_p WHERE constraint_id = %s""",
+                    (constraint_id, ))
+    db.commit()
+
+def find_all_property_id(constraint_id):
+    prop_ids = []
+    cursor.execute("""SELECT property_id FROM con_include_p
+                    WHERE constraint_id = %s""",
+                    (constraint_id, ))
+    for row in cursor.fetchall():
+        prop_ids.append(row[0])
+    return prop_ids
+
+def find_all_constraint_id(property_id):
+    cons_ids = []
+    cursor.execute("""SELECT constraint_id FROM con_include_p
+                    WHERE property_id = %s""",
+                    (property_id, ))
+    for row in cursor.fetchall():
+        cons_ids.append(row[0])
+    return cons_ids
+
+# constraint_id = 2
+# property_id = 3
+# property_ids = [1,2,3,4]
+
+# add_constraint_property(constraint_id, property_ids)
+
+# delete_property(property_id)
+
+# delete_constraint(constraint_id)
+
+# prop_ids = find_all_property_id(constraint_id)
+# print(prop_ids)
+
+# cons_ids = find_all_constraint_id(property_id)
+# print(cons_ids)
