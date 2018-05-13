@@ -19,6 +19,7 @@ def login():
     if user.password == password:
         resp = make_response(render_template('home.html', login=True))
         resp.set_cookie('user_email', log_email)
+        session['user_email'] = log_email
         return resp
     else:
         return render_template('home.html', login=False)

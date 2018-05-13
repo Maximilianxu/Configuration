@@ -13,9 +13,9 @@ def insert_order(order):
     order.assignments, order.order_date, order.price, order.order_state))
     db.commit()
 
-def find_all_orders():
+def find_all_orders_by_email(email):
     ords = []
-    cursor.execute("SELECT * FROM c_order")
+    cursor.execute("SELECT * FROM c_order WHERE user_email=%s", (email, ))
     for row in cursor.fetchall():
         ord = Order(row[1], row[2], row[3], row[4], row[5], row[6])
         ords.append(ord)

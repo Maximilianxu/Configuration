@@ -1,0 +1,54 @@
+{%extends "home.html"%} {%block style%}
+<link rel="stylesheet" href="/static/css/order.css"> {%endblock%} {%block title%} Config--Order {%endblock%} {%block navbar%}
+<nav class="navbar">
+    <div class="nav-links">
+        <a href="/" class="nav-link">
+            Home
+        </a>
+        <a href="/products" class="nav-link">
+            Products
+        </a>
+        <a href="/model" class="nav-link">
+            Model
+        </a>
+        <a class="nav-link" href="/config">
+            Config
+        </a>
+        <a class="nav-link active" href="/order">
+            Order
+        </a>
+    </div>
+</nav>
+<div class="dropdown">
+    <div class="menu_bars" onclick="toggle_menu(this)">
+        <div class="menu_bar1"></div>
+        <div class="menu_bar2"></div>
+        <div class="menu_bar3"></div>
+    </div>
+    <a href="/" class="nav-link">Home</a>
+    <a href="/products" class="nav-link" >Products</a>
+    <a href="/model" class="nav-link">Model</a>
+    <a href="/order" class="nav-link active">Order</a>
+    <a href="/about" class="nav-link">About</a>
+</div>
+{%endblock navbar%} 
+
+{%block side%}
+<p>Model components tree</p>
+{%endblock%} 
+
+{%block main%}
+<div class="order-wrapper">
+    <ul>
+        {% for ord in orders%}
+        <li>{{ord.assignments}}</li>
+        {%endfor%}
+    </ul>
+
+</div>
+{%endblock%} 
+
+{%block script%} 
+{%endblock script%}
+
+</html>
