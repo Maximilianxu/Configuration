@@ -290,22 +290,7 @@ a.ext-link:hover{
     html{
         font-size: 75%;
     }
-<<<<<<< HEAD
-    .log-reg-wrapper #log_email{
-        margin-left: 4.4rem;
-    }
-
-    .log-reg-wrapper #log_name{
-        margin-left: 0.8rem;
-    }
-    
-    .log-reg-wrapper #log_pswd{
-        margin-left: 1.7rem;
-    }
-    
-=======
         
->>>>>>> 5f18d617c7c624bb837ca1de9674b057cb7fab8f
     .log-reg-wrapper .sub-inp{
         width: 100%;
     }
