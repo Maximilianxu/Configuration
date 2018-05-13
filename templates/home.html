@@ -14,41 +14,6 @@
 </head>
 
 <body class="modal-fade">
-    <div id="nav_wrapper" class="nav-wrapper">
-        {%block navbar%}
-        <nav class="navbar">
-            <div class="nav-links">
-                <a href="/" class="nav-link active">
-                    Home
-                </a>
-                <a href="/products" class="nav-link">
-                    Products
-                </a>
-                <a href="/model" class="nav-link">
-                    Model
-                </a>
-                <a class="nav-link" href="/config">
-                    Config
-                </a>
-                <a class="nav-link" href="/order">
-                    Order
-                </a>
-            </div>
-        </nav>
-        <div class="dropdown">
-            <div class="menu_bars" onclick="toggle_menu(this)">
-                <div class="menu_bar1"></div>
-                <div class="menu_bar2"></div>
-                <div class="menu_bar3"></div>
-            </div>
-            <a href="/" class="nav-link active">Home</a>
-            <a href="/products" class="nav-link">Products</a>
-            <a href="/model" class="nav-link">Model</a>
-            <a href="/order" class="nav-link">Order</a>
-            <a href="/about" class="nav-link">About</a>
-        </div>
-        {%endblock navbar%}
-    </div>
     <div class="side-wrapper">
         {%block side%}
         <div class="logo-wrapper">
@@ -62,18 +27,48 @@
         {%endblock%}
     </div>
     <div class="main-wrapper">
+        <div id="nav_wrapper" class="nav-wrapper">
+            {%block navbar%}
+            <nav class="navbar">
+                <div class="nav-links">
+                    <a href="/" class="nav-link active">
+                        Home
+                    </a>
+                    <a href="/products" class="nav-link">
+                        Products
+                    </a>
+                    <a href="/model" class="nav-link">
+                        Model
+                    </a>
+                    <a class="nav-link" href="/config">
+                        Config
+                    </a>
+                    <a class="nav-link" href="/order">
+                        Order
+                    </a>
+                </div>
+            </nav>
+            <div class="dropdown">
+                <div class="menu_bars" onclick="toggle_menu(this)">
+                    <div class="menu_bar1"></div>
+                    <div class="menu_bar2"></div>
+                    <div class="menu_bar3"></div>
+                </div>
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/products" class="nav-link">Products</a>
+                <a href="/model" class="nav-link">Model</a>
+                <a href="/order" class="nav-link">Order</a>
+                <a href="/about" class="nav-link">About</a>
+            </div>
+            {%endblock navbar%}
+        </div>
         {%block main%}
         <div id="prt_container">
 
         </div>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            {% for message in messages %}
-                <div id="flash_message">{{message}}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
-        {%if not login%}
+        {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
+        <div id="flash_message">{{message}}</div>
+        {% endfor %} {% endif %} {% endwith %} {%if not login%}
         <div class="log-reg-wrapper">
             <div class="log-reg-ch">
                 <a id="log_ch" class="log-ch active">Login</a>
@@ -93,8 +88,7 @@
                 <input class="sub-inp" type="submit" id="log_reg_subm" value="SUBMIT">
             </form>
         </div>
-        {%endif%} 
-        {%endblock%}
+        {%endif%} {%endblock%}
     </div>
 
 </body>
@@ -284,12 +278,11 @@
     }
 
     $('#log_reg_subm').click(log_reg);
-    $(function() {
-    $('#flash_message').delay(500).fadeIn('normal', function() {
-      $(this).delay(2500).fadeOut();
+    $(function () {
+        $('#flash_message').delay(500).fadeIn('normal', function () {
+            $(this).delay(2500).fadeOut();
+        });
     });
-});
-</script> 
-{%endblock%}
+</script> {%endblock%}
 
 </html>

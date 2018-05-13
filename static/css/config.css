@@ -3,7 +3,7 @@
     max-height:100%;
     position: relative;
     float: left;
-    margin-top: 6.25rem;
+    margin-top:2rem;
 }
 .opreq-desp{
     font-weight: bold;
@@ -134,7 +134,7 @@
     text-decoration: none;
     padding-left: 0.5rem;
     padding-right:0.5rem;
-    margin-left:0.6rem;
+    margin-left:2%;
     text-align: center;
     font-family: 'Monaco', sans-serif;
     font-weight: bold;
@@ -154,7 +154,7 @@
     position: relative;
     float:left;
     width:30%;
-    margin-top: 8.05rem;
+    margin-top:2rem;
 }
 
 .reqs-list{
@@ -179,6 +179,8 @@
     background-color: #006d00;
     display: inline-block;
     position: relative;
+    margin:2rem 0 0 0;
+    padding: 0.5rem 0.5rem;
 }
 
 .short-line{
