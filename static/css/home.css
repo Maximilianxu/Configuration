@@ -294,19 +294,7 @@ a.ext-link:hover{
     .nav-link{
         margin-left: 5rem; 
     }
-
-    .log-reg-wrapper #log_email{
-        margin-left: 4.4rem;
-    }
-
-    .log-reg-wrapper #log_name{
-        margin-left: 0.8rem;
-    }
-    
-    .log-reg-wrapper #log_pswd{
-        margin-left: 1.7rem;
-    }
-    
+        
     .log-reg-wrapper .sub-inp{
         width: 100%;
     }
