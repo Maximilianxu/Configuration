@@ -1,10 +1,10 @@
 import sys
 sys.path.append("../..")
-import MySQLdb as sql
+import mysql.connector as sql
 import datetime
 from Configuration.model.user import User
 
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
+db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
 def insert_user(user):
