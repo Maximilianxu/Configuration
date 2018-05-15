@@ -27,6 +27,11 @@ def delete_property(id):
                     (id, ))
     db.commit()
 
+def delete_all_propertys(component_id):
+    cursor.execute("""DELETE FROM property WHERE component_id = %s""",
+                    (component_id, ))
+    db.commit()
+
 def update_property(property):
     vals_str_list = [str(i) for i in property.dom.vals_list]
     domin = ','.join(vals_str_list)
@@ -60,6 +65,6 @@ def find_all_propertys(component_id):
 
 # update_property(pro)
 
-props = find_all_propertys(6)
-for prop in props:
-    prop.prn_obj()
+# props = find_all_propertys(6)
+# for prop in props:
+#     prop.prn_obj()

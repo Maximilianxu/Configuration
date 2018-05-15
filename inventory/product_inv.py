@@ -30,18 +30,25 @@ def update_product(id, name, introducton):
                     (name, introducton, id))
     db.commit()
 
-def update_is_realease(id):
+def update_realease(id):
     cursor.execute("""UPDATE product
                     SET is_release = 1 
                     WHERE id = %s """,
                     (id, ))
     db.commit()
 
-def updete_deadline(id, deadline):
+def update_deadline(id, deadline):
     cursor.execute("""UPDATE product
                     SET deadline = %s 
                     WHERE id = %s """,
                     (deadline, id))
+    db.commit()
+
+def update_root_component_id(id, root_component_id):
+    cursor.execute("""UPDATE product
+                    SET root_component_id = %s 
+                    WHERE id = %s """,
+                    (root_component_id, id))
     db.commit()
 
 def find_all_products(user_email):
@@ -54,17 +61,25 @@ def find_all_products(user_email):
         pros.append(pro)
     return pros
 
-def find_all_models(user_email):
+def find_models_id_name(user_email):
     mods = []
-    cursor.execute("""SELECT * FROM product
+    cursor.execute("""SELECT id, name FROM product
                     WHERE user_email = %s AND is_release = 0""",
                     (user_email, ))
     for row in cursor.fetchall():
-        mod = Product(row[0], row[2], row[3], row[4], row[5], row[6])
+        mod = {'id': row[0], 'name': row[1]}
         mods.append(mod)
     return mods
 
-user_email = 'chenjn_amtf@qq.com'
+def find_a_model(id):
+    cursor.execute("""SELECT introduction, root_component_id FROM product
+                    WHERE id = %s""",
+                    (id, ))
+    row = cursor.fetchone()
+    mod = {'introduction': row[0], 'root_component_id': row[1]}
+    return mod
+
+# user_email = 'chenjn_amtf@qq.com'
 
 # product = Product('jlsj', 'This is the best world.', 0, datetime.datetime.now(), 666)
 # id = add_product(user_email, product)
@@ -79,6 +94,7 @@ user_email = 'chenjn_amtf@qq.com'
 
 # updete_deadline(2, datetime.datetime.now())
 
-pros = find_all_products(user_email)
-for pro in pros:
-    pro.prn_obj()
+# mods = find_all_models(user_email)
+# print(mods)
+# for mod in mods:
+#     print(mod[0], mod[1])

@@ -22,6 +22,11 @@ def delete_component(id):
                     (id, ))
     db.commit()
 
+def delete_all_components(product_id):
+    cursor.execute("""DELETE FROM component WHERE product_id = %s""",
+                    (product_id, ))
+    db.commit()
+
 def update_component(id, name, introducton):
     cursor.execute("""UPDATE component
                     SET name = %s, introduction = %s
@@ -35,6 +40,15 @@ def updata_father_id(id, father_component_id):
                     WHERE id = %s """,
                     (father_component_id, id))
     db.commit()
+
+def find_components_id(product_id):
+    com_ids = []
+    cursor.execute("""SELECT id FROM component
+                    WHERE product_id = %s""",
+                    (product_id, ))
+    for row in cursor.fetchall():
+        com_ids.append(row[0])
+    return com_ids
 
 def find_all_components(product_id):
     coms = []

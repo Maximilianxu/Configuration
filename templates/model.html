@@ -1,11 +1,15 @@
-{%extends "home.html"%}
+ {% extends "home.html" %}
 
-{%block title%}
+{% block title %}
     Config--Model
-{%endblock%}
+{% endblock %}
+
+{% block style%}
+    <link rel="stylesheet" href="/static/css/model.css">
+{% endblock %}
 
 
-{%block navbar%}
+{% block navbar %}
     <nav class="navbar">
         <div class="nav-links">
             <a href="/" class="nav-link">
@@ -37,23 +41,258 @@
         <a href="/order" class="nav-link">Order</a>
         <a href="/about" class="nav-link">About</a>
     </div>
-{%endblock navbar%}
+{% endblock navbar %}
 
-{%block side%}
+{% block side %}
     <div>
         <p>Model list</p>
-        <ul id="model_list">
-            {% for model in models%}
-                <li class="model_item">{{ }}</li>
-        </ul>
-        <input value="CREATE" type="button" id="create_model" class="submit">
+        <div id="model_list">
+            {% for model in models %}
+                <a class="model_item" data-id="{{model['id']}}">{{model['name']}}</a>
+                <br>
+            {% else %}
+                <p>No models here so for</p>
+            {% endfor %}
+        </div>
+        <input value="Creat" type="button" id="create_btn">
     </div>
     
+{% endblock %}
+
+{% block main %}   
+
+    {% with messages = get_flashed_messages() %}
+    {% for message in messages %}
+    <div id="flash_message">{{message}}</div>
+    {% endfor %}
+    {% endwith %}
+
+    <div class="model_display">
+        <p id="welcome_tip">Welcome to model creator</p>
+
+        <form id="model_form", class="inactive">
+            <label for="name">Name</label>
+            <input type="text" name="name" required id="model_name", data-model-id, data-root-component-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" required id="model_introduction">
+            <br>
+            <label for="deadline" class="inactive">Deadline</label>
+            <input type="datetime-local" name="deadline" required id="model_deadline" class="inactive">
+            <br>
+            <label id="delete_tip" class="inactive">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
+            <br>
+            <div id="sure_btn" class="inactive">
+                <input value="OK" type="submit" id="submit_btn">
+                <input value="Cancle" type="button" id="cancle_btn">
+            </div>
+        </form>
+
+        <div id="operate_btn" class="inactive">
+            <input value="Component" type="button" id="enter_component_btn">
+            <input value="Release" type="button" id="release_btn">
+            <input value="Update" type="button" id="update_btn">
+            <input value="Delete" type="button" id="delete_btn">
+        </div>
+
+
+    </div>
+
 {%endblock%}
 
 {%block script%}
 <script>
 
+    function show_model_info(e) {
+        e.preventDefault();
+        if($('#sure_btn').hasClass('inactive')) {
+            $('.model_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#model_name').val($(this).text());
+            $('#model_name').attr('readonly', true);
+            $('#model_name').data('model-id', $(this).data('id'));
+            $.ajax({
+                url: '/model/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#model_introduction').val(resp['introduction']);
+                    $('#model_introduction').attr('readonly', true);
+                    $('#model_name').data('root-component-id', resp['root_component_id']);
+                    $('#welcome_tip').addClass('inactive');
+                    $('#model_form').removeClass('inactive');
+                    $('#operate_btn').removeClass('inactive');
+                    $('#sure_btn').addClass('inactive');
+                }
+            });
+        }
+    }
 
+    $('.model_item').click(show_model_info);
+
+    function create_model() {
+        $(this).addClass('active');
+        $('#welcome_tip').addClass('inactive');
+        $('#model_form').removeClass('inactive');
+        $('#model_name').val('');
+        $('#model_name').attr('readonly', false);
+        $('#model_introduction').val('');
+        $('#model_introduction').attr('readonly', false);
+        $('#sure_btn').removeClass('inactive');
+        $('#operate_btn').addClass('inactive');
+    }
+
+    $('#create_btn').click(create_model);
+
+    function release_model() {
+        $(this).addClass('active');
+        $('#create_btn').addClass('inactive');
+        $('#model_deadline').removeClass('inactive');
+        $('#model_deadline').prev().removeClass('inactive');
+        $('#sure_btn').removeClass('inactive');
+        $('#operate_btn').addClass('inactive');
+    }
+
+    $('#release_btn').click(release_model);
+
+    var old_name, old_introduction; //记录原值，以供取消修改后恢复model的相应展示内容。
+
+    function update_model() {
+        $(this).addClass('active');
+        $('#create_btn').addClass('inactive');
+        old_name = $('#model_name').val();
+        $('#model_name').attr('readonly', false);
+        old_introduction = $('#model_introduction').val();
+        $('#model_introduction').attr('readonly', false);
+        $('#sure_btn').removeClass('inactive');
+        $('#operate_btn').addClass('inactive');
+    }
+
+    $('#update_btn').click(update_model);
+
+    function delete_model() {
+        $(this).addClass('active');
+        $('#create_btn').addClass('inactive');
+        $('#delete_tip').removeClass('inactive');
+        $('#sure_btn').removeClass('inactive');
+        $('#operate_btn').addClass('inactive');
+    }
+
+    $('#delete_btn').click(delete_model)
+
+    function judge_submit_btn() {
+        var url, data;
+        if($('#create_btn').hasClass('active')) {
+            if($('#model_name').val() == '' || $('#model_introduction').val() == '') {
+                return;
+            }
+            url = '/model/create';
+            data = {
+                name: $('#model_name').val(),
+                introduction: $('#model_introduction').val()
+            };
+        }
+        else if($('#release_btn').hasClass('active')) {
+            if($('#model_deadline').val() == '') {
+                return;
+            }
+            url = '/model/release';
+            data = {
+                id: $('#model_name').data('model-id'),
+                deadline: $('#model_deadline').val(),
+            };
+        }
+        else if($('#update_btn').hasClass('active')) {
+            if($('#model_name').val() == '' || $('#model_introduction').val() == '') {
+                return;
+            }
+            url = '/model/update';
+            data = {
+                id: $('#model_name').data('model-id'),
+                name: $('#model_name').val(),
+                introduction: $('#model_introduction').val()
+            };
+        }
+        else if($('#delete_btn').hasClass('active')) {
+            url = '/model/delete';
+            data = {
+                id: $('#model_name').data('model-id')
+            };
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function() {
+                if(url == '/model/create') {
+                    location.reload();
+                }
+                else if(url == '/model/release') {
+                    location.reload();
+                }
+                else if(url == '/model/update') {
+                    // location.reload();
+                    $('.model_item.active').text($('#model_name').val());
+                    // $('#model_form').removeClass('inactive');
+                    $('#update_btn').removeClass('active');
+                    $('#create_btn').removeClass('inactive');
+                    $('#sure_btn').addClass('inactive');
+                    $('#operate_btn').removeClass('inactive');
+                }
+                else if(url == '/model/delete') {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    $('#submit_btn').click(judge_submit_btn);
+
+    function judge_cancle_btn() {
+        if($('#create_btn').hasClass('active')) {
+            $('#create_btn').removeClass('active');
+            $('#welcome_tip').removeClass('inactive');
+            $('#model_form').addClass('inactive');
+            $('#sure_btn').addClass('inactive');
+        }
+        else if($('#release_btn').hasClass('active')) {
+            $('#release_btn').removeClass('active');
+            $('#model_deadline').addClass('inactive');
+            $('#model_deadline').prev().addClass('inactive');
+            $('#create_btn').removeClass('inactive');
+            $('#sure_btn').addClass('inactive');
+            $('#operate_btn').removeClass('inactive');
+        }
+        else if($('#update_btn').hasClass('active')) {
+            $('#update_btn').removeClass('active');
+            $('#create_btn').removeClass('inactive');
+            $('#sure_btn').addClass('inactive');
+            $('#operate_btn').removeClass('inactive');
+            $('#model_name').val(old_name);            
+            $('#model_name').attr('readonly', true);
+            $('#model_introduction').val(old_introduction);
+            $('#model_introduction').attr('readonly', true);
+        }
+        else if($('#delete_btn').hasClass('active')) {
+            $('#delete_btn').removeClass('active');
+            $('#delete_tip').addClass('inactive');
+            $('#create_btn').removeClass('inactive');
+            $('#sure_btn').addClass('inactive');
+            $('#operate_btn').removeClass('inactive');
+        }
+    }
+
+    $('#cancle_btn').click(judge_cancle_btn);
+
+    $(function () {
+        $('#flash_message').delay(500).fadeIn('normal', function () {
+            $(this).delay(2500).fadeOut();
+        });
+    });
 
 </script>
+{%endblock%}
