@@ -50,6 +50,24 @@ def find_components_id(product_id):
         com_ids.append(row[0])
     return com_ids
 
+def find_subcomponents_id_name(father_component_id):
+    coms = []
+    cursor.execute("""SELECT id, name FROM component
+                    WHERE father_component_id = %s""",
+                    (father_component_id, ))
+    for row in cursor.fetchall():
+        com = {'id': row[0], 'name': row[1]}
+        coms.append(com)
+    return coms
+
+def find_a_component(id):
+    cursor.execute("""SELECT name, introduction FROM component
+                    WHERE id = %s""",
+                    (id, ))
+    row = cursor.fetchone()
+    com = {'name': row[0], 'introduction': row[1]}
+    return com
+
 def find_all_components(product_id):
     coms = []
     cursor.execute("""SELECT * FROM component

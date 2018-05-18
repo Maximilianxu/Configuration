@@ -4,10 +4,10 @@ from flask import Blueprint, render_template, request, session, jsonify, flash
 from Configuration.inventory.product_inv import find_models_id_name, find_a_model,\
         add_product, delete_product, update_root_component_id, update_product,\
         update_realease, update_deadline        
-from Configuration.inventory.component_inv import add_component, delete_all_components, find_components_id
+from Configuration.inventory.component_inv import add_component, delete_all_components, find_a_component, find_components_id
 from Configuration.inventory.property_inv import delete_all_propertys
 from Configuration.inventory.constraint_inv import delete_all_constraints, find_constraints_id
-from Configuration.inventory.con_include_p_inv import delete_constraint
+from Configuration.inventory.con_include_p_inv import delete_relation_by_constraint
 from Configuration.model.product import Product
 from Configuration.model.component import Component
 
@@ -22,8 +22,12 @@ def model():
 @model_creator.route('/model/item', methods=['POST'])
 def find_model_by_id():
     data = request.get_json()
-    mod = find_a_model(data['id'])
-    return jsonify(mod)
+    session['model_id'] = data['id']
+    model = find_a_model(data['id'])
+    root_component = find_a_component(model['root_component_id'])
+    session['root_component_id'] = model['root_component_id']
+    session['root_component_name'] = root_component['name']
+    return jsonify(model)
 
 @model_creator.route('/model/create', methods=['POST'])
 def create_model():
@@ -34,8 +38,8 @@ def create_model():
     component = Component(0, 0, data['name'], data['introduction'])
     component.id = add_component(model.id, component)
     update_root_component_id(model.id, component.id)
-    flash('Create model success!')
-    return 'success'
+    resp = {'id': model.id}
+    return jsonify(resp)
 
 @model_creator.route('/model/release', methods=['POST'])
 def release_model():
@@ -63,7 +67,7 @@ def delete_model():
     delete_all_components(model_id)
     constraints_id = find_constraints_id(model_id)
     for constraint_id in constraints_id:
-        delete_constraint(constraint_id)
+        delete_relation_by_constraint(constraint_id)
     delete_all_constraints(model_id)
     delete_product(model_id)
     flash('Delete model success!')

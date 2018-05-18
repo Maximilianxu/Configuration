@@ -5,11 +5,13 @@ from flask import Flask, render_template, request
 from Configuration.controller.order_generator import order_generator
 from Configuration.controller.home import home
 from Configuration.controller.model_creator import model_creator
+from Configuration.controller.component_creator import component_creator
 
 app = Flask(__name__)
 app.register_blueprint(order_generator)
 app.register_blueprint(home)
 app.register_blueprint(model_creator)
+app.register_blueprint(component_creator)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 @app.route('/')
 def index():

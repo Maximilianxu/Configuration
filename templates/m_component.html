@@ -1,0 +1,375 @@
+{% extends "home.html" %}
+
+{% block title %}
+    Config--Model--Component
+{% endblock %}
+
+{% block style%}
+    <link rel="stylesheet" href="/static/css/component.css">
+    <link rel="stylesheet" href="/static/css/jquery.treeview.css">
+{% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="/" class="nav-link">
+                Home
+            </a>
+            <a href="/products" class="nav-link">
+                Products
+            </a>
+            <a class="nav-link active" href="/model">
+                Model
+            </a>
+            <a class="nav-link" href="/config">
+                Config
+            </a>
+            <a class="nav-link" href="/order">
+                Order
+            </a>
+        </div>
+    </nav>
+    <div class="dropdown">
+        <div class="menu_bars" onclick="toggle_menu(this)">
+            <div class="menu_bar1"></div>
+            <div class="menu_bar2"></div>
+            <div class="menu_bar3"></div>
+        </div>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/products" class="nav-link">Products</a>
+        <a href="/model" class="nav-link active">Model</a>
+        <a href="/order" class="nav-link">Order</a>
+        <a href="/about" class="nav-link">About</a>
+    </div>
+{% endblock navbar %}
+
+{% block side %}
+    <div>
+        <p>Model Component Tree</p>
+        <ul id="component_tree" class="treeview" >
+            <li><span class="unfold_fold unfold got_sub">- </span><a class="component_item" data-id="{{root_component_id}}">{{root_component_name}}</a>
+                <ul>
+                    {% for subcomponent in subcomponents %}
+                        <li><span class="unfold_fold fold">+ </span><a class="component_item" data-id="{{subcomponent['id']}}">{{subcomponent['name']}}</a><ul class="none"></ul></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block main %}   
+
+    <div id="back"><a href="/model">Back</a></div>
+
+    <div id="flash_message"></div>
+
+    <div class="component_display">
+        <p id="welcome_tip">Welcome to component creator</p>
+
+        <form id="component_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" required id="component_name", data-component-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" required id="component_introduction">
+            <br>
+            <label id="delete_tip" class="none">Tip: This will delete all related properties and constraints. Are you sure?</label>
+            <br>
+            <div id="sure_btn" class="none">
+                <input value="OK" type="submit" id="submit_btn">
+                <input value="Cancle" type="button" id="cancle_btn">
+            </div>
+        </form>
+
+        <div id="operate_btn" class="none">
+            <input value="Add subcomponent" type="button" id="add_btn">
+            <input value="Update" type="button" id="update_btn">
+            <input value="Delete" type="button" id="delete_btn">
+            <br>
+            <br>
+            <a href="/property" id="enter_property">Manage properties</a>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+<script src="/static/js/jquery.treeview.js"></script>
+<script>
+
+    var just_add_subcom;    
+    /* 布尔型：在judeg_submit_btn()的'add'部分，如果还未获取子部件的信息
+    设置其为true，以在unfold_fold_tree()中获取子部件信息后设置活跃子部件 */
+
+    function show_component_info(e) {
+        e.preventDefault();
+        if($('#sure_btn').hasClass('none')) {
+            $('.component_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#component_name').val($(this).text());
+            $('#component_name').attr('readonly', true);
+            $('#component_name').data('component-id', $(this).data('id'));
+            if($(this).data('id') == $('#component_tree').children('li').children('a').data('id')) {
+                $('#delete_btn').addClass('none');
+            }
+            else {
+                $('#delete_btn').removeClass('none');
+            }
+            $.ajax({
+                url: '/component/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#component_introduction').val(resp['introduction']);
+                    $('#component_introduction').attr('readonly', true);
+                    $('#welcome_tip').addClass('none');
+                    $('#component_form').removeClass('none');
+                    $('#operate_btn').removeClass('none');
+                    $('#sure_btn').addClass('none');
+                }
+            });
+        }
+    }
+
+    $('.component_item').click(show_component_info);
+
+    var now_node, next_com, next_subul;
+
+    function unfold_fold_tree() {
+        now_node = $(this);
+        next_com = now_node.next();
+        next_subul = now_node.next().next();
+        if(now_node.hasClass('got_sub')){
+            if(now_node.hasClass('fold')) {
+                now_node.removeClass('fold');
+                now_node.addClass('unfold');
+                now_node.text('- ');
+                next_subul.removeClass('none');
+            }
+            else {
+                now_node.removeClass('unfold');
+                now_node.addClass('fold');
+                now_node.text('+ ');
+                next_subul.addClass('none');
+            }
+        }
+        else {
+            now_node.removeClass('fold');
+            now_node.addClass('unfold');
+            now_node.addClass('got_sub');
+            now_node.text('- ');
+            next_subul.removeClass('none');
+            $.ajax({
+                url: '/component/subcomponents',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: next_com.data('id')
+                }),
+                success: function(resp) {
+                    var len = resp.length;
+                    for(var i=0; i<len; i++) {
+                        next_subul.append(
+                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            + resp[i]['id'] + "'>" + resp[i]['name'] + "</a><ul class='none'></ul></li>"
+                        );
+                    }
+                    next_subul.find('a').click(show_component_info);
+                    next_subul.find('span').click(unfold_fold_tree);
+                    if(just_add_subcom) {
+                        var new_li = next_subul.children('li').last();
+                        new_li.children('a').addClass('active');
+                        just_add_subcom = false;
+                    }
+                }
+            });
+        }
+    }
+
+    $('.unfold_fold').click(unfold_fold_tree);
+
+    function add_subcomponent() {
+        $(this).addClass('active');
+        $('#welcome_tip').addClass('none');
+        $('#component_form').removeClass('none');
+        $('#component_name').val('');
+        $('#component_name').attr('readonly', false);
+        $('#component_introduction').val('');
+        $('#component_introduction').attr('readonly', false);
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
+    }
+
+    $('#add_btn').click(add_subcomponent);
+
+    var old_name, old_introduction; //记录原值，以供取消修改后恢复component的相应展示内容。
+
+    function update_component() {
+        $(this).addClass('active');
+        old_name = $('#component_name').val();
+        $('#component_name').attr('readonly', false);
+        old_introduction = $('#component_introduction').val();
+        $('#component_introduction').attr('readonly', false);
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
+    }
+
+    $('#update_btn').click(update_component);
+
+    function delete_component() {
+        $(this).addClass('active');
+        $('#delete_tip').removeClass('none');
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
+    }
+
+    $('#delete_btn').click(delete_component);
+
+    function judge_submit_btn(e) {
+        e.preventDefault();
+        var url, data;
+        if($('#add_btn').hasClass('active')) {
+            if($('#component_name').val() == '' || $('#component_introduction').val() == '') {
+                return;
+            }
+            url = '/component/add';
+            data = {
+                father_component_id: $('#component_name').data('component-id'),
+                name: $('#component_name').val(),
+                introduction: $('#component_introduction').val()
+            };
+        }
+        else if($('#update_btn').hasClass('active')) {
+            if($('#component_name').val() == '' || $('#component_introduction').val() == '') {
+                return;
+            }
+            url = '/component/update';
+            data = {
+                id: $('#component_name').data('component-id'),
+                name: $('#component_name').val(),
+                introduction: $('#component_introduction').val()
+            };
+        }
+        else if($('#delete_btn').hasClass('active')) {
+            url = '/component/delete';
+            data = {
+                id: $('#component_name').data('component-id')
+            };
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(resp) {
+                if(url == '/component/add') {
+                    $('#flash_message').text('Add subcomponent success!');
+                    $('#flash_message').fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('#component_name').attr('readonly', true);
+                    $('#component_introduction').attr('readonly', true);
+                    $('#sure_btn').addClass('none');
+                    $('#operate_btn').removeClass('none');
+                    $('#add_btn').removeClass('active');
+                    $('#delete_btn').removeClass('none');
+                    var com_active = $('.component_item.active');
+                    var prev_span = com_active.prev();
+                    var next_ul = com_active.next();
+                    if(prev_span.hasClass('got_sub')) {
+                        if(prev_span.hasClass('fold')) {
+                            prev_span.removeClass('fold');
+                            prev_span.addClass('unfold');
+                            prev_span.text('- ');
+                            next_ul.removeClass('none');
+                        }
+                        var name = $('#component_name').val();
+                        next_ul.append(
+                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            + resp['id'] + "'>" + name + "</a><ul class='none'></ul></li>"
+                        );
+                        com_active.removeClass('active');
+                        var new_li = next_ul.children('li').last();
+                        new_li.children('span').click(unfold_fold_tree);
+                        new_li.children('a').addClass('active'); 
+                        new_li.children('a').click(show_component_info);                      
+                    }
+                    else {
+                        just_add_subcom = true;
+                        prev_span.click();
+                        com_active.removeClass('active');
+                    }
+                }
+                else if(url == '/component/update') {
+                    $('#flash_message').text('Update component success!');
+                    $('#flash_message').fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('#component_name').attr('readonly', true);
+                    $('#component_introduction').attr('readonly', true);
+                    $('.component_item.active').text($('#component_name').val());
+                    $('#update_btn').removeClass('active');
+                    $('#sure_btn').addClass('none');
+                    $('#operate_btn').removeClass('none');
+                }
+                else if(url == '/component/delete') {
+                    $('#flash_message').text('Delete component success!');
+                    $('#flash_message').fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.component_item.active').parent().remove();
+                    $('#delete_btn').removeClass('active');
+                    $('#delete_tip').addClass('none');
+                    $('#welcome_tip').removeClass('none');
+                    $('#component_form').addClass('none');
+                    $('#sure_btn').addClass('none');
+                }
+            }
+        });
+
+    }
+
+    $('#submit_btn').click(judge_submit_btn);
+
+    function judge_cancle_btn() {
+        if($('#add_btn').hasClass('active')) {
+            $('#add_btn').removeClass('active');
+            $('#welcome_tip').removeClass('none');
+            $('#component_form').addClass('none');
+            $('#sure_btn').addClass('none');
+        }
+        else if($('#update_btn').hasClass('active')) {
+            $('#update_btn').removeClass('active');
+            $('#sure_btn').addClass('none');
+            $('#operate_btn').removeClass('none');
+            $('#component_name').val(old_name);            
+            $('#component_name').attr('readonly', true);
+            $('#component_introduction').val(old_introduction);
+            $('#component_introduction').attr('readonly', true);
+        }
+        else if($('#delete_btn').hasClass('active')) {
+            $('#delete_btn').removeClass('active');
+            $('#delete_tip').addClass('none');
+            $('#sure_btn').addClass('none');
+            $('#operate_btn').removeClass('none');
+        }
+    }
+
+    $('#cancle_btn').click(judge_cancle_btn);
+    
+    
+
+    $(function () {
+        $('#flash_message').hide();
+    }); 
+
+</script>
+
+{% endblock %}

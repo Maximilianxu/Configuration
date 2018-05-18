@@ -5,7 +5,7 @@ import mysql.connector as sql
 db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
-def add_constraint_property(constraint_id, property_ids):
+def add_relation(constraint_id, property_ids):
     for property_id in property_ids:
         cursor.execute("""INSERT INTO con_include_p
                         (constraint_id, property_id)
@@ -14,17 +14,17 @@ def add_constraint_property(constraint_id, property_ids):
                         (constraint_id, property_id))
     db.commit()
 
-def delete_property(property_id):
+def delete_relation_by_property(property_id):
     cursor.execute("""DELETE FROM con_include_p WHERE property_id = %s""",
                     (property_id, ))
     db.commit()
 
-def delete_constraint(constraint_id):
+def delete_relation_by_constraint(constraint_id):
     cursor.execute("""DELETE FROM con_include_p WHERE constraint_id = %s""",
                     (constraint_id, ))
     db.commit()
 
-def find_all_property_id(constraint_id):
+def find_properties_id_by_constraint(constraint_id):
     prop_ids = []
     cursor.execute("""SELECT property_id FROM con_include_p
                     WHERE constraint_id = %s""",
@@ -33,7 +33,7 @@ def find_all_property_id(constraint_id):
         prop_ids.append(row[0])
     return prop_ids
 
-def find_all_constraint_id(property_id):
+def find_constraints_id_by_property(property_id):
     cons_ids = []
     cursor.execute("""SELECT constraint_id FROM con_include_p
                     WHERE property_id = %s""",

@@ -1,3 +1,18 @@
-.inactive{
+.none{
     display: none;
+}
+
+#model_list a {
+    line-height: 20px;
+    text-decoration: none;
+    display: block;
+    padding: 4px;
+    border-bottom: 1px solid #efefef;
+    color: #000;
+}
+
+#model_list a.active {
+    text-decoration: blink;
+    font-weight: bold;
+    color: #ff3300;
 }

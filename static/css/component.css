@@ -1,0 +1,13 @@
+.none{
+    display: none;
+}
+
+#component_tree span {
+    cursor: default;
+}
+
+#component_tree a.active {
+    text-decoration: blink;
+    font-weight: bold;
+    color: #ff3300;
+}

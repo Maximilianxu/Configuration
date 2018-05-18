@@ -49,9 +49,8 @@
         <div id="model_list">
             {% for model in models %}
                 <a class="model_item" data-id="{{model['id']}}">{{model['name']}}</a>
-                <br>
             {% else %}
-                <p>No models here so for</p>
+                <p id="model_tip">No models here so for</p>
             {% endfor %}
         </div>
         <input value="Creat" type="button" id="create_btn">
@@ -61,40 +60,37 @@
 
 {% block main %}   
 
-    {% with messages = get_flashed_messages() %}
-    {% for message in messages %}
-    <div id="flash_message">{{message}}</div>
-    {% endfor %}
-    {% endwith %}
+    <div id="flash_message"></div>
 
     <div class="model_display">
         <p id="welcome_tip">Welcome to model creator</p>
 
-        <form id="model_form", class="inactive">
+        <form id="model_form", class="none">
             <label for="name">Name</label>
-            <input type="text" name="name" required id="model_name", data-model-id, data-root-component-id>
+            <input type="text" name="name" required id="model_name", data-model-id>
             <br>
             <label for="introduction">Introduction</label>
             <input type="text" name="introduction" required id="model_introduction">
             <br>
-            <label for="deadline" class="inactive">Deadline</label>
-            <input type="datetime-local" name="deadline" required id="model_deadline" class="inactive">
+            <label for="deadline" class="none">Deadline</label>
+            <input type="datetime-local" name="deadline" required id="model_deadline" class="none">
             <br>
-            <label id="delete_tip" class="inactive">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
+            <label id="delete_tip" class="none">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
             <br>
-            <div id="sure_btn" class="inactive">
+            <div id="sure_btn" class="none">
                 <input value="OK" type="submit" id="submit_btn">
                 <input value="Cancle" type="button" id="cancle_btn">
             </div>
         </form>
 
-        <div id="operate_btn" class="inactive">
-            <input value="Component" type="button" id="enter_component_btn">
+        <div id="operate_btn" class="none">
             <input value="Release" type="button" id="release_btn">
             <input value="Update" type="button" id="update_btn">
             <input value="Delete" type="button" id="delete_btn">
+            <br>
+            <br>
+            <a href="/component" id="enter_component">Manage components</a>
         </div>
-
 
     </div>
 
@@ -105,7 +101,7 @@
 
     function show_model_info(e) {
         e.preventDefault();
-        if($('#sure_btn').hasClass('inactive')) {
+        if($('#sure_btn').hasClass('none')) {
             $('.model_item.active').removeClass('active');
             $(this).addClass('active');
             $('#model_name').val($(this).text());
@@ -121,11 +117,10 @@
                 success: function(resp) {
                     $('#model_introduction').val(resp['introduction']);
                     $('#model_introduction').attr('readonly', true);
-                    $('#model_name').data('root-component-id', resp['root_component_id']);
-                    $('#welcome_tip').addClass('inactive');
-                    $('#model_form').removeClass('inactive');
-                    $('#operate_btn').removeClass('inactive');
-                    $('#sure_btn').addClass('inactive');
+                    $('#welcome_tip').addClass('none');
+                    $('#model_form').removeClass('none');
+                    $('#operate_btn').removeClass('none');
+                    $('#sure_btn').addClass('none');
                 }
             });
         }
@@ -135,25 +130,27 @@
 
     function create_model() {
         $(this).addClass('active');
-        $('#welcome_tip').addClass('inactive');
-        $('#model_form').removeClass('inactive');
+        $(this).addClass('none');
+        $('.model_item.active').removeClass('active');
+        $('#welcome_tip').addClass('none');
+        $('#model_form').removeClass('none');
         $('#model_name').val('');
         $('#model_name').attr('readonly', false);
         $('#model_introduction').val('');
         $('#model_introduction').attr('readonly', false);
-        $('#sure_btn').removeClass('inactive');
-        $('#operate_btn').addClass('inactive');
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
     }
 
     $('#create_btn').click(create_model);
 
     function release_model() {
         $(this).addClass('active');
-        $('#create_btn').addClass('inactive');
-        $('#model_deadline').removeClass('inactive');
-        $('#model_deadline').prev().removeClass('inactive');
-        $('#sure_btn').removeClass('inactive');
-        $('#operate_btn').addClass('inactive');
+        $('#create_btn').addClass('none');
+        $('#model_deadline').removeClass('none');
+        $('#model_deadline').prev().removeClass('none');
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
     }
 
     $('#release_btn').click(release_model);
@@ -162,28 +159,29 @@
 
     function update_model() {
         $(this).addClass('active');
-        $('#create_btn').addClass('inactive');
+        $('#create_btn').addClass('none');
         old_name = $('#model_name').val();
         $('#model_name').attr('readonly', false);
         old_introduction = $('#model_introduction').val();
         $('#model_introduction').attr('readonly', false);
-        $('#sure_btn').removeClass('inactive');
-        $('#operate_btn').addClass('inactive');
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
     }
 
     $('#update_btn').click(update_model);
 
     function delete_model() {
         $(this).addClass('active');
-        $('#create_btn').addClass('inactive');
-        $('#delete_tip').removeClass('inactive');
-        $('#sure_btn').removeClass('inactive');
-        $('#operate_btn').addClass('inactive');
+        $('#create_btn').addClass('none');
+        $('#delete_tip').removeClass('none');
+        $('#sure_btn').removeClass('none');
+        $('#operate_btn').addClass('none');
     }
 
-    $('#delete_btn').click(delete_model)
+    $('#delete_btn').click(delete_model);
 
-    function judge_submit_btn() {
+    function judge_submit_btn(e) {
+        e.preventDefault()
         var url, data;
         if($('#create_btn').hasClass('active')) {
             if($('#model_name').val() == '' || $('#model_introduction').val() == '') {
@@ -227,24 +225,65 @@
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),
-            success: function() {
+            success: function(resp) {
                 if(url == '/model/create') {
-                    location.reload();
+                    $('#flash_message').text('Create model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    var name = $('#model_name').val();
+                    $('#model_list').append('<a class="model_item active" data-id="'
+                             + resp['id'] +'">' + name + '</a>'
+                    );
+                    $('#model_list').children('a').last().click(show_model_info);
+                    $('#model_tip').addClass('none');
+                    $('#create_btn').removeClass('active');
+                    $('#create_btn').removeClass('none');
+                    $('#model_name').attr('readonly', true);
+                    $('#model_introduction').attr('readonly', true);
+                    $('#sure_btn').addClass('none');
+                    $('#operate_btn').removeClass('none');
                 }
                 else if(url == '/model/release') {
-                    location.reload();
+                    $('#flash_message').text('Release model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.model_item.active').remove();
+                    $('#release_btn').removeClass('active');
+                    $('#create_btn').removeClass('none');
+                    $('#welcome_tip').removeClass('none');
+                    $('#model_form').addClass('none');
+                    $('#model_deadline').addClass('none');
+                    $('#model_deadline').prev().addClass('none');
+                    $('#sure_btn').addClass('none');                   
                 }
                 else if(url == '/model/update') {
-                    // location.reload();
+                    $('#flash_message').text('Update model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
                     $('.model_item.active').text($('#model_name').val());
-                    // $('#model_form').removeClass('inactive');
                     $('#update_btn').removeClass('active');
-                    $('#create_btn').removeClass('inactive');
-                    $('#sure_btn').addClass('inactive');
-                    $('#operate_btn').removeClass('inactive');
+                    $('#create_btn').removeClass('none');
+                    $('#sure_btn').addClass('none');
+                    $('#operate_btn').removeClass('none');
                 }
                 else if(url == '/model/delete') {
-                    location.reload();
+                    $('#flash_message').text('Delete model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.model_item.active').remove();
+                    if(!$('#model_list').children().hasClass('model_item')) {
+                        $('model_tip').removeClass('none');
+                    }
+                    $('#delete_btn').removeClass('active');
+                    $('#delete_tip').addClass('none');
+                    $('#create_btn').removeClass('none');
+                    $('#welcome_tip').removeClass('none');
+                    $('#model_form').addClass('none');
+                    $('#sure_btn').addClass('none');
                 }
             }
         });
@@ -255,23 +294,24 @@
     function judge_cancle_btn() {
         if($('#create_btn').hasClass('active')) {
             $('#create_btn').removeClass('active');
-            $('#welcome_tip').removeClass('inactive');
-            $('#model_form').addClass('inactive');
-            $('#sure_btn').addClass('inactive');
+            $('#create_btn').removeClass('none');
+            $('#welcome_tip').removeClass('none');
+            $('#model_form').addClass('none');
+            $('#sure_btn').addClass('none');
         }
         else if($('#release_btn').hasClass('active')) {
             $('#release_btn').removeClass('active');
-            $('#model_deadline').addClass('inactive');
-            $('#model_deadline').prev().addClass('inactive');
-            $('#create_btn').removeClass('inactive');
-            $('#sure_btn').addClass('inactive');
-            $('#operate_btn').removeClass('inactive');
+            $('#model_deadline').addClass('none');
+            $('#model_deadline').prev().addClass('none');
+            $('#create_btn').removeClass('none');
+            $('#sure_btn').addClass('none');
+            $('#operate_btn').removeClass('none');
         }
         else if($('#update_btn').hasClass('active')) {
             $('#update_btn').removeClass('active');
-            $('#create_btn').removeClass('inactive');
-            $('#sure_btn').addClass('inactive');
-            $('#operate_btn').removeClass('inactive');
+            $('#create_btn').removeClass('none');
+            $('#sure_btn').addClass('none');
+            $('#operate_btn').removeClass('none');
             $('#model_name').val(old_name);            
             $('#model_name').attr('readonly', true);
             $('#model_introduction').val(old_introduction);
@@ -279,20 +319,18 @@
         }
         else if($('#delete_btn').hasClass('active')) {
             $('#delete_btn').removeClass('active');
-            $('#delete_tip').addClass('inactive');
-            $('#create_btn').removeClass('inactive');
-            $('#sure_btn').addClass('inactive');
-            $('#operate_btn').removeClass('inactive');
+            $('#delete_tip').addClass('none');
+            $('#create_btn').removeClass('none');
+            $('#sure_btn').addClass('none');
+            $('#operate_btn').removeClass('none');
         }
     }
 
     $('#cancle_btn').click(judge_cancle_btn);
 
     $(function () {
-        $('#flash_message').delay(500).fadeIn('normal', function () {
-            $(this).delay(2500).fadeOut();
-        });
-    });
+        $('#flash_message').hide();
+    });    
 
 </script>
 {%endblock%}

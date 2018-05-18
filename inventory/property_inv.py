@@ -41,6 +41,15 @@ def update_property(property):
                     (property.name, property.introduction, property.dataunit, domin, property.domin_display, property.id))
     db.commit()
 
+def find_properties_id(component_id):
+    properties_id = []
+    cursor.execute("""SELECT id FROM property
+                    WHERE component_id = %s""",
+                    (component_id, ))
+    for row in cursor.fetchall():
+        properties_id.append(row[0])
+    return properties_id
+
 def find_all_propertys(component_id):
     props = []
     cursor.execute("""SELECT * FROM property
