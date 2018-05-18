@@ -3,7 +3,7 @@ from flask import Blueprint, render_template, request, jsonify, flash, session
 from queue import Queue
 from Configuration.inventory.component_inv import add_component, find_a_component, find_subcomponents_id_name, \
     update_component, delete_component
-from Configuration.inventory.property_inv import find_properties_id, delete_all_propertys
+from Configuration.inventory.property_inv import find_properties_id_name, delete_all_propertys
 from Configuration.inventory.constraint_inv import delete_constraint
 from Configuration.inventory.con_include_p_inv import find_constraints_id_by_property,\
     delete_relation_by_constraint
@@ -24,6 +24,8 @@ def component():
 def find_model_by_id():
     data = request.get_json()
     component = find_a_component(data['id'])
+    session['component_id'] = data['id']
+    session['component_name'] = component['name']
     return jsonify(component)
 
 @component_creator.route('/component/subcomponents', methods=['POST'])
@@ -59,9 +61,9 @@ def delete_components_by_father_id():
         subcoms = find_subcomponents_id_name(component_id)
         for sub in subcoms:
             q.put(sub['id'])
-        properties_id = find_properties_id(component_id)
-        for p_id in properties_id:
-            constraints_id = find_constraints_id_by_property(p_id)
+        properties = find_properties_id_name(component_id)
+        for pro in properties:
+            constraints_id = find_constraints_id_by_property(pro['id'])
             for c_id in constraints_id:
                 delete_constraint(c_id)
                 delete_relation_by_constraint(c_id)

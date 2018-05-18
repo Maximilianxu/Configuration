@@ -16,3 +16,18 @@
     font-weight: bold;
     color: #ff3300;
 }
+
+#model_form label {
+    width: 10rem;
+}
+
+#model_form input[type="text"] {
+    width: 40rem;
+    height: 5rem;
+}
+
+#model_form input[type="text"][readonly] {
+    border: 0px;
+    outline: 0px;
+    background-color: transparent;
+}

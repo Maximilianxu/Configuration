@@ -8,15 +8,15 @@ from Configuration.model.property import Property
 db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
-def add_property(component_id, property):
-    vals_str_list = [str(i) for i in property.dom.vals_list]
-    domin = ','.join(vals_str_list)
-    domin_display = ','.join(property.domin_display)
+def add_property(component_id, name, introduction, datatype, dataunit, domin, domin_display):
+    # vals_str_list = [str(i) for i in property.dom.vals_list]
+    # domin = ','.join(vals_str_list)
+    # domin_display = ','.join(property.domin_display)
     cursor.execute("""INSERT INTO property
                     (component_id, name, introduction, datatype, dataunit, domin, domin_display)
                     VALUES
                     (%s, %s, %s, %s, %s, %s, %s)""",
-                    (component_id, property.name, property.introduction, property.datatype, property.dataunit, domin, domin_display))
+                    (component_id, name, introduction, datatype, dataunit, domin, domin_display))
     db.commit()
     cursor.execute("SELECT LAST_INSERT_ID()")
     row = cursor.fetchone()
@@ -32,23 +32,32 @@ def delete_all_propertys(component_id):
                     (component_id, ))
     db.commit()
 
-def update_property(property):
-    vals_str_list = [str(i) for i in property.dom.vals_list]
-    domin = ','.join(vals_str_list)
+def update_property(property_id, name, introduction, datatype, dataunit, domin, domin_display):
+    # vals_str_list = [str(i) for i in property.dom.vals_list]
+    # domin = ','.join(vals_str_list)
     cursor.execute("""UPDATE property
-                    SET name = %s, introduction = %s, dataunit = %s, domin = %s, domin_display = %s
+                    SET name = %s, introduction = %s, datatype = %s, dataunit = %s, domin = %s, domin_display = %s
                     WHERE id = %s """,
-                    (property.name, property.introduction, property.dataunit, domin, property.domin_display, property.id))
+                    (name, introduction, datatype, dataunit, domin, domin_display, property_id))
     db.commit()
 
-def find_properties_id(component_id):
-    properties_id = []
-    cursor.execute("""SELECT id FROM property
+def find_properties_id_name(component_id):
+    properties = []
+    cursor.execute("""SELECT id, name FROM property
                     WHERE component_id = %s""",
                     (component_id, ))
     for row in cursor.fetchall():
-        properties_id.append(row[0])
-    return properties_id
+        property = {'id': row[0], 'name': row[1]}
+        properties.append(property)
+    return properties
+
+def find_a_property(id):
+    cursor.execute("""SELECT name, introduction, datatype, dataunit, domin_display FROM property
+                    WHERE id = %s""",
+                    (id, ))
+    row = cursor.fetchone()
+    pro = {'name': row[0], 'introduction': row[1], 'datatype': row[2], 'dataunit': row[3], 'domin_display': row[4]}
+    return pro
 
 def find_all_propertys(component_id):
     props = []

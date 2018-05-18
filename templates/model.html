@@ -67,15 +67,15 @@
 
         <form id="model_form", class="none">
             <label for="name">Name</label>
-            <input type="text" name="name" required id="model_name", data-model-id>
+            <input type="text" name="name" required placeholder="Can't be empty." id="model_name", data-model-id>
             <br>
             <label for="introduction">Introduction</label>
-            <input type="text" name="introduction" required id="model_introduction">
+            <textarea name="introduction" required placeholder="Can't be empty." id="model_introduction"></textarea>
             <br>
             <label for="deadline" class="none">Deadline</label>
             <input type="datetime-local" name="deadline" required id="model_deadline" class="none">
             <br>
-            <label id="delete_tip" class="none">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
+            <p id="delete_tip" class="none">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
             <br>
             <div id="sure_btn" class="none">
                 <input value="OK" type="submit" id="submit_btn">
@@ -266,6 +266,8 @@
                     $('.model_item.active').text($('#model_name').val());
                     $('#update_btn').removeClass('active');
                     $('#create_btn').removeClass('none');
+                    $('#model_name').attr('readonly', true);
+                    $('#model_introduction').attr('readonly', true);
                     $('#sure_btn').addClass('none');
                     $('#operate_btn').removeClass('none');
                 }
