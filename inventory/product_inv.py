@@ -3,6 +3,9 @@ sys.path.append("../..")
 import mysql.connector as sql
 import datetime
 from Configuration.model.product import Product
+from Configuration.model.variable import Variable
+from Configuration.model.property import Property
+from Configuration.model.constraint import Constraint
 
 db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
@@ -51,16 +54,6 @@ def update_root_component_id(id, root_component_id):
                     (root_component_id, id))
     db.commit()
 
-def find_all_products(user_email):
-    pros = []
-    cursor.execute("""SELECT * FROM product
-                    WHERE user_email = %s AND is_release = 1""",
-                    (user_email, ))
-    for row in cursor.fetchall():
-        pro = Product(row[0], row[2], row[3], row[4], row[5], row[6])
-        pros.append(pro)
-    return pros
-
 def find_models_id_name(user_email):
     mods = []
     cursor.execute("""SELECT id, name FROM product
@@ -79,6 +72,54 @@ def find_a_model(id):
     mod = {'introduction': row[0], 'root_component_id': row[1]}
     return mod
 
+def find_all_properties_by_product_id(product_id):
+    properties = []
+    cursor.execute("""SELECT id FROM component
+                    WHERE product_id = %s""",
+                    (product_id, ))
+    components_id = []
+    for row in cursor.fetchall():
+        components_id.append(row[0])
+    for component_id in components_id:        
+        cursor.execute("""SELECT * FROM property
+                    WHERE component_id = %s""",
+                    (component_id, ))
+        for row in cursor.fetchall():
+            vals_str_list = row[6].split(',')
+            domin = [int(i) for i in vals_str_list]
+            domin_display = row[7].split(',')
+            property = Property(domin[0], domin, row[0], row[2], row[3], row[4], row[5], domin_display)
+            properties.append(property)
+    return properties
+
+def find_all_constraints_by_product_id(product_id):
+    constraints = []
+    cursor.execute("""SELECT * FROM c_constraint
+                    WHERE product_id = %s""",
+                    (product_id, ))
+    for row in cursor.fetchall():
+        constraint = Constraint(row[0], row[2], [])
+        constraints.append(constraint)
+    for constraint in constraints:
+        cursor.execute("""SELECT property_id FROM con_include_p
+                        WHERE constraint_id = %s""",
+                        (constraint.id, ))
+        rows = cursor.fetchall()
+        variables = []
+        for row1 in rows:
+            property_id = row1[0]
+            cursor.execute("""SELECT domin FROM property
+            WHERE id = %s""",
+            (property_id, ))
+            row2 = cursor.fetchone()
+            vals_str_list = row2[0].split(',')
+            domin = [int(i) for i in vals_str_list]
+            variable = Variable(domin[0], domin)
+            variables.append(variable)
+        constraint.vars = variables
+    return constraints
+        
+
 # user_email = 'chenjn_amtf@qq.com'
 
 # product = Product('jlsj', 'This is the best world.', 0, datetime.datetime.now(), 666)
@@ -94,7 +135,6 @@ def find_a_model(id):
 
 # updete_deadline(2, datetime.datetime.now())
 
-# mods = find_all_models(user_email)
-# print(mods)
-# for mod in mods:
-#     print(mod[0], mod[1])
+# constraints = find_all_constraints_by_product_id(2)
+# for con in constraints:
+#     print(con)

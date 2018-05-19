@@ -6,6 +6,7 @@
 
 {% block style%}
     <link rel="stylesheet" href="/static/css/model.css">
+    <link rel="stylesheet" href="/static/css/jquery.treeview.css">
 {% endblock %}
 
 
@@ -63,7 +64,7 @@
     <div id="flash_message"></div>
 
     <div class="model_display">
-        <p id="welcome_tip">Welcome to model creator</p>
+        <p id="welcome_model_tip">Welcome to model creator</p>
 
         <form id="model_form", class="none">
             <label for="name">Name</label>
@@ -75,18 +76,18 @@
             <label for="deadline" class="none">Deadline</label>
             <input type="datetime-local" name="deadline" required id="model_deadline" class="none">
             <br>
-            <p id="delete_tip" class="none">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
+            <p id="delete_model_tip" class="none">Tip: This will delete all related components, properties and constraints. Are you sure?</label>
             <br>
-            <div id="sure_btn" class="none">
-                <input value="OK" type="submit" id="submit_btn">
-                <input value="Cancle" type="button" id="cancle_btn">
+            <div id="sure_model_btn" class="none">
+                <input value="OK" type="submit" id="submit_model_btn">
+                <input value="Cancle" type="button" id="cancle_model_btn">
             </div>
         </form>
 
-        <div id="operate_btn" class="none">
-            <input value="Release" type="button" id="release_btn">
-            <input value="Update" type="button" id="update_btn">
-            <input value="Delete" type="button" id="delete_btn">
+        <div id="operate_model_btn" class="none">
+            <input value="Release" type="button" id="release_model_btn">
+            <input value="Update" type="button" id="update_model_btn">
+            <input value="Delete" type="button" id="delete_model_btn">
             <br>
             <br>
             <a href="/component" id="enter_component">Manage components</a>
@@ -102,7 +103,7 @@
 
     function show_model_info(e) {
         e.preventDefault();
-        if($('#sure_btn').hasClass('none')) {
+        if($('#sure_model_btn').hasClass('none')) {
             $('.model_item.active').removeClass('active');
             $(this).addClass('active');
             $('#model_name').val($(this).text());
@@ -118,10 +119,10 @@
                 success: function(resp) {
                     $('#model_introduction').val(resp['introduction']);
                     $('#model_introduction').attr('readonly', true);
-                    $('#welcome_tip').addClass('none');
+                    $('#welcome_model_tip').addClass('none');
                     $('#model_form').removeClass('none');
-                    $('#operate_btn').removeClass('none');
-                    $('#sure_btn').addClass('none');
+                    $('#operate_model_btn').removeClass('none');
+                    $('#sure_model_btn').addClass('none');
                 }
             });
         }
@@ -133,14 +134,14 @@
         $(this).addClass('active');
         $(this).addClass('none');
         $('.model_item.active').removeClass('active');
-        $('#welcome_tip').addClass('none');
+        $('#welcome_model_tip').addClass('none');
         $('#model_form').removeClass('none');
         $('#model_name').val('');
         $('#model_name').attr('readonly', false);
         $('#model_introduction').val('');
         $('#model_introduction').attr('readonly', false);
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
     }
 
     $('#create_btn').click(create_model);
@@ -150,11 +151,11 @@
         $('#create_btn').addClass('none');
         $('#model_deadline').removeClass('none');
         $('#model_deadline').prev().removeClass('none');
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
     }
 
-    $('#release_btn').click(release_model);
+    $('#release_model_btn').click(release_model);
 
     var old_name, old_introduction; //记录原值，以供取消修改后恢复model的相应展示内容。
 
@@ -165,23 +166,23 @@
         $('#model_name').attr('readonly', false);
         old_introduction = $('#model_introduction').val();
         $('#model_introduction').attr('readonly', false);
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
     }
 
-    $('#update_btn').click(update_model);
+    $('#update_model_btn').click(update_model);
 
     function delete_model() {
         $(this).addClass('active');
         $('#create_btn').addClass('none');
-        $('#delete_tip').removeClass('none');
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#delete_model_tip').removeClass('none');
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
     }
 
-    $('#delete_btn').click(delete_model);
+    $('#delete_model_btn').click(delete_model);
 
-    function judge_submit_btn(e) {
+    function judge_submit_model_btn(e) {
         e.preventDefault()
         var url, data;
         if($('#create_btn').hasClass('active')) {
@@ -194,7 +195,7 @@
                 introduction: $('#model_introduction').val()
             };
         }
-        else if($('#release_btn').hasClass('active')) {
+        else if($('#release_model_btn').hasClass('active')) {
             if($('#model_deadline').val() == '') {
                 return;
             }
@@ -204,7 +205,7 @@
                 deadline: $('#model_deadline').val(),
             };
         }
-        else if($('#update_btn').hasClass('active')) {
+        else if($('#update_model_btn').hasClass('active')) {
             if($('#model_name').val() == '' || $('#model_introduction').val() == '') {
                 return;
             }
@@ -215,7 +216,7 @@
                 introduction: $('#model_introduction').val()
             };
         }
-        else if($('#delete_btn').hasClass('active')) {
+        else if($('#delete_model_btn').hasClass('active')) {
             url = '/model/delete';
             data = {
                 id: $('#model_name').data('model-id')
@@ -242,8 +243,8 @@
                     $('#create_btn').removeClass('none');
                     $('#model_name').attr('readonly', true);
                     $('#model_introduction').attr('readonly', true);
-                    $('#sure_btn').addClass('none');
-                    $('#operate_btn').removeClass('none');
+                    $('#sure_model_btn').addClass('none');
+                    $('#operate_model_btn').removeClass('none');
                 }
                 else if(url == '/model/release') {
                     $('#flash_message').text('Release model success!');
@@ -251,13 +252,13 @@
                         $(this).delay(2500).fadeOut();
                     });
                     $('.model_item.active').remove();
-                    $('#release_btn').removeClass('active');
+                    $('#release_model_btn').removeClass('active');
                     $('#create_btn').removeClass('none');
-                    $('#welcome_tip').removeClass('none');
+                    $('#welcome_model_tip').removeClass('none');
                     $('#model_form').addClass('none');
                     $('#model_deadline').addClass('none');
                     $('#model_deadline').prev().addClass('none');
-                    $('#sure_btn').addClass('none');                   
+                    $('#sure_model_btn').addClass('none');                   
                 }
                 else if(url == '/model/update') {
                     $('#flash_message').text('Update model success!');
@@ -265,12 +266,12 @@
                         $(this).delay(2500).fadeOut();
                     });
                     $('.model_item.active').text($('#model_name').val());
-                    $('#update_btn').removeClass('active');
+                    $('#update_model_btn').removeClass('active');
                     $('#create_btn').removeClass('none');
                     $('#model_name').attr('readonly', true);
                     $('#model_introduction').attr('readonly', true);
-                    $('#sure_btn').addClass('none');
-                    $('#operate_btn').removeClass('none');
+                    $('#sure_model_btn').addClass('none');
+                    $('#operate_model_btn').removeClass('none');
                 }
                 else if(url == '/model/delete') {
                     $('#flash_message').text('Delete model success!');
@@ -281,55 +282,55 @@
                     if(!$('#model_list').children().hasClass('model_item')) {
                         $('model_tip').removeClass('none');
                     }
-                    $('#delete_btn').removeClass('active');
-                    $('#delete_tip').addClass('none');
+                    $('#delete_model_btn').removeClass('active');
+                    $('#delete_model_tip').addClass('none');
                     $('#create_btn').removeClass('none');
-                    $('#welcome_tip').removeClass('none');
+                    $('#welcome_model_tip').removeClass('none');
                     $('#model_form').addClass('none');
-                    $('#sure_btn').addClass('none');
+                    $('#sure_model_btn').addClass('none');
                 }
             }
         });
     }
 
-    $('#submit_btn').click(judge_submit_btn);
+    $('#submit_model_btn').click(judge_submit_model_btn);
 
-    function judge_cancle_btn() {
+    function judge_cancle_model_btn() {
         if($('#create_btn').hasClass('active')) {
             $('#create_btn').removeClass('active');
             $('#create_btn').removeClass('none');
-            $('#welcome_tip').removeClass('none');
+            $('#welcome_model_tip').removeClass('none');
             $('#model_form').addClass('none');
-            $('#sure_btn').addClass('none');
+            $('#sure_model_btn').addClass('none');
         }
-        else if($('#release_btn').hasClass('active')) {
-            $('#release_btn').removeClass('active');
+        else if($('#release_model_btn').hasClass('active')) {
+            $('#release_model_btn').removeClass('active');
             $('#model_deadline').addClass('none');
             $('#model_deadline').prev().addClass('none');
             $('#create_btn').removeClass('none');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
+            $('#sure_model_btn').addClass('none');
+            $('#operate_model_btn').removeClass('none');
         }
-        else if($('#update_btn').hasClass('active')) {
-            $('#update_btn').removeClass('active');
+        else if($('#update_model_btn').hasClass('active')) {
+            $('#update_model_btn').removeClass('active');
             $('#create_btn').removeClass('none');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
+            $('#sure_model_btn').addClass('none');
+            $('#operate_model_btn').removeClass('none');
             $('#model_name').val(old_name);            
             $('#model_name').attr('readonly', true);
             $('#model_introduction').val(old_introduction);
             $('#model_introduction').attr('readonly', true);
         }
-        else if($('#delete_btn').hasClass('active')) {
-            $('#delete_btn').removeClass('active');
-            $('#delete_tip').addClass('none');
+        else if($('#delete_model_btn').hasClass('active')) {
+            $('#delete_model_btn').removeClass('active');
+            $('#delete_model_tip').addClass('none');
             $('#create_btn').removeClass('none');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
+            $('#sure_model_btn').addClass('none');
+            $('#operate_model_btn').removeClass('none');
         }
     }
 
-    $('#cancle_btn').click(judge_cancle_btn);
+    $('#cancle_model_btn').click(judge_cancle_model_btn);
 
     $(function () {
         $('#flash_message').hide();

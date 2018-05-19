@@ -23,3 +23,5 @@ def index():
         return render_template('home.html', login=False)
     else:
         return render_template('home.html', login=False)
+
+app.run(debug=True)
