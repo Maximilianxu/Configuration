@@ -1,7 +1,8 @@
 {%extends "home.html"%} 
 
 {%block style%}
-<link rel="stylesheet" href="/static/css/config.css"> 
+<link rel="stylesheet" href="/static/css/config.css">
+<link rel="stylesheet" href="/static/css/jquery.treeview.css"> 
 {%endblock%}
 
 {%block title%} 
@@ -43,7 +44,18 @@
 {%endblock navbar%}
 
 {%block side%}
-    <p>Model components tree</p>
+    <div>
+        <p>Model Component Tree</p>
+        <ul id="component_tree" class="treeview" >
+            <li><span class="unfold_fold unfold got_sub">- </span><a class="component_item" data-id="{{root_component_id}}">{{root_component_name}}</a>
+                <ul>
+                    {% for subcomponent in subcomponents %}
+                        <li><span class="unfold_fold fold">+ </span><a class="component_item" data-id="{{subcomponent['id']}}">{{subcomponent['name']}}</a><ul class="none"></ul></li>
+                    {% endfor %}
+                </ul>
+            </li>
+        </ul>
+    </div>
 {%endblock%}
 
 {%block main%}
@@ -113,7 +125,77 @@
 {%endblock%}
 
 {%block script%}
+<script src="/static/js/jquery.treeview.js"></script>
 <script>
+
+    function show_component_info(e) {
+        e.preventDefault();
+        $('.component_item.active').removeClass('active');
+        $(this).addClass('active');
+        // $.ajax({
+        //     url: '/component/item',
+        //     type: 'POST',
+        //     contentType: 'application/json',
+        //     data: JSON.stringify({
+        //         id: $(this).data('id')
+        //     }),
+        //     success: function(resp) {
+        //     }
+        // });
+    }
+
+    $('.component_item').click(show_component_info);
+
+    var now_node, next_com, next_subul;
+
+    function unfold_fold_tree() {
+        now_node = $(this);
+        next_com = now_node.next();
+        next_subul = now_node.next().next();
+        console.log('unfold_fold_tree');
+        if(now_node.hasClass('got_sub')){
+            if(now_node.hasClass('fold')) {
+                now_node.removeClass('fold');
+                now_node.addClass('unfold');
+                now_node.text('- ');
+                next_subul.removeClass('none');
+            }
+            else {
+                now_node.removeClass('unfold');
+                now_node.addClass('fold');
+                now_node.text('+ ');
+                next_subul.addClass('none');
+            }
+        }
+        else {
+            now_node.removeClass('fold');
+            now_node.addClass('unfold');
+            now_node.addClass('got_sub');
+            now_node.text('- ');
+            next_subul.removeClass('none');
+            $.ajax({
+                url: '/component/subcomponents',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: next_com.data('id')
+                }),
+                success: function(resp) {
+                    var len = resp.length;
+                    for(var i=0; i<len; i++) {
+                        next_subul.append(
+                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            + resp[i]['id'] + "'>" + resp[i]['name'] + "</a><ul class='none'></ul></li>"
+                        );
+                    }
+                    next_subul.find('a').click(show_component_info);
+                    next_subul.find('span').click(unfold_fold_tree);
+                }
+            });
+        }
+    }
+
+    $('.unfold_fold').click(unfold_fold_tree);
 
     var reqs = [];
 
