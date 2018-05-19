@@ -15,6 +15,7 @@ app.register_blueprint(model_creator)
 app.register_blueprint(component_creator)
 app.register_blueprint(property_manager)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+
 @app.route('/')
 def index():
     phone_num = request.cookies.get('user_email')
@@ -23,3 +24,6 @@ def index():
         return render_template('home.html', login=False)
     else:
         return render_template('home.html', login=False)
+
+if __name__=="__main__":
+    app.run(debug=True)

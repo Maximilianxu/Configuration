@@ -4,7 +4,7 @@ import mysql.connector as sql
 import datetime
 from Configuration.model.product import Product
 
-db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
+db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
 cursor = db.cursor()
 
 def add_product(user_email, product):

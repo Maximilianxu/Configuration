@@ -4,23 +4,22 @@ import datetime
 from Configuration.inventory.component_inv import find_subcomponents_id_name
 from Configuration.inventory.order_inv import find_all_orders_by_email, insert_order
 from Configuration.model.order import Order
+from Configuration.model.task import Task
 order_generator = Blueprint('order_generator', __name__, template_folder='templates')
+import redis
 
 @order_generator.route('/config')
 def config():
     root_component_id = session['root_component_id']
     root_component_name = session['root_component_name']
     subcomponents = find_subcomponents_id_name(root_component_id)
+    r = redis.Redis(host='localhost', port=6379)
+    prod_id = session['model_id']
+    task = Task()
+    r.set(prod_id, task)
     return render_template('config.html',\
             root_component_id=root_component_id, root_component_name=root_component_name,\
             subcomponents=subcomponents)
-
-# @order_generator.route('/config/subcomponents', methods=['POST'])
-# def find_subcomponents():
-#     data = request.get_json()
-#     father_component_id = data['id']
-#     subcomponents = find_subcomponents_id_name(father_component_id)
-#     return jsonify(subcomponents)
 
 @order_generator.route('/order')
 def order():
@@ -34,7 +33,8 @@ def order():
 @order_generator.route('/order/reqs', methods=['POST'])
 def sub_reqs():
     reqs = request.get_json()
-    # 可以join之后作为一个string，作为求解器的reqs
+    print(reqs)
+
     return 'success'
 
 @order_generator.route('/order/new', methods=['POST'])

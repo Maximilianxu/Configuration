@@ -63,10 +63,7 @@
         <p class="opreq-desp">Add Custom Constraints:</p>
         <div class="comp-wrapper">
             <div class="tips">
-                <ul>
-                    <li>component desp</li>
-                    <li>property desp</li>
-                    <li>property domain</li>
+                <ul id="tips_props">
                 </ul>
             </div>
             <form id="opreq" action="">
@@ -127,21 +124,31 @@
 {%block script%}
 <script src="/static/js/jquery.treeview.js"></script>
 <script>
-
+    var props = [];
     function show_component_info(e) {
         e.preventDefault();
         $('.component_item.active').removeClass('active');
         $(this).addClass('active');
-        // $.ajax({
-        //     url: '/component/item',
-        //     type: 'POST',
-        //     contentType: 'application/json',
-        //     data: JSON.stringify({
-        //         id: $(this).data('id')
-        //     }),
-        //     success: function(resp) {
-        //     }
-        // });
+        $.ajax({
+            url: '/component/properties',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: $(this).data('id')
+            }),
+            success: function(resp) {
+                props = JSON.parse(resp);
+                for(var i = 0;i<props.length;i++){
+                    props[i] = JSON.parse(props[i]);
+                }
+                for(var i =0;i<props.length;i++){
+                    prop = props[i];
+                    $('#tips_props').append("\
+                        <li class='prop_li' data-id="+prop['id']+"><span id='pname_'"+prop['id']+">"+prop['name']+"</span>\
+                        <span id='pdom_'"+prop['id']+">"+prop['domin_display']+"</span></li>");
+                }
+            }
+        });
     }
 
     $('.component_item').click(show_component_info);
@@ -198,18 +205,33 @@
     $('.unfold_fold').click(unfold_fold_tree);
 
     var reqs = [];
-
     function add_cons(evt) {
         evt.preventDefault();
         var cons_expr = $('#cons_inp').val();
         var li_str = "<li>" + cons_expr + "<button class='mdreqd'>D</button>\
                 <button class='mdreqm'>M</button></li>";
-        $('#cons_list').append(li_str);
-        cons_expr = cons_expr;//要把property id替换成占位符
+        $('#cons_list').append(li_str);   
+        var vars = [];   
+        for(var i = 0;i<props.length;i++){
+            prop = props[i];
+            var start_ind = cons_expr.indexOf(prop['name']);
+            if (start_ind!=-1){
+                cons_expr.replace(prop['name'], '?');
+                vars.push(i);
+                for(var j =0;j<prop['domin_display'].length;j++){
+                    var dom_start_ind = cons_expr.indexOf(prop['domin_display'][j], start_ind);
+                    if(dom_start_ind!=-1){
+                        cons_expr = cons_expr.substr(0,dom_start_ind)+j+
+                            cons_expr.substr(dom_start_ind+prop['domin_display'][j].length);
+                    }
+                }
+            }
+        }
         reqs.push({
-            expr: cons_expr,
-            vars: ""//要等构模器才能做，前台直接在cons_expr中存储property id
+            expr:cons_expr,
+            vars:vars
         });
+        alert(JSON.stringify(reqs));
     }
 
     $('#cons_sub').click(add_cons);
@@ -285,6 +307,12 @@
     }
 
     $('.operation').on('click', op_keyboard);
+
+    function op_prop(e){
+        e.preventDefault();
+        $('#cons_inp').val($('#cons_inp').val()+$(this).children().first().text());
+    }
+    $('#tips_props').on('click', '.prop_li', op_prop);
 </script> 
 
 {%endblock script%}
