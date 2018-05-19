@@ -42,11 +42,11 @@ def find_constraints_id_by_property(property_id):
         cons_ids.append(row[0])
     return cons_ids
 
-# constraint_id = 2
+# constraint_id = 4
 # property_id = 3
-# property_ids = [1,2,3,4]
+# property_ids = [5]
 
-# add_constraint_property(constraint_id, property_ids)
+# add_relation(constraint_id, property_ids)
 
 # delete_property(property_id)
 

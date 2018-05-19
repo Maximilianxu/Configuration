@@ -25,5 +25,4 @@ def index():
     else:
         return render_template('home.html', login=False)
 
-if __name__=="__main__":
-    app.run(debug=True)
+app.run(debug=True)
