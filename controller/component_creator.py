@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify, session
 from queue import Queue
 from Configuration.inventory.component_inv import add_component, find_a_component, find_subcomponents_id_name, \
     update_component, delete_component
-from Configuration.inventory.property_inv import find_properties_id_name, delete_all_propertys
+from Configuration.inventory.property_inv import find_properties_id_name, delete_all_propertys, find_all_propertys
 from Configuration.inventory.constraint_inv import delete_constraint
 from Configuration.inventory.con_include_p_inv import find_constraints_id_by_property,\
     delete_relation_by_constraint
@@ -63,4 +63,12 @@ def delete_components_by_father_id():
         delete_all_propertys(component_id)
         delete_component(component_id)
     return 'success'
+
+@component_creator.route('/component/properties', methods=['POST'])
+def find_properties_by_comp_id():
+    import json
+    comp_id = request.get_json()['id']
+    props = find_all_propertys(comp_id)
+    props_json = json.dumps([prop.toJSON() for prop in props])
+    return props_json
 

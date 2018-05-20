@@ -67,7 +67,7 @@
     padding-left: 0.5rem;
     margin-left:10%;
     text-align: center;
-    font-family: 'Monaco', sans-serif;
+    font-family: 'Monaco';
 }
 
 .nav-link:hover, .nav-link.active {
