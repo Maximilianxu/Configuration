@@ -52,11 +52,52 @@
     font-family: monospace;
     font-size: 1.5rem;
 }
+
+.prop-name{
+    margin-left: 4rem;
+    width: 6rem;
+    display: inline-block;
+    color: #222222;
+}
+
+.prop-dom{
+    margin-left: 4rem;
+    display: inline-block;
+    color: #222222;
+}
+
+.pname{
+    font-size: 1.2rem;
+    margin-right: 2rem;
+    display: inline-block;
+    width: 6rem;
+}
+
+.pdom-list{
+    display: inline-block;
+}
+
+.pdom{
+    margin-left: 2rem;
+}
+
+.pdom:hover{
+    color: #fff;
+    cursor: pointer;
+    background-color: #4fd0ea;
+}
+
+.pname:hover{
+    color: #fff;
+    cursor: pointer;
+    background-color: #4fd0ea;
+}
+
 #opreq{
     background-color: #7fa99b;
     width: 34rem;
-    position: relative;
-    top: 13rem;
+    position: absolute;
+    top: 19rem;
     left: 2.5rem;
     height: 3.5rem;
     border-radius: 0.5rem;
@@ -337,6 +378,22 @@ body.modal-open .main-wrapper{
     left: 2rem;
     font-family: monospace;
     font-size: 1.5rem;
+    font-weight: bold;
+    color: #fdf6e3;
+}
+
+.conf-desp{
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #222222;
+    margin-left: 2rem;
+}
+.conf-list{
+    position: relative;
+    left: 2rem;
+    font-family: monospace;
+    font-size: 2rem;
     font-weight: bold;
     color: #fdf6e3;
 }

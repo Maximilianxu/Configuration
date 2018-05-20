@@ -39,12 +39,26 @@
 
 {%block main%}
 <div class="order-wrapper">
-    <ul>
-        {% for ord in orders%}
-        <li>{{ord.assignments}}</li>
-        {%endfor%}
-    </ul>
-
+    <table class="orders-table">
+        <thead class="orders-head">
+            <tr>
+                <th>OPTIONS</th>
+                <th>PRICE</th>
+                <th>DATE</th>
+                <th>STATE</th>
+            </tr>
+        </thead>
+        <tbody class="orders-body">
+            {% for ord in orders%}
+            <tr>
+                <td>{{ord.assignments}}</td>
+                <td>{{ord.price}} </td>
+                <td>{{ord.order_date}}</td>
+                <td>{{ord.order_state}}</td>
+            </tr>    
+            {%endfor%}
+        </tbody>
+    </table>
 </div>
 {%endblock%} 
 

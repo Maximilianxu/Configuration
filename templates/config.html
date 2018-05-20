@@ -63,6 +63,8 @@
         <p class="opreq-desp">Add Custom Constraints:</p>
         <div class="comp-wrapper">
             <div class="tips">
+                <span class="prop-name">NAME</span>
+                <span class="prop-dom">DOMAIN</span>
                 <ul id="tips_props">
                 </ul>
             </div>
@@ -106,18 +108,14 @@
     <p class="prod-desp">Available Products:</p>
     <button id="clo_modal" class="clo-modal">×</button>
     <form id="prods_list" action="#" class="prods-list">
-        <input id="prod1" class="prod" type="checkbox" name="prod1" value="prod1" data-price="10">
-        <label for="prod1"> a = 1, b = 2, c = 3 </label> price: 10
-        <br>
-        <input id="prod2" class="prod" type="checkbox" name="prod2" value="prod2" data-price="20">
-        <label for="prod2"> a = 2, b = 2, c = 3 </label> price: 20
-        <br>
-        <div class="bill-wrapper">
-            <span id="total_price_desp">Total Price: </span>
-            <label id="total_price" for="total_price_desp">0</label>
-            <input id="sub_prod" class="sub-prod" type="submit" value="SUBMIT">
-        </div>
     </form>
+    <div id="conf_desp" class="conf-desp">
+        list of conflicts (you can exit and modify your requirements)
+    </div>
+    <div id="conf_list" class="conf-list">
+        
+
+    </div>
 </div>
 {%endblock%}
 
@@ -141,11 +139,18 @@
                 for(var i = 0;i<props.length;i++){
                     props[i] = JSON.parse(props[i]);
                 }
-                for(var i =0;i<props.length;i++){
-                    prop = props[i];
-                    $('#tips_props').append("\
-                        <li class='prop_li' data-id="+prop['id']+"><span id='pname_'"+prop['id']+">"+prop['name']+"</span>\
-                        <span id='pdom_'"+prop['id']+">"+prop['domin_display']+"</span></li>");
+                
+                for(var i =0;i<props.length;i++){     
+                    var prop = props[i];
+                    var dom_disp = prop['domin_display'].toString().split(',');
+                    var html = "\
+                        <li class='prop_li' data-id="+prop['id']+"><span class='pname' id='pname_'"+prop['id']+">"+prop['name']+"</span>\
+                        <span class='pdom-list' id='pdom_'"+prop['id']+">";
+                    for(var j=0; j<dom_disp.length;j++){
+                        html += ("<span class='pdom'>"+dom_disp[j]+"</span>")
+                    }
+                    html+=("</span></li>")
+                    $('#tips_props').append(html);
                 }
             }
         });
@@ -216,8 +221,8 @@
             prop = props[i];
             var start_ind = cons_expr.indexOf(prop['name']);
             if (start_ind!=-1){
-                cons_expr.replace(prop['name'], '?');
-                vars.push(i);
+                cons_expr = cons_expr.replace(prop['name'], '?');
+                vars.push(prop['id']);
                 for(var j =0;j<prop['domin_display'].length;j++){
                     var dom_start_ind = cons_expr.indexOf(prop['domin_display'][j], start_ind);
                     if(dom_start_ind!=-1){
@@ -231,18 +236,45 @@
             expr:cons_expr,
             vars:vars
         });
-        alert(JSON.stringify(reqs));
     }
 
     $('#cons_sub').click(add_cons);
 
     function sub_reqs(evt) {
+        evt.preventDefault();
+        $('#prods_list').empty();
+        $('#conf_list').empty();
+        $('#conf_desp').css('display','none');
         $.ajax({
             url: '/order/reqs',
             method: 'post',
             contentType: 'application/json',
             data: JSON.stringify(reqs),
             success: function (resp) {
+                var SC = resp[0];
+                resp = resp.slice(1);
+                if(SC=='S'){
+                    var prods = resp.split(";");
+                    for(var i = 0; i<prods.length-1; i++){
+                        var prod = prods[i];
+                        $('#prods_list').append("<input id='prod"+i+"' class='prod' type='checkbox' name='prod2' value='prod2' data-price='20'>\
+                        <label for='prod"+i+"'>"+prod+"</label> price: 20\
+                        <br>");
+                    }
+                    $('#prods_list').append("<div class='bill-wrapper'>\
+                    <span id='total_price_desp'>Total Price: </span>\
+                    <label id='total_price' for='total_price_desp'>0</label>\
+                    <input id='sub_prod' class='sub-prod' type='submit' value='SUBMIT'>\
+                    </div>");
+                }
+                else{
+                    var confs = resp.split(";");
+                    $('#conf_desp').css('display','block');
+                    for(var i = 0; i<confs.length-1; i++){
+                        var conf = confs[i];
+                        $('#conf_list').append((i+1) +". "+ conf);
+                    }
+                }
                 $('#prod_modal').css('display', 'block');
                 $('body').attr('class', 'modal-open');
             }
@@ -261,15 +293,15 @@
     function modify_total_price() {
         if ($(this).is(':checked')) {
             total_price += $(this).data('price');
-            assignments.push($(this).next().text());
+            assignments.push($(this).next().text() + ";");
         } else {
             total_price -= $(this).data('price');
-            var ind = assignments.indexOf($(this).next().text());
+            var ind = assignments.indexOf($(this).next().text()+";");
             assignments.splice(ind, 1);
         }
         $('#total_price').html(total_price);
     }
-    $('#prods_list .prod').on('click', modify_total_price);
+    $('#prods_list').on('click', '.prod', modify_total_price);
 
     function modify_constraint() {
         var expr = $(this).parent().contents().get(0).nodeValue;
@@ -298,7 +330,7 @@
             }
         })
     }
-    $('#sub_prod').on('click', sub_prod);
+    $('#prods_list').on('click', '#sub_prod', sub_prod);
 
     function op_keyboard(e){
         e.preventDefault();
@@ -310,9 +342,10 @@
 
     function op_prop(e){
         e.preventDefault();
-        $('#cons_inp').val($('#cons_inp').val()+$(this).children().first().text());
+        $('#cons_inp').val($('#cons_inp').val()+$(this).text());
     }
-    $('#tips_props').on('click', '.prop_li', op_prop);
+    $('#tips_props').on('click', '.pname', op_prop);
+    $('#tips_props').on('click', '.pdom', op_prop);
 </script> 
 
 {%endblock script%}

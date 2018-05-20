@@ -6,6 +6,7 @@ from Configuration.model.product import Product
 from Configuration.model.variable import Variable
 from Configuration.model.property import Property
 from Configuration.model.constraint import Constraint
+from Configuration.model.domain import Domain
 
 db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
 cursor = db.cursor()
@@ -86,9 +87,9 @@ def find_all_properties_by_product_id(product_id):
                     (component_id, ))
         for row in cursor.fetchall():
             vals_str_list = row[6].split(',')
-            domin = [int(i) for i in vals_str_list]
+            domin = Domain([int(i) for i in vals_str_list])
             domin_display = row[7].split(',')
-            property = Property(domin[0], domin, row[0], row[2], row[3], row[4], row[5], domin_display)
+            property = Property(domin.vals_list[0], domin, row[0], row[2], row[3], row[4], row[5], domin_display)
             properties.append(property)
     return properties
 
@@ -113,8 +114,8 @@ def find_all_constraints_by_product_id(product_id):
             (property_id, ))
             row2 = cursor.fetchone()
             vals_str_list = row2[0].split(',')
-            domin = [int(i) for i in vals_str_list]
-            variable = Variable(domin[0], domin)
+            domin = Domain([int(i) for i in vals_str_list])
+            variable = Variable(domin.vals_list[0], domin)
             variables.append(variable)
         constraint.vars = variables
     return constraints

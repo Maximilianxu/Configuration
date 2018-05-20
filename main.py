@@ -21,7 +21,7 @@ def index():
     phone_num = request.cookies.get('user_email')
     if phone_num is not None:
         print('=====> ', phone_num, 'logged in')
-        return render_template('home.html', login=False)
+        return render_template('home.html', login=True)
     else:
         return render_template('home.html', login=False)
 
