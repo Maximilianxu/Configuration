@@ -66,7 +66,7 @@
     <div id="flash_message"></div>
 
     <div class="component_display">
-        <p id="welcome_tip">Welcome to component creator</p>
+        <p id="welcome_component_tip">Welcome to component creator</p>
 
         <form id="component_form", class="none">
             <label for="name">Name</label>
@@ -75,18 +75,18 @@
             <label for="introduction">Introduction</label>
             <textarea name="introduction" required placeholder="Can't be empty." id="component_introduction"></textarea>
             <br>
-            <label id="delete_tip" class="none">Tip: This will delete all related properties and constraints. Are you sure?</label>
+            <label id="delete_component_tip" class="none">Tip: This will delete all related properties and constraints. Are you sure?</label>
             <br>
-            <div id="sure_btn" class="none">
-                <input value="OK" type="submit" id="submit_btn">
-                <input value="Cancle" type="button" id="cancle_btn">
+            <div id="sure_component_btn" class="none">
+                <input value="OK" type="submit" id="submit_component_btn">
+                <input value="Cancle" type="button" id="cancle_component_btn">
             </div>
         </form>
 
-        <div id="operate_btn" class="none">
-            <input value="Add subcomponent" type="button" id="add_btn">
-            <input value="Update" type="button" id="update_btn">
-            <input value="Delete" type="button" id="delete_btn">
+        <div id="operate_component_btn" class="none">
+            <input value="Add subcomponent" type="button" id="add_component_btn">
+            <input value="Update" type="button" id="update_component_btn">
+            <input value="Delete" type="button" id="delete_component_btn">
             <br>
             <br>
             <a href="/property" id="enter_property">Manage properties</a>
@@ -102,22 +102,22 @@
 <script>
 
     var just_add_subcom;    
-    /* 布尔型：在judeg_submit_btn()的'add'部分，如果还未获取子部件的信息
+    /* 布尔型：在judeg_submit_component_btn()的'add'部分，如果还未获取子部件的信息
     设置其为true，以在unfold_fold_tree()中获取子部件信息后设置活跃子部件 */
 
     function show_component_info(e) {
         e.preventDefault();
-        if($('#sure_btn').hasClass('none')) {
+        if($('#sure_component_btn').hasClass('none')) {
             $('.component_item.active').removeClass('active');
             $(this).addClass('active');
             $('#component_name').val($(this).text());
             $('#component_name').attr('readonly', true);
             $('#component_name').data('component-id', $(this).data('id'));
             if($(this).data('id') == $('#component_tree').children('li').children('a').data('id')) {
-                $('#delete_btn').addClass('none');
+                $('#delete_component_btn').addClass('none');
             }
             else {
-                $('#delete_btn').removeClass('none');
+                $('#delete_component_btn').removeClass('none');
             }
             $.ajax({
                 url: '/component/item',
@@ -129,10 +129,10 @@
                 success: function(resp) {
                     $('#component_introduction').val(resp['introduction']);
                     $('#component_introduction').attr('readonly', true);
-                    $('#welcome_tip').addClass('none');
+                    $('#welcome_component_tip').addClass('none');
                     $('#component_form').removeClass('none');
-                    $('#operate_btn').removeClass('none');
-                    $('#sure_btn').addClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                    $('#sure_component_btn').addClass('none');
                 }
             });
         }
@@ -195,47 +195,49 @@
 
     $('.unfold_fold').click(unfold_fold_tree);
 
+    var old_component_name, old_component_introduction; //记录原值，以供取消修改后恢复component的相应展示内容。
+
     function add_subcomponent() {
         $(this).addClass('active');
-        $('#welcome_tip').addClass('none');
+        $('#welcome_component_tip').addClass('none');
         $('#component_form').removeClass('none');
+        old_component_name = $('#component_name').val();
         $('#component_name').val('');
         $('#component_name').attr('readonly', false);
+        old_component_introduction = $('#component_introduction').val();
         $('#component_introduction').val('');
         $('#component_introduction').attr('readonly', false);
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_component_btn').removeClass('none');
+        $('#operate_component_btn').addClass('none');
     }
 
-    $('#add_btn').click(add_subcomponent);
-
-    var old_name, old_introduction; //记录原值，以供取消修改后恢复component的相应展示内容。
+    $('#add_component_btn').click(add_subcomponent);
 
     function update_component() {
         $(this).addClass('active');
-        old_name = $('#component_name').val();
+        old_component_name = $('#component_name').val();
         $('#component_name').attr('readonly', false);
-        old_introduction = $('#component_introduction').val();
+        old_component_introduction = $('#component_introduction').val();
         $('#component_introduction').attr('readonly', false);
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_component_btn').removeClass('none');
+        $('#operate_component_btn').addClass('none');
     }
 
-    $('#update_btn').click(update_component);
+    $('#update_component_btn').click(update_component);
 
     function delete_component() {
         $(this).addClass('active');
-        $('#delete_tip').removeClass('none');
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#delete_component_tip').removeClass('none');
+        $('#sure_component_btn').removeClass('none');
+        $('#operate_component_btn').addClass('none');
     }
 
-    $('#delete_btn').click(delete_component);
+    $('#delete_component_btn').click(delete_component);
 
-    function judge_submit_btn(e) {
+    function judge_submit_component_btn(e) {
         e.preventDefault();
         var url, data;
-        if($('#add_btn').hasClass('active')) {
+        if($('#add_component_btn').hasClass('active')) {
             if($('#component_name').val() == '' || $('#component_introduction').val() == '') {
                 return;
             }
@@ -246,7 +248,7 @@
                 introduction: $('#component_introduction').val()
             };
         }
-        else if($('#update_btn').hasClass('active')) {
+        else if($('#update_component_btn').hasClass('active')) {
             if($('#component_name').val() == '' || $('#component_introduction').val() == '') {
                 return;
             }
@@ -257,7 +259,7 @@
                 introduction: $('#component_introduction').val()
             };
         }
-        else if($('#delete_btn').hasClass('active')) {
+        else if($('#delete_component_btn').hasClass('active')) {
             url = '/component/delete';
             data = {
                 id: $('#component_name').data('component-id')
@@ -276,10 +278,10 @@
                     });
                     $('#component_name').attr('readonly', true);
                     $('#component_introduction').attr('readonly', true);
-                    $('#sure_btn').addClass('none');
-                    $('#operate_btn').removeClass('none');
-                    $('#add_btn').removeClass('active');
-                    $('#delete_btn').removeClass('none');
+                    $('#sure_component_btn').addClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                    $('#add_component_btn').removeClass('active');
+                    $('#delete_component_btn').removeClass('none');
                     var com_active = $('.component_item.active');
                     var prev_span = com_active.prev();
                     var next_ul = com_active.next();
@@ -315,9 +317,9 @@
                     $('#component_name').attr('readonly', true);
                     $('#component_introduction').attr('readonly', true);
                     $('.component_item.active').text($('#component_name').val());
-                    $('#update_btn').removeClass('active');
-                    $('#sure_btn').addClass('none');
-                    $('#operate_btn').removeClass('none');
+                    $('#update_component_btn').removeClass('active');
+                    $('#sure_component_btn').addClass('none');
+                    $('#operate_component_btn').removeClass('none');
                 }
                 else if(url == '/component/delete') {
                     $('#flash_message').text('Delete component success!');
@@ -325,44 +327,44 @@
                         $(this).delay(2500).fadeOut();
                     });
                     $('.component_item.active').parent().remove();
-                    $('#delete_btn').removeClass('active');
-                    $('#delete_tip').addClass('none');
-                    $('#welcome_tip').removeClass('none');
+                    $('#delete_component_btn').removeClass('active');
+                    $('#delete_component_tip').addClass('none');
+                    $('#welcome_component_tip').removeClass('none');
                     $('#component_form').addClass('none');
-                    $('#sure_btn').addClass('none');
+                    $('#sure_component_btn').addClass('none');
                 }
             }
         });
 
     }
 
-    $('#submit_btn').click(judge_submit_btn);
+    $('#submit_component_btn').click(judge_submit_component_btn);
 
-    function judge_cancle_btn() {
-        if($('#add_btn').hasClass('active')) {
-            $('#add_btn').removeClass('active');
-            $('#welcome_tip').removeClass('none');
+    function judge_cancle_component_btn() {
+        if($('#add_component_btn').hasClass('active')) {
+            $('#add_component_btn').removeClass('active');
+            $('#welcome_component_tip').removeClass('none');
             $('#component_form').addClass('none');
-            $('#sure_btn').addClass('none');
+            $('#sure_component_btn').addClass('none');
         }
-        else if($('#update_btn').hasClass('active')) {
-            $('#update_btn').removeClass('active');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
-            $('#component_name').val(old_name);            
+        else if($('#update_component_btn').hasClass('active')) {
+            $('#update_component_btn').removeClass('active');
+            $('#sure_component_btn').addClass('none');
+            $('#operate_component_btn').removeClass('none');
+            $('#component_name').val(old_component_name);            
             $('#component_name').attr('readonly', true);
-            $('#component_introduction').val(old_introduction);
+            $('#component_introduction').val(old_component_introduction);
             $('#component_introduction').attr('readonly', true);
         }
-        else if($('#delete_btn').hasClass('active')) {
-            $('#delete_btn').removeClass('active');
-            $('#delete_tip').addClass('none');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
+        else if($('#delete_component_btn').hasClass('active')) {
+            $('#delete_component_btn').removeClass('active');
+            $('#delete_component_tip').addClass('none');
+            $('#sure_component_btn').addClass('none');
+            $('#operate_component_btn').removeClass('none');
         }
     }
 
-    $('#cancle_btn').click(judge_cancle_btn);
+    $('#cancle_component_btn').click(judge_cancle_component_btn);
     
     
 

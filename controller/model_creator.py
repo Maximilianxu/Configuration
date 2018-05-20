@@ -27,6 +27,7 @@ def find_model_by_id():
     root_component = find_a_component(model['root_component_id'])
     session['root_component_id'] = model['root_component_id']
     session['root_component_name'] = root_component['name']
+    model['root_component_name'] = root_component['name']
     return jsonify(model)
 
 @model_creator.route('/model/create', methods=['POST'])

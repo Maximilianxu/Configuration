@@ -59,6 +59,19 @@ def find_a_property(id):
     pro = {'name': row[0], 'introduction': row[1], 'datatype': row[2], 'dataunit': row[3], 'domin_display': row[4]}
     return pro
 
+def find_all_propertys(component_id):
+    props = []
+    cursor.execute("""SELECT * FROM property
+                    WHERE component_id = %s""",
+                    (component_id, ))
+    for row in cursor.fetchall():
+        vals_str_list = row[6].split(',')
+        domin = [int(i) for i in vals_str_list]
+        domin_display = row[7].split(',')
+        prop = Property(domin[0], domin, row[0], row[2], row[3], row[4], row[5], domin_display)
+        props.append(prop)
+    return props
+
 # dom = Domain([10, 50, 100])
 # domin_display = [str(i) for i in dom.vals_list]
 # pro = Property(dom.vals_list[0], dom, 2, '面积', '莲花因为念佛人的愿力大小、精进程度等而有不同的面积。', '整型', '由旬', domin_display)

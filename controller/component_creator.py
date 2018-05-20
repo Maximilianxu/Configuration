@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, jsonify, flash, session
+from flask import Blueprint, request, jsonify, session
 from queue import Queue
 from Configuration.inventory.component_inv import add_component, find_a_component, find_subcomponents_id_name, \
     update_component, delete_component
@@ -11,20 +11,14 @@ from Configuration.model.component import Component
 
 component_creator = Blueprint('component_creator', __name__, template_folder='templates')
 
-@component_creator.route('/component')
-def component():
-    root_component_id = session['root_component_id']
-    root_component_name = session['root_component_name']
-    subcomponents = find_subcomponents_id_name(root_component_id)
-    return render_template('m_component.html',\
-            root_component_id=root_component_id, root_component_name=root_component_name,\
-            subcomponents=subcomponents)
-
 @component_creator.route('/component/item', methods=['POST'])
 def find_model_by_id():
     data = request.get_json()
-    component = find_a_component(data['id'])
-    session['component_id'] = data['id']
+    component_id = data['id']
+    session['component_id'] = component_id
+    component = find_a_component(component_id)
+    properties = find_properties_id_name(component_id)
+    component['properties'] = properties
     session['component_name'] = component['name']
     return jsonify(component)
 
@@ -48,7 +42,6 @@ def create_component():
 def update_a_component():
     data = request.get_json()
     update_component(data['id'], data['name'], data['introduction'])
-    flash('Update component success!')
     return 'success'
 
 @component_creator.route('/component/delete', methods=['POST'])

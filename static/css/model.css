@@ -2,7 +2,7 @@
     display: none;
 }
 
-#model_list a {
+#model_list .model_item {
     line-height: 20px;
     text-decoration: none;
     display: block;
@@ -11,7 +11,17 @@
     color: #000;
 }
 
-#model_list a.active {
+#model_list .model_item.active {
+    text-decoration: blink;
+    font-weight: bold;
+    color: #ff3300;
+}
+
+#component_tree .unfold_fold {
+    cursor: default;
+}
+
+#component_tree .component_item.active {
     text-decoration: blink;
     font-weight: bold;
     color: #ff3300;
@@ -30,4 +40,16 @@
     border: 0px;
     outline: 0px;
     background-color: transparent;
+}
+
+#component_display {
+    position: relative;
+    float: left;
+    width: 50%
+}
+
+#property_display {
+    position: relative;
+    float: left;
+    width: 50%
 }

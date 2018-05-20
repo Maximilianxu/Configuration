@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, render_template, request, jsonify,\
-        session
+from flask import Blueprint,  request, jsonify, session
 from Configuration.inventory.property_inv import add_property, update_property, find_properties_id_name,\
         find_a_property, delete_property
 from Configuration.inventory.constraint_inv import delete_constraint
@@ -9,15 +8,6 @@ from Configuration.inventory.con_include_p_inv import find_constraints_id_by_pro
 from Configuration.model.property import Property
 
 property_manager = Blueprint('property_manager', __name__, template_folder='templates')
-
-@property_manager.route('/property')
-def property():
-    component_id = session['component_id']
-    component_name = session['component_name']
-    properties = find_properties_id_name(component_id)
-    print(properties)
-    return render_template('property.html', component_name=component_name,\
-        properties=properties)
 
 @property_manager.route('/property/item', methods=['POST'])
 def find_property_by_id():

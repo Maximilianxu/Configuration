@@ -44,7 +44,7 @@
 {% endblock navbar %}
 
 {% block side %}
-    <div>
+    <div id="property_list_area">
         <p>{{component_name}} Property list</p>
         <div id="property_list">
             {% for property in properties %}
@@ -53,7 +53,7 @@
                 <p id="property_tip">No propertys here so for</p>
             {% endfor %}
         </div>
-        <input value="Creat" type="button" id="create_btn">
+        <input value="Creat" type="button" id="create_property_btn">
     </div>
     
 {% endblock %}
@@ -65,7 +65,7 @@
     <div id="flash_message"></div>
 
     <div class="property_display">
-        <p id="welcome_tip">Welcome to property manager</p>
+        <p id="welcome_property_tip">Property manager</p>
 
         <form id="property_form", class="none">
             <label for="name">Name</label>
@@ -89,17 +89,17 @@
             <label for="dataunit">Dataunit</label>
             <input type="text" name="dataunit" placeholder="Can be empty." id="property_dataunit">
             <br>
-            <label id="delete_tip" class="none">Tip: This will delete all related constraints. Are you sure?</label>
+            <label id="delete_property_tip" class="none">Tip: This will delete all related constraints. Are you sure?</label>
             <br>
-            <div id="sure_btn" class="none">
-                <input value="OK" type="submit" id="submit_btn">
-                <input value="Cancle" type="button" id="cancle_btn">
+            <div id="sure_property_btn" class="none">
+                <input value="OK" type="submit" id="submit_property_btn">
+                <input value="Cancle" type="button" id="cancle_property_btn">
             </div>
         </form>
 
-        <div id="operate_btn" class="none">
-            <input value="Update" type="button" id="update_btn">
-            <input value="Delete" type="button" id="delete_btn">
+        <div id="operate_property_btn" class="none">
+            <input value="Update" type="button" id="update_property_btn">
+            <input value="Delete" type="button" id="delete_property_btn">
         </div>
 
     </div>
@@ -111,7 +111,7 @@
 
     function show_property_info(e) {
         e.preventDefault();
-        if($('#sure_btn').hasClass('none')) {
+        if($('#sure_property_btn').hasClass('none')) {
             $('.property_item.active').removeClass('active');
             $(this).addClass('active');
             $('#property_name').val($(this).text());
@@ -125,7 +125,6 @@
                     id: $(this).data('id')
                 }),
                 success: function(resp) {
-                    $('#welcome_tip').addClass('none');
                     $('#property_introduction').val(resp['introduction']);
                     $('#property_introduction').attr('readonly', true);
                     $('#property_datatype').val(resp['datatype']);
@@ -135,8 +134,8 @@
                     $('#property_dataunit').val(resp['dataunit']);
                     $('#property_dataunit').attr('readonly', true);
                     $('#property_form').removeClass('none');
-                    $('#operate_btn').removeClass('none');
-                    $('#sure_btn').addClass('none');
+                    $('#operate_property_btn').removeClass('none');
+                    $('#sure_property_btn').addClass('none');
                 }
             });
         }
@@ -148,7 +147,6 @@
         $(this).addClass('active');
         $(this).addClass('none');
         $('.property_item.active').removeClass('active');
-        $('#welcome_tip').addClass('none');
         $('#property_form').removeClass('none');
         $('#property_name').val('');
         $('#property_name').attr('readonly', false);
@@ -160,47 +158,47 @@
         $('#property_domin_display').attr('readonly', false);
         $('#property_dataunit').val('');
         $('#property_dataunit').attr('readonly', false);
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_property_btn').removeClass('none');
+        $('#operate_property_btn').addClass('none');
     }
 
-    $('#create_btn').click(create_property);
+    $('#create_property_btn').click(create_property);
 
-    var old_name, old_introduction, old_domin_display, old_dataunit; //记录原值，以供取消修改后恢复property的相应展示内容。
+    var old_property_name, old_property_introduction, old_property_domin_display, old_property_dataunit; //记录原值，以供取消修改后恢复property的相应展示内容。
 
     function update_property() {
         $(this).addClass('active');
-        $('#create_btn').addClass('none');
-        old_name = $('#property_name').val();
+        $('#create_property_btn').addClass('none');
+        old_property_name = $('#property_name').val();
         $('#property_name').attr('readonly', false);
-        old_introduction = $('#property_introduction').val();
+        old_property_introduction = $('#property_introduction').val();
         $('#property_introduction').attr('readonly', false);
         $('#property_datatype').addClass('none');
         $('#select_datatype').removeClass('none');
-        old_domin_display = $('#property_domin_display').val();
+        old_property_domin_display = $('#property_domin_display').val();
         $('#property_domin_display').attr('readonly', false);
-        old_dataunit = $('#property_dataunit').val();
+        old_property_dataunit = $('#property_dataunit').val();
         $('#property_dataunit').attr('readonly', false);
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#sure_property_btn').removeClass('none');
+        $('#operate_property_btn').addClass('none');
     }
 
-    $('#update_btn').click(update_property);
+    $('#update_property_btn').click(update_property);
 
     function delete_property() {
         $(this).addClass('active');
-        $('#create_btn').addClass('none');
-        $('#delete_tip').removeClass('none');
-        $('#sure_btn').removeClass('none');
-        $('#operate_btn').addClass('none');
+        $('#create_property_btn').addClass('none');
+        $('#delete_property_tip').removeClass('none');
+        $('#sure_property_btn').removeClass('none');
+        $('#operate_property_btn').addClass('none');
     }
 
-    $('#delete_btn').click(delete_property);
+    $('#delete_property_btn').click(delete_property);
 
-    function judge_submit_btn(e) {
+    function judge_submit_property_btn(e) {
         e.preventDefault()
         var url, data;
-        if($('#create_btn').hasClass('active')) {
+        if($('#create_property_btn').hasClass('active')) {
             if($('#property_name').val() == '' ||
                  $('#property_introduction').val() == '' ||
                  $('#property_domin_display').val() == '') {
@@ -216,7 +214,7 @@
             };
             $('#property_datatype').val(data['datatype']);
         }
-        else if($('#update_btn').hasClass('active')) {
+        else if($('#update_property_btn').hasClass('active')) {
             if($('#property_name').val() == '' || $('#property_introduction').val() == '') {
                 return;
             }
@@ -231,7 +229,7 @@
             };
             $('#property_datatype').val(data['datatype']);
         }
-        else if($('#delete_btn').hasClass('active')) {
+        else if($('#delete_property_btn').hasClass('active')) {
             url = '/property/delete';
             data = {
                 id: $('#property_name').data('property-id')
@@ -254,16 +252,16 @@
                     );
                     $('#property_list').children('a').last().click(show_property_info);
                     $('#property_tip').addClass('none');
-                    $('#create_btn').removeClass('active');
-                    $('#create_btn').removeClass('none');
+                    $('#create_property_btn').removeClass('active');
+                    $('#create_property_btn').removeClass('none');
                     $('#property_name').attr('readonly', true);
                     $('#property_introduction').attr('readonly', true);
                     $('#property_datatype').removeClass('none');
                     $('#select_datatype').addClass('none');
                     $('#property_domin_display').attr('readonly', true);
                     $('#property_dataunit').attr('readonly', true);
-                    $('#sure_btn').addClass('none');
-                    $('#operate_btn').removeClass('none');
+                    $('#sure_property_btn').addClass('none');
+                    $('#operate_property_btn').removeClass('none');
                 }
                 else if(url == '/property/update') {
                     $('#flash_message').text('Update property success!');
@@ -271,16 +269,16 @@
                         $(this).delay(2500).fadeOut();
                     });
                     $('.property_item.active').text($('#property_name').val());
-                    $('#update_btn').removeClass('active');
-                    $('#create_btn').removeClass('none');
+                    $('#update_property_btn').removeClass('active');
+                    $('#create_property_btn').removeClass('none');
                     $('#property_name').attr('readonly', true);
                     $('#property_introduction').attr('readonly', true);
                     $('#property_datatype').removeClass('none');
                     $('#select_datatype').addClass('none');
                     $('#property_domin_display').attr('readonly', true);
                     $('#property_dataunit').attr('readonly', true);
-                    $('#sure_btn').addClass('none');
-                    $('#operate_btn').removeClass('none');
+                    $('#sure_property_btn').addClass('none');
+                    $('#operate_property_btn').removeClass('none');
                 }
                 else if(url == '/property/delete') {
                     $('#flash_message').text('Delete property success!');
@@ -291,53 +289,51 @@
                     if(!$('#property_list').children().hasClass('property_item')) {
                         $('property_tip').removeClass('none');
                     }
-                    $('#delete_btn').removeClass('active');
-                    $('#delete_tip').addClass('none');
-                    $('#create_btn').removeClass('none');
-                    $('#welcome_tip').removeClass('none');
+                    $('#delete_property_btn').removeClass('active');
+                    $('#delete_property_tip').addClass('none');
+                    $('#create_property_btn').removeClass('none');
                     $('#property_form').addClass('none');
-                    $('#sure_btn').addClass('none');
+                    $('#sure_property_btn').addClass('none');
                 }
             }
         });
     }
 
-    $('#submit_btn').click(judge_submit_btn);
+    $('#submit_property_btn').click(judge_submit_property_btn);
 
-    function judge_cancle_btn() {
-        if($('#create_btn').hasClass('active')) {
-            $('#create_btn').removeClass('active');
-            $('#create_btn').removeClass('none');
-            $('#welcome_tip').removeClass('none');
+    function judge_cancle_property_btn() {
+        if($('#create_property_btn').hasClass('active')) {
+            $('#create_property_btn').removeClass('active');
+            $('#create_property_btn').removeClass('none');
             $('#property_form').addClass('none');
-            $('#sure_btn').addClass('none');
+            $('#sure_property_btn').addClass('none');
         }
-        else if($('#update_btn').hasClass('active')) {
-            $('#update_btn').removeClass('active');
-            $('#create_btn').removeClass('none');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
-            $('#property_name').val(old_name);            
+        else if($('#update_property_btn').hasClass('active')) {
+            $('#update_property_btn').removeClass('active');
+            $('#create_property_btn').removeClass('none');
+            $('#sure_property_btn').addClass('none');
+            $('#operate_property_btn').removeClass('none');
+            $('#property_name').val(old_property_name);            
             $('#property_name').attr('readonly', true);
-            $('#property_introduction').val(old_introduction);
+            $('#property_introduction').val(old_property_introduction);
             $('#property_introduction').attr('readonly', true);
             $('#property_datatype').removeClass('none');
             $('#select_datatype').addClass('none');
-            $('#property_domin_display').val(old_domin_display);
+            $('#property_domin_display').val(old_property_domin_display);
             $('#property_domin_display').attr('readonly', true);
-            $('#property_dataunit').val(old_dataunit);
+            $('#property_dataunit').val(old_property_dataunit);
             $('#property_dataunit').attr('readonly', true);
         }
-        else if($('#delete_btn').hasClass('active')) {
-            $('#delete_btn').removeClass('active');
-            $('#delete_tip').addClass('none');
-            $('#create_btn').removeClass('none');
-            $('#sure_btn').addClass('none');
-            $('#operate_btn').removeClass('none');
+        else if($('#delete_property_btn').hasClass('active')) {
+            $('#delete_property_btn').removeClass('active');
+            $('#delete_property_tip').addClass('none');
+            $('#create_property_btn').removeClass('none');
+            $('#sure_property_btn').addClass('none');
+            $('#operate_property_btn').removeClass('none');
         }
     }
 
-    $('#cancle_btn').click(judge_cancle_btn);
+    $('#cancle_property_btn').click(judge_cancle_property_btn);
 
     $(function () {
         $('#flash_message').hide();
