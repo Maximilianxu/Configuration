@@ -13,10 +13,11 @@ order_generator = Blueprint('order_generator', __name__, template_folder='templa
 
 @order_generator.route('/config')
 def config():
+    model_name = session['model_name']
     root_component_id = session['root_component_id']
     root_component_name = session['root_component_name']
     subcomponents = find_subcomponents_id_name(root_component_id)
-    return render_template('config.html',\
+    return render_template('config.html', model_name=model_name,\
             root_component_id=root_component_id, root_component_name=root_component_name,\
             subcomponents=subcomponents)
 

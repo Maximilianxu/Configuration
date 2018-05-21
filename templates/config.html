@@ -44,8 +44,9 @@
 {%endblock navbar%}
 
 {%block side%}
-    <div>
-        <p>Model Component Tree</p>
+    <div id="model_container">
+        <p id="model_name">{{model_name}}</p>
+        <p id="tree_tip">Component Tree:</p>
         <ul id="component_tree" class="treeview" >
             <li><span class="unfold_fold unfold got_sub">- </span><a class="component_item" data-id="{{root_component_id}}">{{root_component_name}}</a>
                 <ul>
