@@ -66,11 +66,11 @@ def find_models_id_name(user_email):
     return mods
 
 def find_a_model(id):
-    cursor.execute("""SELECT introduction, root_component_id FROM product
+    cursor.execute("""SELECT name, introduction, root_component_id FROM product
                     WHERE id = %s""",
                     (id, ))
     row = cursor.fetchone()
-    mod = {'introduction': row[0], 'root_component_id': row[1]}
+    mod = {'name': row[0], 'introduction': row[1], 'root_component_id': row[2]}
     return mod
 
 def find_all_properties_by_product_id(product_id):

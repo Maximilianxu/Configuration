@@ -24,6 +24,7 @@ def find_model_by_id():
     data = request.get_json()
     session['model_id'] = data['id']
     model = find_a_model(data['id'])
+    session['model_name'] = model['name']
     root_component = find_a_component(model['root_component_id'])
     session['root_component_id'] = model['root_component_id']
     session['root_component_name'] = root_component['name']

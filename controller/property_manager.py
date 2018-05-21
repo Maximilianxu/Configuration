@@ -20,13 +20,10 @@ def create_property():
     data = request.get_json()
     datatype = data['datatype']
     domin_display = data['domin_display']
-    if(datatype == 'string'):
-        display_list = domin_display.split(',')
-        vars_list = range(len(display_list))
-        vars_str_list = [str(i) for i in vars_list]
-        domin = ','.join(vars_str_list)
-    else:
-        domin = domin_display
+    display_list = domin_display.split(',')
+    vars_list = range(len(display_list))
+    vars_str_list = [str(i) for i in vars_list]
+    domin = ','.join(vars_str_list)
     component_id = session['component_id']
     property_id = add_property(component_id, data['name'], data['introduction'], datatype, data['dataunit'], domin, domin_display)
     resp = {'id': property_id}

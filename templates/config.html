@@ -44,8 +44,9 @@
 {%endblock navbar%}
 
 {%block side%}
-    <div>
-        <p>Model Component Tree</p>
+    <div id="model_container">
+        <p id="model_name">{{model_name}}</p>
+        <p id="tree_tip">Component Tree:</p>
         <ul id="component_tree" class="treeview" >
             <li><span class="unfold_fold unfold got_sub">- </span><a class="component_item" data-id="{{root_component_id}}">{{root_component_name}}</a>
                 <ul>
@@ -135,6 +136,7 @@
                 id: $(this).data('id')
             }),
             success: function(resp) {
+                $('#tips_props').empty();
                 props = JSON.parse(resp);
                 for(var i = 0;i<props.length;i++){
                     props[i] = JSON.parse(props[i]);
@@ -144,8 +146,8 @@
                     var prop = props[i];
                     var dom_disp = prop['domin_display'].toString().split(',');
                     var html = "\
-                        <li class='prop_li' data-id="+prop['id']+"><span class='pname' id='pname_'"+prop['id']+">"+prop['name']+"</span>\
-                        <span class='pdom-list' id='pdom_'"+prop['id']+">";
+                        <li class='prop_li' data-id="+prop['id']+"><span class='pname' id='pname_"+prop['id']+"'>"+prop['name']+"</span>\
+                        <span class='pdom-list' id='pdom_"+prop['id']+"'>";
                     for(var j=0; j<dom_disp.length;j++){
                         html += ("<span class='pdom'>"+dom_disp[j]+"</span>")
                     }
@@ -213,12 +215,13 @@
     function add_cons(evt) {
         evt.preventDefault();
         var cons_expr = $('#cons_inp').val();
-        var li_str = "<li>" + cons_expr + "<button class='mdreqd'>D</button>\
+        var li_str = "<li data-ind='"+reqs.length+"'>" + cons_expr + "<button class='mdreqd'>D</button>\
                 <button class='mdreqm'>M</button></li>";
         $('#cons_list').append(li_str);   
         var vars = [];   
         for(var i = 0;i<props.length;i++){
             prop = props[i];
+            // 关于属性名字重复的小问题
             var start_ind = cons_expr.indexOf(prop['name']);
             if (start_ind!=-1){
                 cons_expr = cons_expr.replace(prop['name'], '?');
@@ -233,6 +236,7 @@
             }
         }
         reqs.push({
+            id: reqs.length,
             expr:cons_expr,
             vars:vars
         });
@@ -306,10 +310,13 @@
     function modify_constraint() {
         var expr = $(this).parent().contents().get(0).nodeValue;
         $('#cons_inp').val(expr);
+        reqs.splice($(this).parent().data("ind"));
         $(this).parent().remove();
     }
 
     function delete_constraint() {
+        var ind = $(this).parent().data("ind");
+        reqs.splice(ind);
         $(this).parent().remove();
     }
     $('#cons_list').on('click', '.mdreqd', delete_constraint);//bug here

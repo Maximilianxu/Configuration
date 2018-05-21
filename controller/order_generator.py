@@ -13,10 +13,11 @@ order_generator = Blueprint('order_generator', __name__, template_folder='templa
 
 @order_generator.route('/config')
 def config():
+    model_name = session['model_name']
     root_component_id = session['root_component_id']
     root_component_name = session['root_component_name']
     subcomponents = find_subcomponents_id_name(root_component_id)
-    return render_template('config.html',\
+    return render_template('config.html', model_name=model_name,\
             root_component_id=root_component_id, root_component_name=root_component_name,\
             subcomponents=subcomponents)
 
@@ -37,15 +38,16 @@ def sub_reqs():
     cons = find_all_constraints_by_product_id(prod_id)
     variables = find_all_properties_by_product_id(prod_id)
     task = Task(variables, cons)
+    custom_cons_start = len(cons)
     properties = task.vars
     constraints = task.cons
     cons_id = len(constraints)
+    print('debug======> ', reqs)
     for req in reqs:
         con_vars = []
         for prop_id in req['vars']:
             for prop in properties:
                 if prop.id == prop_id:
-                    is_exist = True
                     con_vars.append(prop)
         con = Constraint(cons_id, req['expr'], con_vars)
         task.cons.append(con)
@@ -63,7 +65,7 @@ def sub_reqs():
         return solution
     conflict = 'C'
     if not solvable:
-        conf_cons = solver.compute_explanation()
+        conf_cons = solver.compute_explanation(custom_cons_start)
         var_ind = 0
         for con in conf_cons:
             expr = con.expr
