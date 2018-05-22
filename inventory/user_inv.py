@@ -4,7 +4,7 @@ import mysql.connector as sql
 import datetime
 from Configuration.model.user import User
 
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
+db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
 def insert_user(user):
@@ -20,7 +20,7 @@ def find_user_by_email(email):
     row = cursor.fetchone()
     return User(row[0], row[1], row[2], row[3], row[4], row[5])
 
-# user = User('chenjn_amtf@qq.com', 'apple', 'jlsjamtf',0 , 'jlu', 'student')
+# user = User('895255299@qq.com', 'chen', 'jlsjamtf',1 , 'jlu', 'student')
 # insert_user(user)
 
 # user = find_user_by_email('chenjn_amtf@qq.com')

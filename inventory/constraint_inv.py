@@ -5,7 +5,7 @@ from Configuration.model.domain import Domain
 from Configuration.model.variable import Variable
 from Configuration.model.constraint import Constraint
 
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
+db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
 def add_constraint(product_id, expression):

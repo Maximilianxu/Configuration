@@ -24,7 +24,7 @@ input[type='button'] {
     background: #fdf6e3;
     border:0.2rem solid #7fa99b;
     margin-top: 1rem;
-    margin-right: 1rem;
+    margin-bottom: 1rem;
     border-radius: 0.5rem;
     color:#586971;
     cursor: pointer;
@@ -65,7 +65,7 @@ input[type="text"][readonly] {
     cursor: default;
 }
 
-#model_list_tip {
+#product_list_tip {
     font-size: 2.5rem;
     text-align: center;
     letter-spacing: 0.05rem;
@@ -74,17 +74,17 @@ input[type="text"][readonly] {
     margin-bottom: 5%;
 }
 
-#no_model_tip {
+#no_product_tip {
     font-size: 1.4rem;
     text-align: center;
 }
 
-#model_list {
+#product_list {
     height: 60vh;
     overflow-y: scroll;    
 }
 
-#model_list .model_item {
+#product_list .product_item {
     font-size: 1.8rem;
     text-align: center;
     line-height: 20px;
@@ -94,11 +94,11 @@ input[type="text"][readonly] {
     color: #95e1d3;
 }
 
-#model_list .model_item:hover {
+#product_list .product_item:hover {
     color:#586971;
 }
 
-#model_list .model_item.active {
+#product_list .product_item.active {
     color: #f74747;
 }
 
@@ -127,36 +127,25 @@ input[type="text"][readonly] {
     color: #f74747;
 }
 
-#create_model_btn {
-    position: absolute;
-    width: 40%;
-    left: 50%;
-    transform: translate(-50%);
-}
-
-#model_display {
+#product_display {
     position: absolute;
     left: 15%;
     top: 30%;
-    width: 70%;
-    height: 40%;
+    width: 65%;
+    height: 35%;
     border:0.25rem solid #fdf6e3;
     font-size: 1.5rem;
     text-align: center;
 }
 
-#model_display input[type="text"] {
+#product_display input[type="text"] {
     width: 40rem;
 }
 
-#welcome_model_tip {
+#welcome_product_tip {
     margin-top: 3rem;
     margin-bottom: 2rem;
     font-size: 1.8rem;
-}
-
-.delete_model_tip  {
-    font-size: 1.3rem;
 }
 
 #enter_config {
@@ -179,8 +168,8 @@ input[type="text"][readonly] {
     position: relative;
     float: left;
     width: 52%;
-    height: 70%;
-    top: 9%;
+    height: 60%;
+    top: 12%;
     left: 2%;
     border:0.25rem solid #fdf6e3;
     font-size: 1.5rem;
@@ -244,7 +233,7 @@ input[type="text"][readonly] {
     position: relative;
     float: left;
     width: 42%;
-    height: 45%;
+    height: 38%;
     top: 20%;
     left: 4%;
     border: 0.25rem solid #fdf6e3; 
@@ -256,22 +245,6 @@ input[type="text"][readonly] {
 
 #property_domin_display[placeholder] {
     font-size: 12px;
-}
-
-#select_datatype {
-    height: 3rem;
-    width: 31rem;
-    font-size: 1.2rem;
-    text-align: center;
-    background: #fdf6e3;
-    border:0.2rem solid #7fa99b;
-    margin-bottom: 0.5rem;
-    border-radius: 0.5rem;
-    color:#586971;
-}
-
-.delete_property_tip  {
-    font-size: 1.3rem;
 }
 
 @media screen and (max-width: 1400px){
@@ -296,13 +269,8 @@ input[type="text"][readonly] {
         font-size: 1rem;
     }    
     
-    #select_datatype {
-        height: 2.5rem;
-        width: 25rem;
-    }
-    
     #component_display {
-        height: 73%;
+        height: 60%;
     }
     
     #component_display input[type='button'] {

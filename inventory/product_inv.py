@@ -8,7 +8,7 @@ from Configuration.model.property import Property
 from Configuration.model.constraint import Constraint
 from Configuration.model.domain import Domain
 
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
+db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
 def add_product(user_email, product):
@@ -34,11 +34,11 @@ def update_product(id, name, introducton):
                     (name, introducton, id))
     db.commit()
 
-def update_realease(id):
+def update_realease(state, id):
     cursor.execute("""UPDATE product
-                    SET is_release = 1 
+                    SET is_release = %s 
                     WHERE id = %s """,
-                    (id, ))
+                    (state, id))
     db.commit()
 
 def update_deadline(id, deadline):
@@ -65,12 +65,31 @@ def find_models_id_name(user_email):
         mods.append(mod)
     return mods
 
+def find_products_id_name_for_expert(user_email):
+    products = []
+    cursor.execute("""SELECT id, name FROM product
+                    WHERE user_email = %s AND is_release = 1""",
+                    (user_email, ))
+    for row in cursor.fetchall():
+        product = {'id': row[0], 'name': row[1]}
+        products.append(product)
+    return products
+
+def find_products_id_name_for_customer():
+    products = []
+    cursor.execute("""SELECT id, name FROM product
+                    WHERE is_release = 1""")
+    for row in cursor.fetchall():
+        product = {'id': row[0], 'name': row[1]}
+        products.append(product)
+    return products
+
 def find_a_model(id):
-    cursor.execute("""SELECT introduction, root_component_id FROM product
+    cursor.execute("""SELECT name, introduction, root_component_id FROM product
                     WHERE id = %s""",
                     (id, ))
     row = cursor.fetchone()
-    mod = {'introduction': row[0], 'root_component_id': row[1]}
+    mod = {'name': row[0], 'introduction': row[1], 'root_component_id': row[2]}
     return mod
 
 def find_all_properties_by_product_id(product_id):

@@ -47,16 +47,14 @@ def create_model():
 def release_model():
     data = request.get_json()
     model_id = data['id']
-    update_realease(model_id)
-    update_deadline(model_id, data['deadline'])
-    flash('Release model success!')
+    update_realease(1, model_id)
+    update_deadline(model_id, datetime.datetime.now())
     return 'success'
 
 @model_creator.route('/model/update', methods=['POST'])
 def update_model():
     data = request.get_json()
     update_product(data['id'], data['name'], data['introduction'])
-    flash('Update model success!')
     return 'success'
 
 @model_creator.route('/model/delete', methods=['POST'])
@@ -72,7 +70,6 @@ def delete_model():
         delete_relation_by_constraint(constraint_id)
     delete_all_constraints(model_id)
     delete_product(model_id)
-    flash('Delete model success!')
     return 'success'
 
 
