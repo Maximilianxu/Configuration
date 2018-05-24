@@ -1,0 +1,406 @@
+{% extends "home.html" %}
+
+{% block title %}
+    Config--Model
+{% endblock %}
+
+{% block style%}
+    <link rel="stylesheet" href="/static/css/product.css">
+    <link rel="stylesheet" href="/static/css/jquery.treeview.css">
+{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="/" class="nav-link">
+                Home
+            </a>
+            <a class="nav-link active" href="/products">
+                Products
+            </a>
+            <a class="nav-link" href="/model">
+                Model
+            </a>
+            <a class="nav-link" href="/config">
+                Config
+            </a>
+            <a class="nav-link" href="/order">
+                Order
+            </a>
+        </div>
+    </nav>
+    <div class="dropdown">
+        <div class="menu_bars" onclick="toggle_menu(this)">
+            <div class="menu_bar1"></div>
+            <div class="menu_bar2"></div>
+            <div class="menu_bar3"></div>
+        </div>
+        <a href="/" class="nav-link">Home</a>
+        <a href="/products" class="nav-link active">Products</a>
+        <a href="/model" class="nav-link">Model</a>
+        <a href="/order" class="nav-link">Order</a>
+        <a href="/about" class="nav-link">About</a>
+    </div>
+{% endblock navbar %}
+
+{% block side %}
+    <div>
+        <p id="product_list_tip">Product List</p>
+        <div id="product_list" data-user-role="{{user_role}}">
+            {% for product in products %}
+                <a class="product_item" data-id="{{product['id']}}">{{product['name']}}</a>
+                <div class="tree_container none">
+                    <p class="tree_tip">Component  Tree:</p>
+                    <ul id="component_tree" class="treeview">
+                        <li>
+                            <span class="unfold_fold fold">+ </span><a class="component_item" data-id></a>
+                            <ul class="none"></ul>
+                        </li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+        <p id="no_product_tip" class="none">No products here so for</p>
+    </div>
+    
+{% endblock %}
+
+{% block main %}   
+
+    <div id="flash_message"></div>
+
+    <div id="product_display">
+        <p id="welcome_product_tip">Product information</p>
+
+        <form id="product_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" readonly id="product_name", data-product-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" readonly id="product_introduction">
+            <br>
+            <!-- <label for="deadline" class="none">Deadline</label>
+            <input type="datetime-local" name="deadline" required id="product_deadline" class="none">
+            <br>
+            <p class="delete_product_tip none">Tip: This will delete all related components, properties and constraints.</p>
+            <p class="delete_product_tip none">Are you sure?</p>
+            <br> -->
+            <div id="sure_product_btn" class="none">
+                <input value="OK" type="submit" id="submit_product_btn">
+                <input value="Cancle" type="button" id="cancle_product_btn">
+            </div>
+        </form>
+
+        <div id="operate_product_btn" class="none">
+            <input value="Stop release" type="button" id="stop_release_btn">
+            <br>
+            <a href="/config" id="enter_config">Config Product</a>
+        </div>
+
+    </div>
+
+    <div id="component_display" class="none">
+
+        <p id="welcome_component_tip">Component information</p>
+
+        <form id="component_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" readonly id="component_name", data-component-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" readonly id="component_introduction">
+        </form>
+
+        <div id="property_list_area">
+            <p id="property_list_tip">Property list</p>
+            <div id="property_list">               
+            </div>
+            <p id="no_property_tip">No propertys here so for</p>
+        </div>
+
+    </div>
+
+    <div id="property_display" class="none">
+        <p id="welcome_property_tip">Property information</p>
+
+        <form id="property_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" readonly id="property_name", data-property-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" readonly id="property_introduction">
+            <br>
+            <label for="datatype">Datatype</label>
+            <input type="text" name="datatype" readonly id="property_datatype">
+            <br>
+            <label for="domin_display">Domin</label>
+            <input type="text" name="domin_display" readonly id="property_domin_display">
+            <br>
+            <label for="dataunit">Dataunit</label>
+            <input type="text" name="dataunit" readonly id="property_dataunit">
+            <br>
+        </form>
+
+    </div>
+
+{%endblock%}
+
+{%block script%}
+<script>
+
+    var user_role;
+    
+    // 以下是与product有关的函数
+
+    $(document).ready(function () {
+        user_role = $('#product_list').data('user-role');
+        if($('#product_list').children().length == 0) {
+            $('#no_product_tip').removeClass('none');
+        }
+    });
+
+    function show_product_info(e) {
+        e.preventDefault();
+        if($('#sure_product_btn').hasClass('none') && $(this).data('id') != $('.product_item.active').data('id')) {
+            $('.product_item.active').removeClass('active');
+            $('.component_item.active').removeClass('active');
+            $('.property_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#product_display').removeClass('none');
+            $('#component_display').addClass('none');
+            $('#property_display').addClass('none');
+            $('#product_name').val($(this).text());
+            $('#product_name').data('product-id', $(this).data('id'));
+            $.ajax({
+                url: '/model/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#product_introduction').val(resp['introduction']);
+                    $('#product_form').removeClass('none');
+                    $('#operate_product_btn').removeClass('none');
+                    if(user_role == 1) {
+                        $('#stop_release_btn').addClass('none');
+                    }                    
+                    var tree_container = $('.product_item.active').next();
+                    var root_hit_node = tree_container.find('.unfold_fold').first();
+                    if(!root_hit_node.hasClass('got_sub')) {
+                        var component_item = root_hit_node.next();
+                        component_item.data('id', resp['root_component_id']);
+                        component_item.text(resp['root_component_name']);
+                        tree_container.removeClass('none');
+                        root_hit_node.click();
+                    }
+                }
+            });
+        }
+    }
+
+    $('.product_item').click(show_product_info);
+
+    function stop_release_product() {
+        $(this).addClass('active');
+        // $('#product_deadline').removeClass('none');
+        // $('#product_deadline').prev().removeClass('none');
+        $('#sure_product_btn').removeClass('none');
+        $('#operate_product_btn').addClass('none');
+    }
+
+    $('#stop_release_btn').click(stop_release_product);
+
+    function judge_submit_product_btn(e) {
+        e.preventDefault()
+        var url, data;
+        if($('#stop_release_btn').hasClass('active')) {
+            // if($('#product_deadline').val() == '') {
+            //     return;
+            // }
+            url = '/product/stop_release';
+            data = {
+                id: $('#product_name').data('product-id'),
+                // deadline: $('#product_deadline').val()
+            };
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(resp) {
+                if(url == '/product/stop_release') {
+                    $('#flash_message').text('Stop release product success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.product_item.active').next().remove();
+                    $('.product_item.active').remove();
+                    if($('#product_list').children('.product_item').length == 0) {
+                        $('#no_product_tip').removeClass('none');
+                    }                  
+                    $('#stop_release_btn').removeClass('active');
+                    $('#product_form').addClass('none');
+                    // $('#product_deadline').addClass('none');
+                    // $('#product_deadline').prev().addClass('none');
+                    $('#sure_product_btn').addClass('none');                   
+                }
+            }
+        });
+    }
+
+    $('#submit_product_btn').click(judge_submit_product_btn);
+
+    function judge_cancle_product_btn() {
+        if($('#stop_release_btn').hasClass('active')) {
+            $('#stop_release_btn').removeClass('active');
+            // $('#product_deadline').addClass('none');
+            // $('#product_deadline').prev().addClass('none');
+            $('#sure_product_btn').addClass('none');
+            $('#operate_product_btn').removeClass('none');
+        }
+    }
+
+    $('#cancle_product_btn').click(judge_cancle_product_btn);
+    
+    // 以上是与product有关的函数
+
+    // 以下是与component有关的函数
+
+    function show_component_info(e) {
+        e.preventDefault();
+        if($(this).data('id') != $('.component_item.active').data('id')) {
+            $('.product_item.active').removeClass('active');
+            $('.component_item.active').removeClass('active');
+            $('.property_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#product_display').addClass('none');
+            $('#component_display').removeClass('none');
+            $('#property_list_area').removeClass('none'); 
+            $('#property_display').addClass('none');
+            $('#component_name').val($(this).text());
+            $('#component_name').data('component-id', $(this).data('id'));
+            $.ajax({
+                url: '/component/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#component_introduction').val(resp['introduction']);
+                    $('#component_introduction').attr('readonly', true);
+                    $('#component_form').removeClass('none');
+                    $('#property_list').empty();
+                    var properties = resp['properties'];
+                    len = properties.length;
+                    if(len > 0) {
+                        $('#no_property_tip').addClass('none');
+                        for(var i=0; i<len; i++) {
+                            $('#property_list').append('<a class="property_item" data-id="'
+                                + properties[i]['id'] +'">' + properties[i]['name'] + '</a>'
+                            );
+                        }
+                        $('#property_list').children('a').click(show_property_info);
+                    }
+                    else {
+                        $('#no_property_tip').removeClass('none');
+                    }                    
+                }
+            });
+        }
+    }
+
+    $('.component_item').click(show_component_info);
+
+    var now_node, next_com, next_subul;
+
+    function unfold_fold_tree() {
+        now_node = $(this);
+        next_com = now_node.next();
+        next_subul = now_node.next().next();
+        if(now_node.hasClass('got_sub')){
+            if(now_node.hasClass('fold')) {
+                now_node.removeClass('fold');
+                now_node.addClass('unfold');
+                now_node.text('- ');
+                next_subul.removeClass('none');
+            }
+            else {
+                now_node.removeClass('unfold');
+                now_node.addClass('fold');
+                now_node.text('+ ');
+                next_subul.addClass('none');
+            }
+        }
+        else {
+            now_node.removeClass('fold');
+            now_node.addClass('unfold');
+            now_node.addClass('got_sub');
+            now_node.text('- ');
+            next_subul.removeClass('none');
+            $.ajax({
+                url: '/component/subcomponents',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: next_com.data('id')
+                }),
+                success: function(resp) {
+                    var len = resp.length;
+                    for(var i=0; i<len; i++) {
+                        next_subul.append(
+                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            + resp[i]['id'] + "'>" + resp[i]['name'] + "</a><ul class='none'></ul></li>"
+                        );
+                    }
+                    next_subul.find('a').click(show_component_info);
+                    next_subul.find('span').click(unfold_fold_tree);
+                }
+            });
+        }
+    }
+
+    $('.unfold_fold').click(unfold_fold_tree);
+
+    // 以上是与component有关的函数
+
+    // 以下是与property有关的函数
+
+    function show_property_info(e) {
+        e.preventDefault();
+        if($(this).data('id') != $('.property_item.active').data('id')) {
+            $('.property_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#property_name').val($(this).text());
+            $('#property_name').data('property-id', $(this).data('id'));
+            $('#property_display').removeClass('none');
+            $.ajax({
+                url: '/property/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#property_introduction').val(resp['introduction']);
+                    $('#property_datatype').val(resp['datatype']);
+                    $('#property_domin_display').val(resp['domin_display']);
+                    $('#property_dataunit').val(resp['dataunit']);
+                    $('#property_form').removeClass('none');
+                }
+            });
+        }
+    }
+
+    $('.property_item').click(show_property_info);
+
+    // 以上是与property有关的函数
+
+    $(function () {
+        $('#flash_message').hide();
+    });    
+
+</script>
+{%endblock%}

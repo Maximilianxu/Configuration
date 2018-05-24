@@ -4,6 +4,7 @@ sys.path.append("..")
 from flask import Flask, render_template, request
 from Configuration.controller.order_generator import order_generator
 from Configuration.controller.home import home
+from Configuration.controller.product_manager import product_manager
 from Configuration.controller.model_creator import model_creator
 from Configuration.controller.component_creator import component_creator
 from Configuration.controller.property_manager import property_manager
@@ -11,6 +12,7 @@ from Configuration.controller.property_manager import property_manager
 app = Flask(__name__)
 app.register_blueprint(order_generator)
 app.register_blueprint(home)
+app.register_blueprint(product_manager)
 app.register_blueprint(model_creator)
 app.register_blueprint(component_creator)
 app.register_blueprint(property_manager)

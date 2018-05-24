@@ -1,4 +1,4 @@
- {% extends "home.html" %}
+{% extends "home.html" %}
 
 {% block title %}
     Config--Model
@@ -16,7 +16,7 @@
             <a href="/" class="nav-link">
                 Home
             </a>
-            <a href="/products" class="nav-link">
+            <a class="nav-link" href="/products">
                 Products
             </a>
             <a class="nav-link active" href="/model">
@@ -81,9 +81,13 @@
             <label for="introduction">Introduction</label>
             <input type="text" name="introduction" required placeholder="Not empty." id="model_introduction">
             <br>
-            <label for="deadline" class="none">Deadline</label>
+            <!-- <label for="deadline" class="none">Deadline</label>
             <input type="datetime-local" name="deadline" required id="model_deadline" class="none">
+<<<<<<< HEAD
             <br>
+=======
+            <br> -->
+>>>>>>> ba1e3d50ce2ea35d053aef4748df994191a0d068
             <p class="delete_model_tip none">Tip: This will delete all related components, properties and constraints.</p>
             <p class="delete_model_tip none">Are you sure?</p>
             <br>
@@ -164,10 +168,15 @@
             <br>
             <label for="dataunit">Dataunit</label>
             <input type="text" name="dataunit" placeholder="can empty." id="property_dataunit">
+<<<<<<< HEAD
             <br>
             <p class="delete_property_tip none">Tip: This will delete all related constraints.</p>
             <p class="delete_property_tip none">Are you sure?</p>
+=======
+>>>>>>> ba1e3d50ce2ea35d053aef4748df994191a0d068
             <br>
+            <p class="delete_property_tip none">Tip: This will delete all related constraints.</p>
+            <p class="delete_property_tip none">Are you sure?</p>
             <div id="sure_property_btn" class="none">
                 <input value="OK" type="submit" id="submit_property_btn">
                 <input value="Cancle" type="button" id="cancle_property_btn">
@@ -198,7 +207,6 @@
         e.preventDefault();
         if($('#sure_model_btn').hasClass('none') && $(this).data('id') != $('.model_item.active').data('id') &&
             $('#sure_component_btn').hasClass('none') && $('#sure_property_btn').hasClass('none')) {
-            console.log('show model');
             $('.model_item.active').removeClass('active');
             $('.component_item.active').removeClass('active');
             $('.property_item.active').removeClass('active');
@@ -259,8 +267,8 @@
     function release_model() {
         $(this).addClass('active');
         $('#create_model_btn').addClass('none');
-        $('#model_deadline').removeClass('none');
-        $('#model_deadline').prev().removeClass('none');
+        // $('#model_deadline').removeClass('none');
+        // $('#model_deadline').prev().removeClass('none');
         $('#sure_model_btn').removeClass('none');
         $('#operate_model_btn').addClass('none');
     }
@@ -306,13 +314,13 @@
             };
         }
         else if($('#release_model_btn').hasClass('active')) {
-            if($('#model_deadline').val() == '') {
-                return;
-            }
+            // if($('#model_deadline').val() == '') {
+            //     return;
+            // }
             url = '/model/release';
             data = {
                 id: $('#model_name').data('model-id'),
-                deadline: $('#model_deadline').val(),
+                // deadline: $('#model_deadline').val()
             };
         }
         else if($('#update_model_btn').hasClass('active')) {
@@ -381,8 +389,8 @@
                     $('#release_model_btn').removeClass('active');
                     $('#create_model_btn').removeClass('none');
                     $('#model_form').addClass('none');
-                    $('#model_deadline').addClass('none');
-                    $('#model_deadline').prev().addClass('none');
+                    // $('#model_deadline').addClass('none');
+                    // $('#model_deadline').prev().addClass('none');
                     $('#sure_model_btn').addClass('none');                   
                 }
                 else if(url == '/model/update') {
@@ -429,8 +437,8 @@
         }
         else if($('#release_model_btn').hasClass('active')) {
             $('#release_model_btn').removeClass('active');
-            $('#model_deadline').addClass('none');
-            $('#model_deadline').prev().addClass('none');
+            // $('#model_deadline').addClass('none');
+            // $('#model_deadline').prev().addClass('none');
             $('#create_model_btn').removeClass('none');
             $('#sure_model_btn').addClass('none');
             $('#operate_model_btn').removeClass('none');
@@ -793,8 +801,10 @@
                 success: function(resp) {
                     $('#property_introduction').val(resp['introduction']);
                     $('#property_introduction').attr('readonly', true);
-                    $('#property_datatype').val(resp['datatype']);
+                    $('#property_datatype').val(resp['datatype']);                    
                     $('#property_datatype').attr('readonly', true);
+                    $('#property_datatype').removeClass('none');
+                    $('#select_datatype').addClass('none');
                     $('#property_domin_display').val(resp['domin_display']);
                     $('#property_domin_display').attr('readonly', true);
                     $('#property_dataunit').val(resp['dataunit']);
