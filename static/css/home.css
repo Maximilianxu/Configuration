@@ -11,6 +11,11 @@
     font-family: 'SourceCode';
     src: url(/static/fonts/SourceCodePro-Medium.ttf);
 }
+
+html{
+    font-size:1.5vmin;
+}
+
 * {
     box-sizing: border-box;
     text-rendering: optimizeLegibility;
