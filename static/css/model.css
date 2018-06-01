@@ -12,7 +12,7 @@ p {
 }
 
 label {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     display: inline-block;
     width: 10rem;
 }
@@ -53,8 +53,8 @@ input[type="text"] {
     border:0.2rem solid #7fa99b;
     border-radius: 0.5rem;
     margin-bottom: 0.5rem;
-    height: 3rem;
-    width: 31rem;
+    height: 2.5rem;
+    width: 25rem;
     background-color: #fdf6e3;
 }
 
@@ -69,7 +69,7 @@ input[type="text"][readonly] {
     font-size: 2.5rem;
     text-align: center;
     letter-spacing: 0.05rem;
-    color: #95e1d3;
+    color: #586971;
     margin-top: 5%;
     margin-bottom: 5%;
 }
@@ -81,7 +81,7 @@ input[type="text"][readonly] {
 
 #model_list {
     height: 60vh;
-    overflow-y: scroll;    
+    overflow-y: auto;
 }
 
 #model_list .model_item {
@@ -90,12 +90,12 @@ input[type="text"][readonly] {
     line-height: 20px;
     display: block;
     padding: 4px;
-    border-top: 2px solid #95e1d3;
-    color: #95e1d3;
+    border-top: 2px solid #586971;
+    color: #586971;
 }
 
 #model_list .model_item:hover {
-    color:#586971;
+    color:#95e1d3;
 }
 
 #model_list .model_item.active {
@@ -104,22 +104,27 @@ input[type="text"][readonly] {
 
 .tree_tip {
     font-size: 1.5rem;
-    color: #95e1d3;
+    color: #586971;
 }
 
 #component_tree .unfold_fold {
     font-size: 1.8rem;
     font-family: 'SourceCode';
     cursor: default;
+    color: #586971;
+}
+
+#component_tree .unfold_fold:hover {
+    color:#95e1d3;
 }
 
 #component_tree .component_item {
-    font-size: 1.5rem;
-    color: #95e1d3;
+    font-size: 1.4rem;
+    color: #586971;
 }
 
 #component_tree .component_item:hover {
-    color:#586971;
+    color:#95e1d3;
 }
 
 #component_tree .component_item.active {
@@ -187,6 +192,10 @@ input[type="text"][readonly] {
     text-align: center;
 }
 
+#add_component_btn {
+    width: 30%;
+}
+
 .delete_component_tip  {
     font-size: 1.3rem;
 }
@@ -209,7 +218,7 @@ input[type="text"][readonly] {
     border: 0.25rem solid #fdf6e3; 
     margin-left: 29%;
     margin-top: 1.2rem;
-    overflow-y: scroll;    
+    overflow-y: auto;    
 }
 
 #property_list .property_item {
@@ -230,6 +239,10 @@ input[type="text"][readonly] {
 
 #no_property_tip {
     font-size: 1.3rem;
+}
+
+#create_property_btn {
+    width: 30%;
 }
 
 #welcome_property_tip {
@@ -254,13 +267,9 @@ input[type="text"][readonly] {
     text-align: center;
 }
 
-#property_domin_display[placeholder] {
-    font-size: 12px;
-}
-
 #select_datatype {
-    height: 3rem;
-    width: 31rem;
+    height: 2.5rem;
+    width: 25rem;
     font-size: 1.2rem;
     text-align: center;
     background: #fdf6e3;
@@ -307,10 +316,6 @@ input[type="text"][readonly] {
     
     #component_display input[type='button'] {
         width: 24%;
-    }
-    
-    #property_domin_display[placeholder] {
-        font-size: 10px;
     }
     
 }

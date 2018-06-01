@@ -18,13 +18,13 @@
             <a class="nav-link active" href="/products">
                 Products
             </a>
-            <a class="nav-link" href="/model">
+            <a id="nav-link-model" class="nav-link" href="/model">
                 Model
             </a>
-            <a class="nav-link" href="/config">
+            <a class="nav-link none" href="/config">
                 Config
             </a>
-            <a class="nav-link" href="/order">
+            <a class="nav-link none" href="/order">
                 Order
             </a>
         </div>
@@ -53,7 +53,7 @@
                     <p class="tree_tip">Component  Tree:</p>
                     <ul id="component_tree" class="treeview">
                         <li>
-                            <span class="unfold_fold fold">+ </span><a class="component_item" data-id></a>
+                            <span class="unfold_fold fold">+</span><a class="component_item" data-id></a>
                             <ul class="none"></ul>
                         </li>
                     </ul>
@@ -154,6 +154,12 @@
 
     $(document).ready(function () {
         user_role = $('#product_list').data('user-role');
+        if(user_role == 0) {
+            $('#enter_config').addClass('none');
+        }
+        else {
+            $('#nav-link-model').addClass('none');            
+        }
         if($('#product_list').children().length == 0) {
             $('#no_product_tip').removeClass('none');
         }
@@ -215,13 +221,9 @@
         e.preventDefault()
         var url, data;
         if($('#stop_release_btn').hasClass('active')) {
-            // if($('#product_deadline').val() == '') {
-            //     return;
-            // }
             url = '/product/stop_release';
             data = {
                 id: $('#product_name').data('product-id'),
-                // deadline: $('#product_deadline').val()
             };
         }
         $.ajax({
@@ -242,8 +244,6 @@
                     }                  
                     $('#stop_release_btn').removeClass('active');
                     $('#product_form').addClass('none');
-                    // $('#product_deadline').addClass('none');
-                    // $('#product_deadline').prev().addClass('none');
                     $('#sure_product_btn').addClass('none');                   
                 }
             }
@@ -324,13 +324,13 @@
             if(now_node.hasClass('fold')) {
                 now_node.removeClass('fold');
                 now_node.addClass('unfold');
-                now_node.text('- ');
+                now_node.text('-');
                 next_subul.removeClass('none');
             }
             else {
                 now_node.removeClass('unfold');
                 now_node.addClass('fold');
-                now_node.text('+ ');
+                now_node.text('+');
                 next_subul.addClass('none');
             }
         }
@@ -338,7 +338,7 @@
             now_node.removeClass('fold');
             now_node.addClass('unfold');
             now_node.addClass('got_sub');
-            now_node.text('- ');
+            now_node.text('-');
             next_subul.removeClass('none');
             $.ajax({
                 url: '/component/subcomponents',
@@ -351,7 +351,7 @@
                     var len = resp.length;
                     for(var i=0; i<len; i++) {
                         next_subul.append(
-                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            "<li><span class='unfold_fold fold'>+</span><a class='component_item' data-id='"
                             + resp[i]['id'] + "'>" + resp[i]['name'] + "</a><ul class='none'></ul></li>"
                         );
                     }

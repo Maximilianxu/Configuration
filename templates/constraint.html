@@ -1,12 +1,12 @@
 {%extends "home.html"%} 
 
 {%block style%}
-<link rel="stylesheet" href="/static/css/config.css">
+<link rel="stylesheet" href="/static/css/constraint.css">
 <link rel="stylesheet" href="/static/css/jquery.treeview.css"> 
 {%endblock%}
 
 {%block title%} 
-    Config--Order 
+    Config-model-constraint
 {%endblock%} 
 
 {%block navbar%}
@@ -18,14 +18,11 @@
             <a href="/products" class="nav-link">
                 Products
             </a>
-            <a href="/model" class="nav-link none">
+            <a href="/model" class="nav-link">
                 Model
             </a>
-            <a class="nav-link active" href="/config">
-                Config
-            </a>
-            <a class="nav-link" href="/order">
-                Order
+            <a class="nav-link active" href="/constraint">
+                Constraint
             </a>
         </div>
     </nav>
@@ -60,8 +57,11 @@
 {%endblock%}
 
 {%block main%}
+
+    <div id="flash_message"></div>
+
     <div class="opreq-wrapper">
-        <p class="opreq-desp">Add Custom Constraints:</p>
+        <p class="opreq-desp">Add Constraint:</p>
         <div class="comp-wrapper">
             <div class="tips">
                 <span class="prop-name">NAME</span>
@@ -97,11 +97,11 @@
         </div>
     </div>
     <div class="reqs-wrapper">
-        <p class="req-desp">Custom Requirements:</p>
+        <p class="req-desp">Constraints List:</p>
         <div class="short-line"></div>
         <div class="reqs-list">
             <ol id="cons_list" class="reqs"></ol>
-            <button id="sub_reqs" class="reqs-sub">SUBMIT</button>
+            <button id="sub_reqs" class="reqs-sub">CHECK</button>
         </div>
     </div>
 </div>
@@ -123,13 +123,18 @@
 {%block script%}
 <script src="/static/js/jquery.treeview.js"></script>
 <script>
+
+    $(document).ready(function() {
+        $('#flash_message').hide();
+    });
+
     var props = [];
     function show_component_info(e) {
         e.preventDefault();
         $('.component_item.active').removeClass('active');
         $(this).addClass('active');
         $.ajax({
-            url: '/component/properties',
+            url: '/constraint/item',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -137,13 +142,10 @@
             }),
             success: function(resp) {
                 $('#tips_props').empty();
-                props = JSON.parse(resp);
-                for(var i = 0;i<props.length;i++){
-                    props[i] = JSON.parse(props[i]);
-                }
-                
-                for(var i =0;i<props.length;i++){     
-                    var prop = props[i];
+                props = resp['propertys'];                
+                for(var i =0;i<props.length;i++){
+                    props[i] = JSON.parse(props[i]);     
+                    var prop = props[i]
                     var dom_disp = prop['domin_display'].toString().split(',');
                     var html = "\
                         <li class='prop_li' data-id="+prop['id']+"><span class='pname' id='pname_"+prop['id']+"'>"+prop['name']+"</span>\
@@ -151,8 +153,16 @@
                     for(var j=0; j<dom_disp.length;j++){
                         html += ("<span class='pdom'>"+dom_disp[j]+"</span><span class='punit'>"+prop['dataunit']+"</span>");
                     }
-                    html+=("</span></li>")
+                    html += ("</span></li>");
                     $('#tips_props').append(html);
+                }
+                $('#cons_list').empty();
+                cons = resp['constraints'];
+                for(var j=0; j<cons.length; j++) {
+                    var con = cons[j]
+                    var li_str = "<li data-ind='"+ con['id'] +"'>" + con['expression_display'] + "<button class='mdreqd'>D</button>\
+                    <button class='mdreqm'>M</button></li>";
+                    $('#cons_list').append(li_str);
                 }
             }
         });
@@ -166,7 +176,6 @@
         now_node = $(this);
         next_com = now_node.next();
         next_subul = now_node.next().next();
-        console.log('unfold_fold_tree');
         if(now_node.hasClass('got_sub')){
             if(now_node.hasClass('fold')) {
                 now_node.removeClass('fold');
@@ -211,13 +220,10 @@
 
     $('.unfold_fold').click(unfold_fold_tree);
 
-    var reqs = [];
     function add_cons(evt) {
         evt.preventDefault();
         var cons_expr = $('#cons_inp').val();
-        var li_str = "<li data-ind='"+reqs.length+"'>" + cons_expr + "<button class='mdreqd'>D</button>\
-                <button class='mdreqm'>M</button></li>";
-        $('#cons_list').append(li_str);   
+        var expr_display = $('#cons_inp').val(); 
         var vars = [];   
         for(var i = 0;i<props.length;i++){
             prop = props[i];
@@ -235,10 +241,27 @@
                 }
             }
         }
-        reqs.push({
-            id: reqs.length,
-            expr:cons_expr,
-            vars:vars
+        $.ajax({
+            url: '/constraint/add',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                cons_expr: cons_expr,
+                expr_display: expr_display,
+                vars: vars
+            }),
+            success: function(resp) {
+                $('#flash_message').text('Add constraint success!');
+                $('#flash_message').delay(500).fadeIn('normal', function () {
+                    $(this).delay(2500).fadeOut();
+                });
+                var ind = resp;
+                var cons_expr = $('#cons_inp').val();
+                var li_str = "<li data-ind='"+ ind +"'>" + cons_expr + "<button class='mdreqd'>D</button>\
+                <button class='mdreqm'>M</button></li>";
+                $('#cons_list').append(li_str);
+                $('#cons_inp').val(''); 
+            }
         });
     }
 
@@ -250,10 +273,9 @@
         $('#conf_list').empty();
         $('#conf_desp').css('display','none');
         $.ajax({
-            url: '/order/reqs',
-            method: 'post',
+            url: '/constraint/check',
+            method: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify(reqs),
             success: function (resp) {
                 var SC = resp[0];
                 resp = resp.slice(1);
@@ -268,7 +290,6 @@
                     $('#prods_list').append("<div class='bill-wrapper'>\
                     <span id='total_price_desp'>Total Price: </span>\
                     <label id='total_price' for='total_price_desp'>0</label>\
-                    <input id='sub_prod' class='sub-prod' type='submit' value='SUBMIT'>\
                     </div>");
                 }
                 else{
@@ -310,34 +331,44 @@
     function modify_constraint() {
         var expr = $(this).parent().contents().get(0).nodeValue;
         $('#cons_inp').val(expr);
-        reqs.splice($(this).parent().data("ind"));
+        var ind = $(this).parent().data("ind");
         $(this).parent().remove();
+        $.ajax({
+            url: '/constraint/delete',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: ind
+            }),
+            success: function(resp) {
+                $('#flash_message').text('Modifying constraint!');
+                $('#flash_message').delay(500).fadeIn('normal', function () {
+                    $(this).delay(2500).fadeOut();
+                });
+            }
+        });  
     }
 
     function delete_constraint() {
         var ind = $(this).parent().data("ind");
-        reqs.splice(ind);
         $(this).parent().remove();
+        $.ajax({
+            url: '/constraint/delete',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                id: ind
+            }),
+            success: function(resp) {
+                $('#flash_message').text('Delete constraint success!');
+                $('#flash_message').delay(500).fadeIn('normal', function () {
+                    $(this).delay(2500).fadeOut();
+                });
+            }
+        }); 
     }
     $('#cons_list').on('click', '.mdreqd', delete_constraint);//bug here
     $('#cons_list').on('click', '.mdreqm', modify_constraint);
-
-    function sub_prod() {
-        $.ajax({
-            url: '/order/new',
-            method: 'post',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                assignments: assignments.join('\n'),
-                price: total_price.toString()
-            }),
-            success: function (resp) {
-                alert('success');
-                clo_modal();
-            }
-        })
-    }
-    $('#prods_list').on('click', '#sub_prod', sub_prod);
 
     function op_keyboard(e){
         e.preventDefault();

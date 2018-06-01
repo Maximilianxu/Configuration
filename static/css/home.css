@@ -29,7 +29,7 @@
     width: 25%;
     background-color: #fdf6e3;
     height: 100vh;
-    color: #95e1d3;
+    color: #586971;
 }
 .main-wrapper {
     position: relative;
@@ -61,11 +61,11 @@
 
 .nav-link {
     line-height: 1.5em;
-    font-size: 1.3em;
+    font-size: 1.5em;
     font-weight: bold;
     text-decoration: none;
     padding-left: 0.5rem;
-    margin-left:10%;
+    margin-left:20%;
     text-align: center;
     font-family: 'Monaco';
 }
@@ -170,7 +170,7 @@ a.ext-link:hover{
 
 .sketch{
     max-width: 100%;
-    height: 99vh;
+    height: 80vh;
 }
 
 .log-reg-wrapper{
@@ -270,6 +270,60 @@ a.ext-link:hover{
     color: #006d00;
 }
 
+.none{
+    display: none;
+}
+
+#user_display {
+    position: absolute;
+    left: 15%;
+    top: 30%;
+    width: 60%;
+    height: 35%;
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+#user_display * {
+    font-weight: bold;
+    font-family: Georgia, serif;
+}
+
+#user_display label {
+    font-size: 1.4rem;
+    display: inline-block;
+    width: 9rem;
+}
+
+#user_display label.none {
+    display: none;
+}
+
+#user_display input[type="text"] {
+    font-size: 1.2rem;
+    text-align: center;
+    border:0.2rem solid #7fa99b;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    height: 3rem;
+    width: 28rem;
+    background-color: #fdf6e3;
+}
+
+#user_display input[type="text"][readonly] {
+    border:0.2rem solid #fdf6e3;
+    background-color: transparent;
+    color: #fdf6e3;
+    cursor: default;
+}
+
+#welcome_user_tip {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    cursor: default;
+}
+
 @media screen and (max-width: 60rem ) {
     .dropdown {
         display: inline-block;
@@ -294,4 +348,5 @@ a.ext-link:hover{
     .log-reg-wrapper .sub-inp{
         width: 100%;
     }
+    
 }

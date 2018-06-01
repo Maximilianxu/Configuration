@@ -4,7 +4,7 @@
 
 import sys
 sys.path.append("../")
-
+sys.path.append("D:/VScode_python_pro")
 from Configuration.model.result import Solution, Explanation, Result
 from Configuration.model.constraint import Constraint
 from Configuration.model.variable import Variable
@@ -44,9 +44,11 @@ class Solver:
 
     def search_solution(self):
         if not self.__initialize__():
+            self.__trace_back__(self.del_vals.pop())
             self.__end_solve__()
             return False
         solvable = self.__solve__(0)
+        self.__trace_back__(self.del_vals.pop())
         self.__end_solve__()
         return solvable
     
@@ -150,6 +152,8 @@ class Solver:
     def __end_solve__(self):
         self.supp.clear()
         self.del_vals.clear()
+        self.queue.clear()
+        self.is_assigned = [False] * len(self.vars)
         for var in self.vars:
             var.val = var.dom.vals_list[0]
 
@@ -185,8 +189,7 @@ class Solver:
     
     def __is_consistent__(self, con_cdrs):
         pre_con_cdrs = self.con_cdrs
-        explain_con_cdrs = []
-        self.con_cdrs = explain_con_cdrs
+        self.con_cdrs = con_cdrs
         pre_max_sols_num = self.MAX_SOLS_NUM
         self.MAX_SOLS_NUM = 1
         is_consistent = self.search_solution()
@@ -215,16 +218,22 @@ class Solver:
 
 
 # v1 = Variable(1, Domain([1, 2, 3]))
-# v2 = Variable(1, Domain([1, 2, 3]))
-# v3 = Variable(2, Domain([2, 3, 4]))
+# v2 = v1
+# v3 = Variable(4, Domain([4, 5, 6]))
 # # 'x < y <= z'
-# c1 = Constraint('? < ? <= ?', [v1, v2, v3])
+# c1 = Constraint(0, '? == 4', [v3])
 # #  v3 == 4 -> v2=2
 # # 蕴含约束转换成逻辑表达式，等价约束表达成两个蕴含约束
-# c2 = Constraint('? != 4 or ? == 2', [v3, v2])
-# c3 = Constraint('? * ? > 1', [v1, v1])
+# c2 = Constraint(1, '? == 1', [v1])
+# c3 = Constraint(2, '? == 2', [v2])
 # task = Task([v1, v2, v3], [c1, c2, c3])
 # solver = Solver(task)
+
+# for var in solver.vars:
+#     for i in range(len(var.dom.vals_list)):
+#         print(var.is_valid(i))
+
+# print('==============================================')
 
 # is_solvable = solver.search_solution()
 # print('====> has any solutions? ', is_solvable)
@@ -232,11 +241,17 @@ class Solver:
 # for sol in sols:
 #     print(sol.vals_list)
 
+# for var in solver.vars:
+#     for i in range(len(var.dom.vals_list)):
+#         print(var.is_valid(i))
+
+# print('==============================================')
+
 # if not is_solvable:
 #     print('====> the conflict constraints including:')
 #     rslt = solver.compute_explanation()
 #     for ind, con in enumerate(rslt):
-#         print(str(ind+1)+'. '+con.expr)
+#         print(con)
 
 # print('====================')
                     

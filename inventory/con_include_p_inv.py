@@ -1,8 +1,7 @@
 import sys
 sys.path.append("../..")
-import mysql.connector as sql
+from Configuration.inventory import db
 
-db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
 cursor = db.cursor()
 
 def add_relation(constraint_id, property_ids):

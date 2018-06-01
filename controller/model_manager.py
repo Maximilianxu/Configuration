@@ -11,15 +11,15 @@ from Configuration.inventory.con_include_p_inv import delete_relation_by_constra
 from Configuration.model.product import Product
 from Configuration.model.component import Component
 
-model_creator = Blueprint('model_creator', __name__, template_folder='templates')
+model_manager = Blueprint('model_manager', __name__, template_folder='templates')
 
-@model_creator.route('/model')
+@model_manager.route('/model')
 def model():
     user_email = session['user_email']
     models = find_models_id_name(user_email)
     return render_template('model.html', models=models)
 
-@model_creator.route('/model/item', methods=['POST'])
+@model_manager.route('/model/item', methods=['POST'])
 def find_model_by_id():
     data = request.get_json()
     session['model_id'] = data['id']
@@ -31,7 +31,7 @@ def find_model_by_id():
     model['root_component_name'] = root_component['name']
     return jsonify(model)
 
-@model_creator.route('/model/create', methods=['POST'])
+@model_manager.route('/model/create', methods=['POST'])
 def create_model():
     data = request.get_json()
     user_email = session['user_email']
@@ -43,7 +43,7 @@ def create_model():
     resp = {'id': model.id}
     return jsonify(resp)
 
-@model_creator.route('/model/release', methods=['POST'])
+@model_manager.route('/model/release', methods=['POST'])
 def release_model():
     data = request.get_json()
     model_id = data['id']
@@ -51,13 +51,13 @@ def release_model():
     update_deadline(model_id, datetime.datetime.now())
     return 'success'
 
-@model_creator.route('/model/update', methods=['POST'])
+@model_manager.route('/model/update', methods=['POST'])
 def update_model():
     data = request.get_json()
     update_product(data['id'], data['name'], data['introduction'])
     return 'success'
 
-@model_creator.route('/model/delete', methods=['POST'])
+@model_manager.route('/model/delete', methods=['POST'])
 def delete_model():
     data = request.get_json()
     model_id = data['id']
