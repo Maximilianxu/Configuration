@@ -64,9 +64,9 @@ def delete_a_constraint():
 def check_constraints():
     prod_id = session['model_id']
     variables = find_all_properties_by_product_id(prod_id)
-    cons = find_all_constraints_by_product_id(prod_id, variables)
-    for con in cons:
-        print(con)
+    cons_tuple = find_all_constraints_by_product_id(prod_id, variables)
+    cons = cons_tuple[0]
+    expressions_display = cons_tuple[1]
     task = Task(variables, cons)
     properties = task.vars
     solver = Solver(task)
@@ -85,28 +85,6 @@ def check_constraints():
     if not solvable:
         conf_cons = solver.compute_explanation()
         for con in conf_cons:
-            var_ind = 0
-            expr = con.expr + '#'
-            cur_var = con.vars[var_ind]
-            val_display = ''
-            digit_area = False
-            tmp_expr = (expr + '.')[:-1]
-            digit = ''
-            for ch in tmp_expr:
-                tmp_ind = expr.index(ch)
-                if not ch.isdigit() and digit_area:
-                    val_ind = int(digit)
-                    val_display = cur_var.domin_display[val_ind]
-                    digit = ''
-                    expr = expr[:tmp_ind] + val_display + expr[tmp_ind+1:]  
-                if not ch.isdigit():
-                    digit_area = False 
-                if ch == '?':
-                    expr = expr[:tmp_ind] + cur_var.name + expr[tmp_ind+1:]
-                    var_ind += 1
-                if ch.isdigit():
-                    digit_area = True
-                    expr = expr[:tmp_ind] + expr[tmp_ind+1:]
-                    digit += ch
-            conflict += (expr+';')
+            con_index = cons.index(con)
+            conflict += (expressions_display[con_index] + ';')
         return conflict

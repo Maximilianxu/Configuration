@@ -113,12 +113,14 @@ def find_all_properties_by_product_id(product_id):
 
 def find_all_constraints_by_product_id(product_id, properties):
     constraints = []
-    cursor.execute("""SELECT id, expression FROM c_constraint
+    expressions_display = []
+    cursor.execute("""SELECT id, expression, expression_display FROM c_constraint
                     WHERE product_id = %s""",
                     (product_id, ))
     for row in cursor.fetchall():
         constraint = Constraint(row[0], row[1], [])
         constraints.append(constraint)
+        expressions_display.append(row[2])
     for constraint in constraints:
         cursor.execute("""SELECT property_id FROM con_include_p
                         WHERE constraint_id = %s""",
@@ -132,7 +134,7 @@ def find_all_constraints_by_product_id(product_id, properties):
                     variables.append(property)
                     break
         constraint.vars = variables
-    return constraints
+    return (constraints, expressions_display)
         
 
 # user_email = 'chenjn_amtf@qq.com'
