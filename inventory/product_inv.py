@@ -1,14 +1,22 @@
 import sys
 sys.path.append("../..")
+<<<<<<< HEAD
 import MySQLdb as sql
+=======
+
+>>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 import datetime
+from Configuration.inventory import db
 from Configuration.model.product import Product
 from Configuration.model.variable import Variable
 from Configuration.model.property import Property
 from Configuration.model.constraint import Constraint
 from Configuration.model.domain import Domain
 
+<<<<<<< HEAD
 db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
+=======
+>>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 cursor = db.cursor()
 
 def add_product(user_email, product):
@@ -112,13 +120,13 @@ def find_all_properties_by_product_id(product_id):
             properties.append(property)
     return properties
 
-def find_all_constraints_by_product_id(product_id):
+def find_all_constraints_by_product_id(product_id, properties):
     constraints = []
-    cursor.execute("""SELECT * FROM c_constraint
+    cursor.execute("""SELECT id, expression FROM c_constraint
                     WHERE product_id = %s""",
                     (product_id, ))
     for row in cursor.fetchall():
-        constraint = Constraint(row[0], row[2], [])
+        constraint = Constraint(row[0], row[1], [])
         constraints.append(constraint)
     for constraint in constraints:
         cursor.execute("""SELECT property_id FROM con_include_p
@@ -126,16 +134,12 @@ def find_all_constraints_by_product_id(product_id):
                         (constraint.id, ))
         rows = cursor.fetchall()
         variables = []
-        for row1 in rows:
-            property_id = row1[0]
-            cursor.execute("""SELECT domin FROM property
-            WHERE id = %s""",
-            (property_id, ))
-            row2 = cursor.fetchone()
-            vals_str_list = row2[0].split(',')
-            domin = Domain([int(i) for i in vals_str_list])
-            variable = Variable(domin.vals_list[0], domin)
-            variables.append(variable)
+        for row in rows:
+            property_id = row[0]
+            for property in properties:
+                if property.id == property_id:
+                    variables.append(property)
+                    break
         constraint.vars = variables
     return constraints
         

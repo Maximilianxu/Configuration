@@ -1,19 +1,26 @@
 import sys
 sys.path.append("../..")
+<<<<<<< HEAD
 import MySQLdb as sql
+=======
+from Configuration.inventory import db
+>>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 from Configuration.model.domain import Domain
 from Configuration.model.variable import Variable
 from Configuration.model.constraint import Constraint
 
+<<<<<<< HEAD
 db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
+=======
+>>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 cursor = db.cursor()
 
-def add_constraint(product_id, expression):
+def add_constraint(product_id, expression, expression_display):
     cursor.execute("""INSERT INTO c_constraint
-                    (product_id, expression)
+                    (product_id, expression, expression_display)
                     VALUES
-                    (%s, %s)""",
-                    (product_id, expression))
+                    (%s, %s, %s)""",
+                    (product_id, expression, expression_display))
     db.commit()
     cursor.execute("SELECT LAST_INSERT_ID()")
     row = cursor.fetchone()
@@ -29,12 +36,13 @@ def delete_all_constraints(product_id):
                     (product_id, ))
     db.commit()
 
-def update_constraint(constraint_id, expression):
-    cursor.execute("""UPDATE c_constraint
-                    SET expression = %s
-                    WHERE id = %s """,
-                    (expression, constraint_id))
-    db.commit()
+def find_a_constraint(constraint_id):
+    cursor.execute("""SELECT id, expression_display FROM c_constraint
+                    WHERE id = %s""",
+                    (constraint_id, ))
+    row = cursor.fetchone()
+    constraint = {'id': row[0], 'expression_display': row[1]}
+    return constraint
 
 def find_constraints_id(product_id):
     con_ids = []

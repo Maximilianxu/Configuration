@@ -65,6 +65,7 @@ CREATE TABLE c_constraint(
     id INT AUTO_INCREMENT,
     product_id INT,
     expression VARCHAR(128),
+    expression_display VARCHAR(128),
     PRIMARY KEY(id),
     FOREIGN KEY(product_id) REFERENCES product(id)
 );

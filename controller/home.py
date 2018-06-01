@@ -17,13 +17,13 @@ def login():
     print('========>', password)
     print('========>', user.password)
     if user.password == password:
-        resp = make_response(render_template('home.html', login=True))
+        resp = make_response(render_template('home.html', login=True, user=user))
         resp.set_cookie('user_email', log_email)
         session['user_email'] = log_email
         session['user_role'] =user.role
         return resp
     else:
-        return render_template('home.html', login=False)
+        return render_template('home.html', login=False, user=user)
 
 
 # Send the message via our own SMTP server.

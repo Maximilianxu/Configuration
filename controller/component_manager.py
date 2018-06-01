@@ -9,27 +9,26 @@ from Configuration.inventory.con_include_p_inv import find_constraints_id_by_pro
     delete_relation_by_constraint
 from Configuration.model.component import Component
 
-component_creator = Blueprint('component_creator', __name__, template_folder='templates')
+component_manager = Blueprint('component_manager', __name__, template_folder='templates')
 
-@component_creator.route('/component/item', methods=['POST'])
-def find_model_by_id():
+@component_manager.route('/component/item', methods=['POST'])
+def find_component_by_id():
     data = request.get_json()
     component_id = data['id']
     session['component_id'] = component_id
     component = find_a_component(component_id)
     properties = find_properties_id_name(component_id)
     component['properties'] = properties
-    session['component_name'] = component['name']
     return jsonify(component)
 
-@component_creator.route('/component/subcomponents', methods=['POST'])
+@component_manager.route('/component/subcomponents', methods=['POST'])
 def find_subcomponents():
     data = request.get_json()
     father_component_id = data['id']
     subcomponents = find_subcomponents_id_name(father_component_id)
     return jsonify(subcomponents)
 
-@component_creator.route('/component/add', methods=['POST'])
+@component_manager.route('/component/add', methods=['POST'])
 def create_component():
     data = request.get_json()
     model_id = session['model_id']
@@ -38,13 +37,13 @@ def create_component():
     resp = {'id': component.id}
     return jsonify(resp)
 
-@component_creator.route('/component/update', methods=['POST'])
+@component_manager.route('/component/update', methods=['POST'])
 def update_a_component():
     data = request.get_json()
     update_component(data['id'], data['name'], data['introduction'])
     return 'success'
 
-@component_creator.route('/component/delete', methods=['POST'])
+@component_manager.route('/component/delete', methods=['POST'])
 def delete_components_by_father_id():
     q = Queue()
     data = request.get_json()
@@ -64,7 +63,7 @@ def delete_components_by_father_id():
         delete_component(component_id)
     return 'success'
 
-@component_creator.route('/component/properties', methods=['POST'])
+@component_manager.route('/component/properties', methods=['POST'])
 def find_properties_by_comp_id():
     import json
     comp_id = request.get_json()['id']

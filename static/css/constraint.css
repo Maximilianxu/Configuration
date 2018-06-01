@@ -3,6 +3,7 @@
 }
 
 .nav-link {
+    font-size: 1.5em;
     margin-left: 15%;
 }
 
@@ -11,7 +12,7 @@
     height: 90vh;
     overflow-y: auto;
     margin-top: 2rem;
-
+    color: #586971;
 }
 
 #model_name {
@@ -30,13 +31,17 @@
     cursor: default;
 }
 
+#component_tree .unfold_fold:hover {
+    color:#95e1d3;
+}
+
 #component_tree .component_item {
     font-size: 1.5rem;
     font-family: Georgia, serif;
 }
 
 #component_tree .component_item:hover {
-    color: #95e1d3;
+    color:#95e1d3;
 }
 
 #component_tree .component_item.active {
@@ -99,7 +104,7 @@
 
 .pname{
     font-size: 1.2rem;
-    margin-right: 2rem;
+    margin-right: 1rem;
     display: inline-block;
     width: 6rem;
 }
@@ -109,7 +114,7 @@
 }
 
 .pdom{
-    margin-left: 2rem;
+    margin-left: 1rem;
 }
 
 .pdom:hover{
@@ -250,7 +255,7 @@
     width: 23.4375rem /* 375/16 */;
     border-top: 3.5rem solid #fdf6e3;
     border-bottom: 2rem solid #fdf6e3;
-    overflow: auto;
+    overflow-y: auto;
 }
 .reqs-list::-webkit-scrollbar { 
     display: none; 
@@ -284,16 +289,15 @@
     list-style-position:inside;
 }
 .reqs-list li{
-    font-style: italic;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     line-height: 2rem;
     padding-left: 1.5rem;
-    width: 100% /* 200/16 */;
-    height:5rem /* 50/16 */;
+    width: 100%;
+    height:5rem;
     background-color: #cbf1f5;
     color: black;
-    padding:1.5rem 0 1.5rem 2rem;
+    padding:1rem 0 1rem 1rem;
     /* border-bottom: 0.125rem solid darkgray; */
     border-top: 0.125rem solid darkgray;
 }
@@ -351,17 +355,17 @@
 .prod-modal{
     display:none;
     position: absolute;
-    left: 35%;
+    left: 25%;
     top: 20%;
-    height: 30rem;
-    width: 35rem;
+    height: 50%;
+    width: 50%;
     background-color: #7fa99b;
     color: #fdf6e3;
     border: 0.7rem solid #fdf6e3;
     border-radius: 0.25rem;
     z-index: 102;
     resize: both;
-    overflow: auto;
+    overflow-y: auto;
 }
 .prod-modal::-webkit-scrollbar{
     display: none;
@@ -406,9 +410,9 @@ body.modal-open .main-wrapper{
 
 .prods-list{
     position: relative;
-    left: 2rem;
+    margin-left: 1rem;
     font-family: monospace;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     color: #fdf6e3;
 }

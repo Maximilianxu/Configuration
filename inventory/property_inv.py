@@ -1,11 +1,10 @@
 import sys
 sys.path.append("../..")
-import MySQLdb as sql
+from Configuration.inventory import db
 from Configuration.model.domain import Domain
 from Configuration.model.variable import Variable
 from Configuration.model.property import Property
 
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
 cursor = db.cursor()
 
 def add_property(component_id, name, introduction, datatype, dataunit, domin, domin_display):
