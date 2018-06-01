@@ -1,18 +1,10 @@
 import sys
 sys.path.append("../..")
-<<<<<<< HEAD
-import MySQLdb as sql
-=======
 from Configuration.inventory import db
->>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 from Configuration.model.domain import Domain
 from Configuration.model.variable import Variable
 from Configuration.model.constraint import Constraint
 
-<<<<<<< HEAD
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
-=======
->>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 cursor = db.cursor()
 
 def add_constraint(product_id, expression, expression_display):

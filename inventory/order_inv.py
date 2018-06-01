@@ -4,10 +4,6 @@ import datetime
 from Configuration.inventory import db
 from Configuration.model.order import Order
 
-<<<<<<< HEAD
-db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
-=======
->>>>>>> df4cef6cec979710aee074118eeb67ff3ab11140
 cursor = db.cursor()
 
 def insert_order(order):
