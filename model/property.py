@@ -18,3 +18,8 @@ class Property(Variable):
 
     def prn_obj(self):
         print('  '.join(['%s:%s' % item for item in self.__dict__.items()]))
+
+    def toJSON(self):
+        import json
+        return json.dumps(self, default=lambda o: o.__dict__, 
+            sort_keys=True, indent=4)

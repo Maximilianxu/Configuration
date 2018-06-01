@@ -1,3 +1,45 @@
+.none{
+    display: none;
+}
+
+#model_container {
+    font-weight: bold;
+    height: 90vh;
+    overflow-y: scroll;
+    margin-top: 2rem;
+
+}
+
+#model_name {
+    font-size: 2rem;
+    font-family: Georgia, serif;
+    text-align: center;
+}
+
+#tree_tip {
+    font-size: 1.5rem;
+    font-family: Georgia, serif;
+}
+
+#component_tree .unfold_fold {
+    font-size: 1.8rem;
+    cursor: default;
+}
+
+#component_tree .component_item {
+    font-size: 1.5rem;
+    font-family: Georgia, serif;
+    color: #95e1d3;
+}
+
+#component_tree .component_item:hover {
+    color:#586971;
+}
+
+#component_tree .component_item.active {
+    color: #f74747;
+}
+
 .opreq-wrapper{
     width: 70%;
     max-height:100%;
@@ -38,11 +80,52 @@
     font-family: monospace;
     font-size: 1.5rem;
 }
+
+.prop-name{
+    margin-left: 4rem;
+    width: 6rem;
+    display: inline-block;
+    color: #222222;
+}
+
+.prop-dom{
+    margin-left: 4rem;
+    display: inline-block;
+    color: #222222;
+}
+
+.pname{
+    font-size: 1.2rem;
+    margin-right: 2rem;
+    display: inline-block;
+    width: 6rem;
+}
+
+.pdom-list{
+    display: inline-block;
+}
+
+.pdom{
+    margin-left: 2rem;
+}
+
+.pdom:hover{
+    color: #fff;
+    cursor: pointer;
+    background-color: #4fd0ea;
+}
+
+.pname:hover{
+    color: #fff;
+    cursor: pointer;
+    background-color: #4fd0ea;
+}
+
 #opreq{
     background-color: #7fa99b;
     width: 34rem;
-    position: relative;
-    top: 13rem;
+    position: absolute;
+    top: 19rem;
     left: 2.5rem;
     height: 3.5rem;
     border-radius: 0.5rem;
@@ -323,6 +406,22 @@ body.modal-open .main-wrapper{
     left: 2rem;
     font-family: monospace;
     font-size: 1.5rem;
+    font-weight: bold;
+    color: #fdf6e3;
+}
+
+.conf-desp{
+    font-family: monospace;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #222222;
+    margin-left: 2rem;
+}
+.conf-list{
+    position: relative;
+    left: 2rem;
+    font-family: monospace;
+    font-size: 2rem;
     font-weight: bold;
     color: #fdf6e3;
 }

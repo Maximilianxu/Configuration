@@ -1,17 +1,22 @@
-{%extends "home.html"%}
+{% extends "home.html" %}
 
-{%block title%}
+{% block title %}
     Config--Model
-{%endblock%}
+{% endblock %}
+
+{% block style%}
+    <link rel="stylesheet" href="/static/css/model.css">
+    <link rel="stylesheet" href="/static/css/jquery.treeview.css">
+{% endblock %}
 
 
-{%block navbar%}
+{% block navbar %}
     <nav class="navbar">
         <div class="nav-links">
             <a href="/" class="nav-link">
                 Home
             </a>
-            <a href="/products" class="nav-link">
+            <a class="nav-link" href="/products">
                 Products
             </a>
             <a class="nav-link active" href="/model">
@@ -37,23 +42,992 @@
         <a href="/order" class="nav-link">Order</a>
         <a href="/about" class="nav-link">About</a>
     </div>
-{%endblock navbar%}
+{% endblock navbar %}
 
-{%block side%}
+{% block side %}
     <div>
-        <p>Model list</p>
-        <ul id="model_list">
-            {% for model in models%}
-                <li class="model_item">{{ }}</li>
-        </ul>
-        <input value="CREATE" type="button" id="create_model" class="submit">
+        <p id="model_list_tip">Model  List</p>
+        <div id="model_list">
+            {% for model in models %}
+                <a class="model_item" data-id="{{model['id']}}">{{model['name']}}</a>
+                <div class="tree_container none">
+                    <p class="tree_tip">Component  Tree:</p>
+                    <ul id="component_tree" class="treeview">
+                        <li>
+                            <span class="unfold_fold fold">+ </span><a class="component_item" data-id></a>
+                            <ul class="none"></ul>
+                        </li>
+                    </ul>
+                </div>
+            {% endfor %}
+        </div>
+        <p id="no_model_tip" class="none">No models here so for</p>
+        <input value="Creat new model" type="button" id="create_model_btn">
     </div>
     
+{% endblock %}
+
+{% block main %}   
+
+    <div id="flash_message"></div>
+
+    <div id="model_display">
+        <p id="welcome_model_tip">Model manager</p>
+
+        <form id="model_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" required placeholder="Not empty." id="model_name", data-model-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" required placeholder="Not empty." id="model_introduction">
+            <br>
+            <!-- <label for="deadline" class="none">Deadline</label>
+            <input type="datetime-local" name="deadline" required id="model_deadline" class="none">
+<<<<<<< HEAD
+            <br>
+=======
+            <br> -->
+>>>>>>> ba1e3d50ce2ea35d053aef4748df994191a0d068
+            <p class="delete_model_tip none">Tip: This will delete all related components, properties and constraints.</p>
+            <p class="delete_model_tip none">Are you sure?</p>
+            <br>
+            <div id="sure_model_btn" class="none">
+                <input value="OK" type="submit" id="submit_model_btn">
+                <input value="Cancle" type="button" id="cancle_model_btn">
+            </div>
+        </form>
+
+        <div id="operate_model_btn" class="none">
+            <input value="Release" type="button" id="release_model_btn">
+            <input value="Update" type="button" id="update_model_btn">
+            <input value="Delete" type="button" id="delete_model_btn">
+            <br>
+            <br>
+            <a href="/config" id="enter_config">Config Model</a>
+        </div>
+
+    </div>
+
+    <div id="component_display" class="none">
+
+        <p id="welcome_component_tip">Component manager</p>
+
+        <form id="component_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" required placeholder="Not empty." id="component_name", data-component-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" required placeholder="Not empty." id="component_introduction">
+            <br>
+            <p class="delete_component_tip none">Tip: This will delete all related properties and constraints.</p>
+            <p class="delete_component_tip none">Are you sure?</p>
+            <br>
+            <div id="sure_component_btn" class="none">
+                <input value="OK" type="submit" id="submit_component_btn">
+                <input value="Cancle" type="button" id="cancle_component_btn">
+            </div>
+        </form>
+
+        <div id="operate_component_btn" class="none">
+            <input value="Add subcomponent" type="button" id="add_component_btn">
+            <input value="Update" type="button" id="update_component_btn">
+            <input value="Delete" type="button" id="delete_component_btn">
+        </div>
+
+        <div id="property_list_area">
+            <p id="property_list_tip">Property list</p>
+            <div id="property_list">               
+            </div>
+            <p id="no_property_tip">No propertys here so for</p>
+            <input value="Creat new property" type="button" id="create_property_btn">
+        </div>
+
+    </div>
+
+    <div id="property_display" class="none">
+        <p id="welcome_property_tip">Property manager</p>
+
+        <form id="property_form", class="none">
+            <label for="name">Name</label>
+            <input type="text" name="name" required placeholder="Not empty." id="property_name", data-property-id>
+            <br>
+            <label for="introduction">Introduction</label>
+            <input type="text" name="introduction" required placeholder="Not empty." id="property_introduction">
+            <br>
+            <label for="datatype">Datatype</label>
+            <input type="text" name="datatype" readonly id="property_datatype">
+            <select required id="select_datatype" class="none">
+                <option value="int">int</option>
+                <option value="float">float</option>
+                <option value="string">string</option>
+            </select>
+            <br>
+            <label for="domin_display">Domin</label>
+            <input type="text" name="domin_display" required placeholder="Not empty. Use commas separate values, e.g 1,2"
+                id="property_domin_display">
+            <br>
+            <label for="dataunit">Dataunit</label>
+            <input type="text" name="dataunit" placeholder="can empty." id="property_dataunit">
+<<<<<<< HEAD
+            <br>
+            <p class="delete_property_tip none">Tip: This will delete all related constraints.</p>
+            <p class="delete_property_tip none">Are you sure?</p>
+=======
+>>>>>>> ba1e3d50ce2ea35d053aef4748df994191a0d068
+            <br>
+            <p class="delete_property_tip none">Tip: This will delete all related constraints.</p>
+            <p class="delete_property_tip none">Are you sure?</p>
+            <div id="sure_property_btn" class="none">
+                <input value="OK" type="submit" id="submit_property_btn">
+                <input value="Cancle" type="button" id="cancle_property_btn">
+            </div>
+        </form>
+
+        <div id="operate_property_btn" class="none">
+            <input value="Update" type="button" id="update_property_btn">
+            <input value="Delete" type="button" id="delete_property_btn">
+        </div>
+
+    </div>
+
 {%endblock%}
 
 {%block script%}
 <script>
 
+    // 以下是与model有关的函数
 
+    $(document).ready(function () {
+        if($('#model_list').children().length == 0) {
+            $('#no_model_tip').removeClass('none');
+        }
+    });
+
+    function show_model_info(e) {
+        e.preventDefault();
+        if($('#sure_model_btn').hasClass('none') && $(this).data('id') != $('.model_item.active').data('id') &&
+            $('#sure_component_btn').hasClass('none') && $('#sure_property_btn').hasClass('none')) {
+            $('.model_item.active').removeClass('active');
+            $('.component_item.active').removeClass('active');
+            $('.property_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#model_display').removeClass('none');
+            $('#create_model_btn').removeClass('none');
+            $('#component_display').addClass('none');
+            $('#property_display').addClass('none');
+            $('#model_name').val($(this).text());
+            $('#model_name').attr('readonly', true);
+            $('#model_name').data('model-id', $(this).data('id'));
+            $.ajax({
+                url: '/model/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#model_introduction').val(resp['introduction']);
+                    $('#model_introduction').attr('readonly', true);
+                    $('#model_form').removeClass('none');
+                    $('#operate_model_btn').removeClass('none');
+                    var tree_container = $('.model_item.active').next();
+                    var root_hit_node = tree_container.find('.unfold_fold').first();
+                    if(!root_hit_node.hasClass('got_sub')) {
+                        var component_item = root_hit_node.next();
+                        component_item.data('id', resp['root_component_id']);
+                        component_item.text(resp['root_component_name']);
+                        tree_container.removeClass('none');
+                        root_hit_node.click();
+                    }
+                }
+            });
+        }
+    }
+
+    $('.model_item').click(show_model_info);
+
+    function create_model() {
+        $('#model_display').removeClass('none');
+        $('#component_display').addClass('none');
+        $('#property_display').addClass('none');
+        $(this).addClass('active');
+        $(this).addClass('none');
+        $('.model_item.active').removeClass('active');
+        $('#model_form').removeClass('none');
+        $('#model_name').val('');
+        $('#model_name').attr('readonly', false);
+        $('#model_introduction').val('');
+        $('#model_introduction').attr('readonly', false);
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
+    }
+
+    $('#create_model_btn').click(create_model);
+
+    function release_model() {
+        $(this).addClass('active');
+        $('#create_model_btn').addClass('none');
+        // $('#model_deadline').removeClass('none');
+        // $('#model_deadline').prev().removeClass('none');
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
+    }
+
+    $('#release_model_btn').click(release_model);
+
+    var old_model_name, old_model_introduction; //记录原值，以供取消修改后恢复model的相应展示内容。
+
+    function update_model() {
+        $(this).addClass('active');
+        $('#create_model_btn').addClass('none');
+        old_model_name = $('#model_name').val();
+        $('#model_name').attr('readonly', false);
+        old_model_introduction = $('#model_introduction').val();
+        $('#model_introduction').attr('readonly', false);
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
+    }
+
+    $('#update_model_btn').click(update_model);
+
+    function delete_model() {
+        $(this).addClass('active');
+        $('#create_model_btn').addClass('none');
+        $('.delete_model_tip').removeClass('none');
+        $('#sure_model_btn').removeClass('none');
+        $('#operate_model_btn').addClass('none');
+    }
+
+    $('#delete_model_btn').click(delete_model);
+
+    function judge_submit_model_btn(e) {
+        e.preventDefault()
+        var url, data;
+        if($('#create_model_btn').hasClass('active')) {
+            if($('#model_name').val() == '' || $('#model_introduction').val() == '') {
+                return;
+            }
+            url = '/model/create';
+            data = {
+                name: $('#model_name').val(),
+                introduction: $('#model_introduction').val()
+            };
+        }
+        else if($('#release_model_btn').hasClass('active')) {
+            // if($('#model_deadline').val() == '') {
+            //     return;
+            // }
+            url = '/model/release';
+            data = {
+                id: $('#model_name').data('model-id'),
+                // deadline: $('#model_deadline').val()
+            };
+        }
+        else if($('#update_model_btn').hasClass('active')) {
+            if($('#model_name').val() == '' || $('#model_introduction').val() == '') {
+                return;
+            }
+            url = '/model/update';
+            data = {
+                id: $('#model_name').data('model-id'),
+                name: $('#model_name').val(),
+                introduction: $('#model_introduction').val()
+            };
+        }
+        else if($('#delete_model_btn').hasClass('active')) {
+            url = '/model/delete';
+            data = {
+                id: $('#model_name').data('model-id')
+            };
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(resp) {
+                if(url == '/model/create') {
+                    $('#flash_message').text('Create model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('#no_model_tip').addClass('none');
+                    $('#create_model_btn').removeClass('active');
+                    $('#create_model_btn').removeClass('none');
+                    $('#sure_model_btn').addClass('none');
+                    var name = $('#model_name').val();
+                    $('#model_list').append('<a class="model_item" data-id="'
+                             + resp['id'] +'">' + name + '</a>' + 
+                            '<div class="tree_container none">' +
+                                '<p class="tree_tip">Component tree:</p>' +
+                                '<ul id="component_tree" class="treeview">' +
+                                    '<li>' + 
+                                        '<span class="unfold_fold fold">+ </span><a class="component_item" data-id></a>' +
+                                        '<ul class="none"></ul>' +
+                                    '</li>' +
+                                '</ul>' +
+                            '</div>'
+                    );
+                    var new_model_item = $('#model_list').children('.model_item').last();
+                    new_model_item.click(show_model_info);
+                    new_model_item.click();
+                    var tree_container = new_model_item.next();
+                    tree_container.find('.unfold_fold').click(unfold_fold_tree);
+                    tree_container.find('.component_item').click(show_component_info);
+                    
+                }
+                else if(url == '/model/release') {
+                    $('#flash_message').text('Release model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.model_item.active').next().remove();
+                    $('.model_item.active').remove();
+                    if($('#model_list').children('.model_item').length == 0) {
+                        $('#no_model_tip').removeClass('none');
+                    }                  
+                    $('#release_model_btn').removeClass('active');
+                    $('#create_model_btn').removeClass('none');
+                    $('#model_form').addClass('none');
+                    // $('#model_deadline').addClass('none');
+                    // $('#model_deadline').prev().addClass('none');
+                    $('#sure_model_btn').addClass('none');                   
+                }
+                else if(url == '/model/update') {
+                    $('#flash_message').text('Update model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.model_item.active').text($('#model_name').val());
+                    $('#update_model_btn').removeClass('active');
+                    $('#create_model_btn').removeClass('none');
+                    $('#model_name').attr('readonly', true);
+                    $('#model_introduction').attr('readonly', true);
+                    $('#sure_model_btn').addClass('none');
+                    $('#operate_model_btn').removeClass('none');
+                }
+                else if(url == '/model/delete') {
+                    $('#flash_message').text('Delete model success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.model_item.active').next().remove();
+                    $('.model_item.active').remove();                    
+                    if($('.model_item').length == 0) {
+                        $('#no_model_tip').removeClass('none');
+                    }
+                    $('#delete_model_btn').removeClass('active');
+                    $('.delete_model_tip').addClass('none');
+                    $('#create_model_btn').removeClass('none');
+                    $('#model_form').addClass('none');
+                    $('#sure_model_btn').addClass('none');
+                }
+            }
+        });
+    }
+
+    $('#submit_model_btn').click(judge_submit_model_btn);
+
+    function judge_cancle_model_btn() {
+        if($('#create_model_btn').hasClass('active')) {
+            $('#create_model_btn').removeClass('active');
+            $('#create_model_btn').removeClass('none');
+            $('#model_form').addClass('none');
+            $('#sure_model_btn').addClass('none');
+        }
+        else if($('#release_model_btn').hasClass('active')) {
+            $('#release_model_btn').removeClass('active');
+            // $('#model_deadline').addClass('none');
+            // $('#model_deadline').prev().addClass('none');
+            $('#create_model_btn').removeClass('none');
+            $('#sure_model_btn').addClass('none');
+            $('#operate_model_btn').removeClass('none');
+        }
+        else if($('#update_model_btn').hasClass('active')) {
+            $('#update_model_btn').removeClass('active');
+            $('#create_model_btn').removeClass('none');
+            $('#sure_model_btn').addClass('none');
+            $('#operate_model_btn').removeClass('none');
+            $('#model_name').val(old_model_name);            
+            $('#model_name').attr('readonly', true);
+            $('#model_introduction').val(old_model_introduction);
+            $('#model_introduction').attr('readonly', true);
+        }
+        else if($('#delete_model_btn').hasClass('active')) {
+            $('#delete_model_btn').removeClass('active');
+            $('.delete_model_tip').addClass('none');
+            $('#create_model_btn').removeClass('none');
+            $('#sure_model_btn').addClass('none');
+            $('#operate_model_btn').removeClass('none');
+        }
+    }
+
+    $('#cancle_model_btn').click(judge_cancle_model_btn);
+
+    // 以上是与model有关的函数
+
+    // 以下是与component有关的函数
+
+    var just_add_subcom;    
+    /* 布尔型：在judeg_submit_component_btn()的'add'部分，如果还未获取子部件的信息
+    设置其为true，以在unfold_fold_tree()中获取子部件信息后设置活跃子部件 */
+
+    function show_component_info(e) {
+        e.preventDefault();
+        if($('#sure_component_btn').hasClass('none') && $(this).data('id') != $('.component_item.active').data('id') &&
+            $('#sure_model_btn').hasClass('none') && $('#sure_property_btn').hasClass('none')) {
+            $('.model_item.active').removeClass('active');
+            $('.component_item.active').removeClass('active');
+            $('.property_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#model_display').addClass('none');
+            $('#create_model_btn').addClass('none');
+            $('#component_display').removeClass('none');
+            $('#property_list_area').removeClass('none'); 
+            $('#create_property_btn').removeClass('none'); 
+            $('#property_display').addClass('none');
+            $('#component_name').val($(this).text());
+            $('#component_name').attr('readonly', true);
+            $('#component_name').data('component-id', $(this).data('id'));
+            if($(this).data('id') == $(this).parents('#component_tree').children('li').children('a').data('id')) {
+                $('#delete_component_btn').addClass('none');
+            }
+            else {
+                $('#delete_component_btn').removeClass('none');
+            }
+            $.ajax({
+                url: '/component/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#component_introduction').val(resp['introduction']);
+                    $('#component_introduction').attr('readonly', true);
+                    $('#component_form').removeClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                    $('#sure_component_btn').addClass('none');
+                    $('#property_list').empty();
+                    var properties = resp['properties'];
+                    len = properties.length;
+                    console.log(len);
+                    if(len > 0) {
+                        $('#no_property_tip').addClass('none');
+                        for(var i=0; i<len; i++) {
+                            $('#property_list').append('<a class="property_item" data-id="'
+                                + properties[i]['id'] +'">' + properties[i]['name'] + '</a>'
+                            );
+                        }
+                        $('#property_list').children('a').click(show_property_info);
+                    }
+                    else {
+                        console.log('len<0');
+                        $('#no_property_tip').removeClass('none');
+                    }                    
+                }
+            });
+        }
+    }
+
+    $('.component_item').click(show_component_info);
+
+    var now_node, next_com, next_subul;
+
+    function unfold_fold_tree() {
+        now_node = $(this);
+        next_com = now_node.next();
+        next_subul = now_node.next().next();
+        if(now_node.hasClass('got_sub')){
+            if(now_node.hasClass('fold')) {
+                now_node.removeClass('fold');
+                now_node.addClass('unfold');
+                now_node.text('- ');
+                next_subul.removeClass('none');
+            }
+            else {
+                now_node.removeClass('unfold');
+                now_node.addClass('fold');
+                now_node.text('+ ');
+                next_subul.addClass('none');
+            }
+        }
+        else {
+            now_node.removeClass('fold');
+            now_node.addClass('unfold');
+            now_node.addClass('got_sub');
+            now_node.text('- ');
+            next_subul.removeClass('none');
+            $.ajax({
+                url: '/component/subcomponents',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: next_com.data('id')
+                }),
+                success: function(resp) {
+                    var len = resp.length;
+                    for(var i=0; i<len; i++) {
+                        next_subul.append(
+                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            + resp[i]['id'] + "'>" + resp[i]['name'] + "</a><ul class='none'></ul></li>"
+                        );
+                    }
+                    next_subul.find('a').click(show_component_info);
+                    next_subul.find('span').click(unfold_fold_tree);
+                    if(just_add_subcom) {
+                        var new_li = next_subul.children('li').last();
+                        new_li.children('a').click();
+                        just_add_subcom = false;
+                    }
+                }
+            });
+        }
+    }
+
+    $('.unfold_fold').click(unfold_fold_tree);
+
+    var old_component_name, old_component_introduction; //记录原值，以供取消修改后恢复component的相应展示内容。
+
+    function add_subcomponent() {
+        $(this).addClass('active');
+        $('#component_form').removeClass('none');
+        old_component_name = $('#component_name').val();
+        $('#component_name').val('');
+        $('#component_name').attr('readonly', false);
+        old_component_introduction = $('#component_introduction').val();
+        $('#component_introduction').val('');
+        $('#component_introduction').attr('readonly', false);
+        $('#sure_component_btn').removeClass('none');
+        $('#operate_component_btn').addClass('none');
+        $('#create_property_btn').addClass('none');
+        $('#property_list_area').addClass('none'); 
+        $('#property_display').addClass('none');
+    }
+
+    $('#add_component_btn').click(add_subcomponent);
+
+    function update_component() {
+        $(this).addClass('active');
+        old_component_name = $('#component_name').val();
+        $('#component_name').attr('readonly', false);
+        old_component_introduction = $('#component_introduction').val();
+        $('#component_introduction').attr('readonly', false);
+        $('#sure_component_btn').removeClass('none');
+        $('#operate_component_btn').addClass('none');
+        $('#create_property_btn').addClass('none');
+        $('#operate_property_btn').addClass('none');
+    }
+
+    $('#update_component_btn').click(update_component);
+
+    function delete_component() {
+        $(this).addClass('active');
+        $('.delete_component_tip').removeClass('none');
+        $('#sure_component_btn').removeClass('none');
+        $('#operate_component_btn').addClass('none');
+        $('#create_property_btn').addClass('none');
+        $('#operate_property_btn').addClass('none');
+    }
+
+    $('#delete_component_btn').click(delete_component);
+
+    function judge_submit_component_btn(e) {
+        e.preventDefault();
+        var url, data;
+        if($('#add_component_btn').hasClass('active')) {
+            if($('#component_name').val() == '' || $('#component_introduction').val() == '') {
+                return;
+            }
+            url = '/component/add';
+            data = {
+                father_component_id: $('#component_name').data('component-id'),
+                name: $('#component_name').val(),
+                introduction: $('#component_introduction').val()
+            };
+        }
+        else if($('#update_component_btn').hasClass('active')) {
+            if($('#component_name').val() == '' || $('#component_introduction').val() == '') {
+                return;
+            }
+            url = '/component/update';
+            data = {
+                id: $('#component_name').data('component-id'),
+                name: $('#component_name').val(),
+                introduction: $('#component_introduction').val()
+            };
+        }
+        else if($('#delete_component_btn').hasClass('active')) {
+            url = '/component/delete';
+            data = {
+                id: $('#component_name').data('component-id')
+            };
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(resp) {
+                if(url == '/component/add') {
+                    $('#flash_message').text('Add subcomponent success!');
+                    $('#flash_message').fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('#component_name').attr('readonly', true);
+                    $('#component_introduction').attr('readonly', true);
+                    $('#sure_component_btn').addClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                    $('#add_component_btn').removeClass('active');
+                    $('#delete_component_btn').removeClass('none');
+                    
+                    var com_active = $('.component_item.active');
+                    var prev_span = com_active.prev();
+                    var next_ul = com_active.next();
+                    if(prev_span.hasClass('got_sub')) {
+                        if(prev_span.hasClass('fold')) {
+                            prev_span.removeClass('fold');
+                            prev_span.addClass('unfold');
+                            prev_span.text('- ');
+                            next_ul.removeClass('none');
+                        }
+                        var name = $('#component_name').val();
+                        next_ul.append(
+                            "<li><span class='unfold_fold fold'>+ </span><a class='component_item' data-id='"
+                            + resp['id'] + "'>" + name + "</a><ul class='none'></ul></li>"
+                        );
+                        com_active.removeClass('active');
+                        var new_li = next_ul.children('li').last();
+                        new_li.children('span').click(unfold_fold_tree);
+                        new_li.children('a').click(show_component_info);
+                        new_li.children('a').click();                      
+                    }
+                    else {
+                        just_add_subcom = true;
+                        prev_span.click();
+                    }
+                }
+                else if(url == '/component/update') {
+                    $('#flash_message').text('Update component success!');
+                    $('#flash_message').fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('#component_name').attr('readonly', true);
+                    $('#component_introduction').attr('readonly', true);
+                    $('.component_item.active').text($('#component_name').val());
+                    $('#update_component_btn').removeClass('active');
+                    $('#sure_component_btn').addClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                    $('#create_property_btn').removeClass('none');
+                    $('#operate_property_btn').removeClass('none');
+                }
+                else if(url == '/component/delete') {
+                    $('#flash_message').text('Delete component success!');
+                    $('#flash_message').fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.component_item.active').parent().remove();
+                    $('#delete_component_btn').removeClass('active');
+                    $('.delete_component_tip').addClass('none');
+                    $('#component_form').addClass('none');
+                    $('#sure_component_btn').addClass('none');
+                    $('#property_list_area').addClass('none');
+                    $('#property_diaplay').addClass('none');
+                }
+            }
+        });
+    }
+
+    $('#submit_component_btn').click(judge_submit_component_btn);
+
+    function judge_cancle_component_btn() {
+        if($('#add_component_btn').hasClass('active')) {
+            $('#add_component_btn').removeClass('active');
+            $('#sure_component_btn').addClass('none');
+            $('#operate_component_btn').removeClass('none');
+            $('#component_name').val(old_component_name);            
+            $('#component_name').attr('readonly', true);
+            $('#component_introduction').val(old_component_introduction);
+            $('#component_introduction').attr('readonly', true);
+            $('#property_list_area').removeClass('none'); 
+            $('#create_property_btn').removeClass('none');
+            $('#operate_property_btn').removeClass('none');
+        }
+        else if($('#update_component_btn').hasClass('active')) {
+            $('#update_component_btn').removeClass('active');
+            $('#sure_component_btn').addClass('none');
+            $('#operate_component_btn').removeClass('none');
+            $('#component_name').val(old_component_name);            
+            $('#component_name').attr('readonly', true);
+            $('#component_introduction').val(old_component_introduction);
+            $('#component_introduction').attr('readonly', true);
+            $('#create_property_btn').removeClass('none');
+            $('#operate_property_btn').removeClass('none');
+        }
+        else if($('#delete_component_btn').hasClass('active')) {
+            $('#delete_component_btn').removeClass('active');
+            $('.delete_component_tip').addClass('none');
+            $('#sure_component_btn').addClass('none');
+            $('#operate_component_btn').removeClass('none');
+            $('#create_property_btn').removeClass('none');
+            $('#operate_property_btn').removeClass('none');
+        }
+    }
+
+    $('#cancle_component_btn').click(judge_cancle_component_btn);
+
+    // 以上是与component有关的函数
+
+    // 以下是与property有关的函数
+
+    function show_property_info(e) {
+        e.preventDefault();
+        if($('#sure_property_btn').hasClass('none') && $(this).data('id') != $('.property_item.active').data('id') &&
+            $('#sure_component_btn').hasClass('none')) {
+            console.log('show property');
+            $('.property_item.active').removeClass('active');
+            $(this).addClass('active');
+            $('#property_name').val($(this).text());
+            $('#property_name').attr('readonly', true);
+            $('#property_name').data('property-id', $(this).data('id'));
+            $('#property_display').removeClass('none');
+            $.ajax({
+                url: '/property/item',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    id: $(this).data('id')
+                }),
+                success: function(resp) {
+                    $('#property_introduction').val(resp['introduction']);
+                    $('#property_introduction').attr('readonly', true);
+                    $('#property_datatype').val(resp['datatype']);                    
+                    $('#property_datatype').attr('readonly', true);
+                    $('#property_datatype').removeClass('none');
+                    $('#select_datatype').addClass('none');
+                    $('#property_domin_display').val(resp['domin_display']);
+                    $('#property_domin_display').attr('readonly', true);
+                    $('#property_dataunit').val(resp['dataunit']);
+                    $('#property_dataunit').attr('readonly', true);
+                    $('#property_form').removeClass('none');
+                    $('#operate_property_btn').removeClass('none');
+                    $('#sure_property_btn').addClass('none');
+                }
+            });
+        }
+    }
+
+    $('.property_item').click(show_property_info);
+
+    function create_property() {
+        $(this).addClass('active');
+        $(this).addClass('none');
+        $('#property_display').removeClass('none');
+        $('.property_item.active').removeClass('active');
+        $('#property_form').removeClass('none');
+        $('#property_name').val('');
+        $('#property_name').attr('readonly', false);
+        $('#property_introduction').val('');
+        $('#property_introduction').attr('readonly', false);
+        $('#property_datatype').addClass('none');
+        $('#select_datatype').removeClass('none');
+        $('#property_domin_display').val('');
+        $('#property_domin_display').attr('readonly', false);
+        $('#property_dataunit').val('');
+        $('#property_dataunit').attr('readonly', false);
+        $('#sure_property_btn').removeClass('none');
+        $('#operate_property_btn').addClass('none');
+        $('#operate_component_btn').addClass('none');
+    }
+
+    $('#create_property_btn').click(create_property);
+
+    var old_property_name, old_property_introduction, old_property_domin_display, old_property_dataunit; //记录原值，以供取消修改后恢复property的相应展示内容。
+
+    function update_property() {
+        $(this).addClass('active');
+        $('#create_property_btn').addClass('none');
+        old_property_name = $('#property_name').val();
+        $('#property_name').attr('readonly', false);
+        old_property_introduction = $('#property_introduction').val();
+        $('#property_introduction').attr('readonly', false);
+        $('#property_datatype').addClass('none');
+        $('#select_datatype').removeClass('none');
+        old_property_domin_display = $('#property_domin_display').val();
+        $('#property_domin_display').attr('readonly', false);
+        old_property_dataunit = $('#property_dataunit').val();
+        $('#property_dataunit').attr('readonly', false);
+        $('#sure_property_btn').removeClass('none');
+        $('#operate_property_btn').addClass('none');
+        $('#operate_component_btn').addClass('none');
+    }
+
+    $('#update_property_btn').click(update_property);
+
+    function delete_property() {
+        $(this).addClass('active');
+        $('#create_property_btn').addClass('none');
+        $('.delete_property_tip').removeClass('none');
+        $('#sure_property_btn').removeClass('none');
+        $('#operate_property_btn').addClass('none');
+        $('#operate_component_btn').addClass('none');
+    }
+
+    $('#delete_property_btn').click(delete_property);
+
+    function judge_submit_property_btn(e) {
+        e.preventDefault()
+        var url, data;
+        if($('#create_property_btn').hasClass('active')) {
+            if($('#property_name').val() == '' ||
+                $('#property_introduction').val() == '' ||
+                $('#property_domin_display').val() == '') {
+                return;
+            }
+            url = '/property/create';
+            data = {
+                name: $('#property_name').val(),
+                introduction: $('#property_introduction').val(),
+                datatype: $('#select_datatype option:selected').val(),
+                domin_display: $('#property_domin_display').val(),
+                dataunit: $('#property_dataunit').val()
+            };
+            $('#property_datatype').val(data['datatype']);
+        }
+        else if($('#update_property_btn').hasClass('active')) {
+            if($('#property_name').val() == '' || $('#property_introduction').val() == '') {
+                return;
+            }
+            url = '/property/update';
+            data = {
+                id: $('#property_name').data('property-id'),
+                name: $('#property_name').val(),
+                introduction: $('#property_introduction').val(),
+                datatype: $('#select_datatype option:selected').val(),
+                domin_display: $('#property_domin_display').val(),
+                dataunit: $('#property_dataunit').val()
+            };
+            $('#property_datatype').val(data['datatype']);
+        }
+        else if($('#delete_property_btn').hasClass('active')) {
+            url = '/property/delete';
+            data = {
+                id: $('#property_name').data('property-id')
+            };
+        }
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function(resp) {
+                if(url == '/property/create') {
+                    $('#flash_message').text('Create property success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    var name = $('#property_name').val();
+                    $('#property_list').append('<a class="property_item active" data-id="'
+                            + resp['id'] +'">' + name + '</a>'
+                    );
+                    $('#property_list').children('a').last().click(show_property_info);
+                    $('#no_property_tip').addClass('none');
+                    $('#create_property_btn').removeClass('active');
+                    $('#create_property_btn').removeClass('none');
+                    $('#property_name').attr('readonly', true);
+                    $('#property_introduction').attr('readonly', true);
+                    $('#property_datatype').removeClass('none');
+                    $('#select_datatype').addClass('none');
+                    $('#property_domin_display').attr('readonly', true);
+                    $('#property_dataunit').attr('readonly', true);
+                    $('#sure_property_btn').addClass('none');
+                    $('#operate_property_btn').removeClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                }
+                else if(url == '/property/update') {
+                    $('#flash_message').text('Update property success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.property_item.active').text($('#property_name').val());
+                    $('#update_property_btn').removeClass('active');
+                    $('#create_property_btn').removeClass('none');
+                    $('#property_name').attr('readonly', true);
+                    $('#property_introduction').attr('readonly', true);
+                    $('#property_datatype').removeClass('none');
+                    $('#select_datatype').addClass('none');
+                    $('#property_domin_display').attr('readonly', true);
+                    $('#property_dataunit').attr('readonly', true);
+                    $('#sure_property_btn').addClass('none');
+                    $('#operate_property_btn').removeClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                }
+                else if(url == '/property/delete') {
+                    $('#flash_message').text('Delete property success!');
+                    $('#flash_message').delay(500).fadeIn('normal', function () {
+                        $(this).delay(2500).fadeOut();
+                    });
+                    $('.property_item.active').remove();
+
+                    if($('.property_item').length == 0) {
+                        $('#no_property_tip').removeClass('none');
+                    }
+                    $('#delete_property_btn').removeClass('active');
+                    $('.delete_property_tip').addClass('none');
+                    $('#create_property_btn').removeClass('none');
+                    $('#property_form').addClass('none');
+                    $('#sure_property_btn').addClass('none');
+                    $('#operate_component_btn').removeClass('none');
+                }
+            }
+        });
+    }
+
+    $('#submit_property_btn').click(judge_submit_property_btn);
+
+    function judge_cancle_property_btn() {
+        if($('#create_property_btn').hasClass('active')) {
+            $('#create_property_btn').removeClass('active');
+            $('#create_property_btn').removeClass('none');
+            $('#property_display').addClass('none');
+            $('#property_form').addClass('none');
+            $('#sure_property_btn').addClass('none');
+            $('#operate_component_btn').removeClass('none');
+        }
+        else if($('#update_property_btn').hasClass('active')) {
+            $('#update_property_btn').removeClass('active');
+            $('#create_property_btn').removeClass('none');
+            $('#sure_property_btn').addClass('none');
+            $('#operate_property_btn').removeClass('none');
+            $('#property_name').val(old_property_name);            
+            $('#property_name').attr('readonly', true);
+            $('#property_introduction').val(old_property_introduction);
+            $('#property_introduction').attr('readonly', true);
+            $('#property_datatype').removeClass('none');
+            $('#select_datatype').addClass('none');
+            $('#property_domin_display').val(old_property_domin_display);
+            $('#property_domin_display').attr('readonly', true);
+            $('#property_dataunit').val(old_property_dataunit);
+            $('#property_dataunit').attr('readonly', true);
+            $('#operate_component_btn').removeClass('none');
+        }
+        else if($('#delete_property_btn').hasClass('active')) {
+            $('#delete_property_btn').removeClass('active');
+            $('.delete_property_tip').addClass('none');
+            $('#create_property_btn').removeClass('none');
+            $('#sure_property_btn').addClass('none');
+            $('#operate_property_btn').removeClass('none');
+            $('#operate_component_btn').removeClass('none');
+        }
+    }
+
+    $('#cancle_property_btn').click(judge_cancle_property_btn);
+
+    // 以上是与property有关的函数
+
+    $(function () {
+        $('#flash_message').hide();
+    });    
 
 </script>
+{%endblock%}

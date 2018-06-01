@@ -11,7 +11,7 @@ from Configuration.model.variable import Variable
 from Configuration.model.domain import Domain
 from Configuration.model.task import Task
 
-from constraint_coder import ConstraintCoder
+from Configuration.solver.constraint_coder import ConstraintCoder
 
 class Solver:
 
@@ -214,29 +214,29 @@ class Solver:
         return list(map(lambda x: x.con, con_cdrs))
 
 
-v1 = Variable(1, Domain([1, 2, 3]))
-v2 = Variable(1, Domain([1, 2, 3]))
-v3 = Variable(2, Domain([2, 3, 4]))
-# 'x < y <= z'
-c1 = Constraint('? < ? <= ?', [v1, v2, v3])
-#  v3 == 4 -> v2=2
-# 蕴含约束转换成逻辑表达式，等价约束表达成两个蕴含约束
-c2 = Constraint('? != 4 or ? == 2', [v3, v2])
-c3 = Constraint('? * ? > 1', [v1, v1])
-task = Task([v1, v2, v3], [c1, c2, c3])
-solver = Solver(task)
+# v1 = Variable(1, Domain([1, 2, 3]))
+# v2 = Variable(1, Domain([1, 2, 3]))
+# v3 = Variable(2, Domain([2, 3, 4]))
+# # 'x < y <= z'
+# c1 = Constraint('? < ? <= ?', [v1, v2, v3])
+# #  v3 == 4 -> v2=2
+# # 蕴含约束转换成逻辑表达式，等价约束表达成两个蕴含约束
+# c2 = Constraint('? != 4 or ? == 2', [v3, v2])
+# c3 = Constraint('? * ? > 1', [v1, v1])
+# task = Task([v1, v2, v3], [c1, c2, c3])
+# solver = Solver(task)
 
-is_solvable = solver.search_solution()
-print('====> has any solutions? ', is_solvable)
-sols = solver.rslt.solutions
-for sol in sols:
-    print(sol.vals_list)
+# is_solvable = solver.search_solution()
+# print('====> has any solutions? ', is_solvable)
+# sols = solver.rslt.solutions
+# for sol in sols:
+#     print(sol.vals_list)
 
-if not is_solvable:
-    print('====> the conflict constraints including:')
-    rslt = solver.compute_explanation()
-    for ind, con in enumerate(rslt):
-        print(str(ind+1)+'. '+con.expr)
+# if not is_solvable:
+#     print('====> the conflict constraints including:')
+#     rslt = solver.compute_explanation()
+#     for ind, con in enumerate(rslt):
+#         print(str(ind+1)+'. '+con.expr)
 
-print('====================')
+# print('====================')
                     
