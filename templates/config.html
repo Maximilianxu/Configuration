@@ -211,6 +211,7 @@
     function add_cons(evt) {
         evt.preventDefault();
         var cons_expr = $('#cons_inp').val();
+        var expr_display = $('#cons_inp').val(); 
         var li_str = "<li data-ind='"+reqs.length+"'>" + cons_expr + "<button class='mdreqd'>D</button>\
                 <button class='mdreqm'>M</button></li>";
         $('#cons_list').append(li_str);   
@@ -234,6 +235,7 @@
         reqs.push({
             id: reqs.length,
             expr:cons_expr,
+            expr_display: expr_display,
             vars:vars
         });
         $('#cons_inp').val('');

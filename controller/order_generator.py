@@ -41,7 +41,6 @@ def sub_reqs():
     custom_cons_start = len(cons)
     properties = task.vars
     constraints = task.cons
-    cons_id = len(constraints)
     print('debug======> ', reqs)
     for req in reqs:
         con_vars = []
@@ -49,7 +48,7 @@ def sub_reqs():
             for prop in properties:
                 if prop.id == prop_id:
                     con_vars.append(prop)
-        con = Constraint(cons_id, req['expr'], con_vars)
+        con = Constraint(req['id'], req['expr'], con_vars)
         task.cons.append(con)
     solver = Solver(task)
     solvable = solver.search_solution()
@@ -67,30 +66,10 @@ def sub_reqs():
     if not solvable:
         conf_cons = solver.compute_explanation(custom_cons_start)
         for con in conf_cons:
-            var_ind = 0
-            expr = con.expr + '#'
-            cur_var = con.vars[var_ind]
-            val_display = ''
-            digit_area = False
-            tmp_expr = (expr + '.')[:-1]
-            digit = ''
-            for ch in tmp_expr:
-                tmp_ind = expr.index(ch)
-                if not ch.isdigit() and digit_area:
-                    val_ind = int(digit)
-                    val_display = cur_var.domin_display[val_ind]
-                    digit = ''
-                    expr = expr[:tmp_ind] + val_display + expr[tmp_ind+1:]  
-                if not ch.isdigit():
-                    digit_area = False 
-                if ch == '?':
-                    expr = expr[:tmp_ind] + cur_var.name + expr[tmp_ind+1:]
-                    var_ind += 1
-                if ch.isdigit():
-                    digit_area = True
-                    expr = expr[:tmp_ind] + expr[tmp_ind+1:]
-                    digit += ch
-            conflict += (expr+';')
+            for req in reqs:
+                if con.id == req['id']:
+                    conflict += (req['expr_display']+';')
+                    break
         return conflict
 
 @order_generator.route('/order/new', methods=['POST'])
