@@ -18,9 +18,6 @@
             <a href="/products" class="nav-link">
                 Products
             </a>
-            <a href="/model" class="nav-link none">
-                Model
-            </a>
             <a class="nav-link active" href="/config">
                 Config
             </a>
@@ -37,7 +34,6 @@
         </div>
         <a href="/" class="nav-link">Home</a>
         <a href="/products" class="nav-link">Products</a>
-        <a href="/model" class="nav-link">Model</a>
         <a href="/order" class="nav-link active">Order</a>
         <a href="/about" class="nav-link">About</a>
     </div>
@@ -240,6 +236,7 @@
             expr:cons_expr,
             vars:vars
         });
+        $('#cons_inp').val('');
     }
 
     $('#cons_sub').click(add_cons);

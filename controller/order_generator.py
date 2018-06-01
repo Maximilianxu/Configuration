@@ -36,7 +36,7 @@ def sub_reqs():
     reqs = request.get_json()
     prod_id = session['model_id']
     variables = find_all_properties_by_product_id(prod_id)
-    cons = find_all_constraints_by_product_id(prod_id, variables)   
+    cons = find_all_constraints_by_product_id(prod_id, variables)[0]   
     task = Task(variables, cons)
     custom_cons_start = len(cons)
     properties = task.vars
@@ -65,7 +65,7 @@ def sub_reqs():
         return solution
     conflict = 'C'
     if not solvable:
-        conf_cons = solver.compute_explanation()
+        conf_cons = solver.compute_explanation(custom_cons_start)
         for con in conf_cons:
             var_ind = 0
             expr = con.expr + '#'

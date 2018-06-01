@@ -18,15 +18,11 @@
             <a class="nav-link active" href="/products">
                 Products
             </a>
-            <a id="nav-link-model" class="nav-link" href="/model">
+            {% if user_role == 0 %}
+            <a class="nav-link" href="/model">
                 Model
             </a>
-            <a class="nav-link none" href="/config">
-                Config
-            </a>
-            <a class="nav-link none" href="/order">
-                Order
-            </a>
+            {% endif %}
         </div>
     </nav>
     <div class="dropdown">
@@ -37,16 +33,16 @@
         </div>
         <a href="/" class="nav-link">Home</a>
         <a href="/products" class="nav-link active">Products</a>
+        {% if user_role == 0 %}
         <a href="/model" class="nav-link">Model</a>
-        <a href="/order" class="nav-link">Order</a>
-        <a href="/about" class="nav-link">About</a>
+        {% endif %}
     </div>
 {% endblock navbar %}
 
 {% block side %}
     <div>
         <p id="product_list_tip">Product List</p>
-        <div id="product_list" data-user-role="{{user_role}}">
+        <div id="product_list">
             {% for product in products %}
                 <a class="product_item" data-id="{{product['id']}}">{{product['name']}}</a>
                 <div class="tree_container none">
@@ -93,8 +89,10 @@
 
         <div id="operate_product_btn" class="none">
             <input value="Stop release" type="button" id="stop_release_btn">
+            {% if user_role == 1 %}
             <br>
             <a href="/config" id="enter_config">Config Product</a>
+            {% endif %}
         </div>
 
     </div>
@@ -153,13 +151,6 @@
     // 以下是与product有关的函数
 
     $(document).ready(function () {
-        user_role = $('#product_list').data('user-role');
-        if(user_role == 0) {
-            $('#enter_config').addClass('none');
-        }
-        else {
-            $('#nav-link-model').addClass('none');            
-        }
         if($('#product_list').children().length == 0) {
             $('#no_product_tip').removeClass('none');
         }

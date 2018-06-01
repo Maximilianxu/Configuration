@@ -38,15 +38,11 @@
                     <a href="/products" class="nav-link">
                         Products
                     </a>
-                    <a href="/model" id="nav-link-model" class="nav-link">
+                    {% if user.role == 0 %}
+                    <a href="/model" class="nav-link">
                         Model
                     </a>
-                    <a class="nav-link none" href="/config">
-                        Config
-                    </a>
-                    <a class="nav-link none" id="nav-link-order" href="/order">
-                        Order
-                    </a>
+                    {% endif %}
                 </div>
             </nav>
             <div class="dropdown">
@@ -57,9 +53,9 @@
                 </div>
                 <a href="/" class="nav-link active">Home</a>
                 <a href="/products" class="nav-link">Products</a>
+                {% if user.role == 0 %}
                 <a href="/model" class="nav-link">Model</a>
-                <a href="/order" class="nav-link">Order</a>
-                <a href="/about" class="nav-link">About</a>
+                {% endif%}
             </div>
             {% endif %}
             {%endblock navbar%}
@@ -67,7 +63,7 @@
         {%block main%}
         <div id="prt_container">
             {%if login%}
-            <div id="user_display" data-user-role="{{ user.role }}">
+            <div id="user_display">
                 <p id="welcome_user_tip">User information</p>
         
                 <form id="user_form">
@@ -256,19 +252,6 @@
             $('.dropdown a').css("display", "block");
         }
     }
-
-    $(document).ready(function () {
-        if($("#user_display").data("user-role") == 1) {
-            $('#user_company').addClass('none');
-            $('#user_company').prev().addClass('none');
-            $('#user_profession').addClass('none');
-            $('#user_profession').prev().addClass('none');
-            $('#nav-link-model').addClass('none');
-        }
-        else {
-            $('#nav-link-order').addClass('none');
-        }
-    });
 
     function switch_log_reg(e) {
         e.preventDefault();
