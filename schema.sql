@@ -75,3 +75,4 @@ CREATE TABLE con_include_p(
     constraint_id INT,
     property_id INT
 );
+

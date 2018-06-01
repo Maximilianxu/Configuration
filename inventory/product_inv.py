@@ -1,6 +1,5 @@
 import sys
 sys.path.append("../..")
-
 import datetime
 from Configuration.inventory import db
 from Configuration.model.product import Product
