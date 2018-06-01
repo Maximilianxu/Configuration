@@ -1,9 +1,9 @@
 import sys
 sys.path.append("../..")
-import mysql.connector as sql
+import MySQLdb as sql
 from Configuration.model.component import Component
 
-db = sql.connect(host="localhost", user="root", passwd="jlsjamtf", db="config")
+db = sql.connect(host="localhost", user="root", passwd="xu71849236", db="config")
 cursor = db.cursor()
 
 def add_component(product_id, component):
