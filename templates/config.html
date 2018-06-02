@@ -211,6 +211,19 @@
     function add_cons(evt) {
         evt.preventDefault();
         var cons_expr = $('#cons_inp').val();
+        var op1 = "<=>", op2 = "=>";
+        if(cons_expr.indexOf(op1) != -1){
+            var op1_ind = cons_expr.indexOf(op1);
+            left_expr = cons_expr.substring(0, op1_ind)
+            right_expr = cons_expr.substring(op1_ind+3)
+            cons_expr = '(not ' + left_expr+' or ' + right_expr +' ) and ' + ' (not ' + right_expr + ' or ' + left_expr + ' )';
+        }
+        else if(cons_expr.indexOf(op2) != -1){
+            var op2_ind = cons_expr.indexOf(op2);
+            left_expr = cons_expr.substring(0, op2_ind)
+            right_expr = cons_expr.substring(op2_ind+2)
+            cons_expr = 'not ' + left_expr + ' or ' + right_expr;
+        }
         var expr_display = $('#cons_inp').val(); 
         var li_str = "<li data-ind='"+reqs.length+"'>" + cons_expr + "<button class='mdreqd'>D</button>\
                 <button class='mdreqm'>M</button></li>";
