@@ -862,7 +862,7 @@
             }
             url = '/property/create';
             data = {
-                name: $('#property_name').val(),
+                name: '(' + $('#component_name').val() + ')' + $('#property_name').val(),
                 introduction: $('#property_introduction').val(),
                 datatype: $('#select_datatype option:selected').val(),
                 domin_display: $('#property_domin_display').val(),
@@ -903,7 +903,8 @@
                     $('#flash_message').delay(500).fadeIn('normal', function () {
                         $(this).delay(2500).fadeOut();
                     });
-                    var name = $('#property_name').val();
+                    var name = '(' + $('#component_name').val() + ')' + $('#property_name').val();
+                    $('#property_name').val(name);
                     $('#property_list').append('<a class="property_item active" data-id="'
                             + resp['id'] +'">' + name + '</a>'
                     );
