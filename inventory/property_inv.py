@@ -66,7 +66,7 @@ def find_all_propertys(component_id):
     for row in cursor.fetchall():
         vals_str_list = row[6].split(',')
         domin = [int(i) for i in vals_str_list]
-        domin_display = row[7].split(',')
+        domin_display = row[7].replace(' ', '').split(',')
         prop = Property(domin[0], domin, row[0], row[2], row[3], row[4], row[5], domin_display)
         props.append(prop)
     return props

@@ -133,14 +133,11 @@
             }),
             success: function(resp) {
                 $('#tips_props').empty();
-                props = JSON.parse(resp);
-                for(var i = 0;i<props.length;i++){
-                    props[i] = JSON.parse(props[i]);
-                }
-                
-                for(var i =0;i<props.length;i++){     
-                    var prop = props[i];
-                    var dom_disp = prop['domin_display'].toString().split(',');
+                item_props = JSON.parse(resp);            
+                for(var i =0;i<item_props.length;i++){
+                    item_props[i] = JSON.parse(item_props[i]);     
+                    var prop = item_props[i];
+                    var dom_disp = prop['domin_display'];
                     var html = "\
                         <li class='prop_li' data-id="+prop['id']+"><span class='pname' id='pname_"+prop['id']+"'>"+prop['name']+"</span>\
                         <span class='pdom-list' id='pdom_"+prop['id']+"'>";
@@ -150,6 +147,10 @@
                     html+=("</span></li>")
                     $('#tips_props').append(html);
                 }
+                if(!($('.component_item.active').hasClass('got_props'))) {
+                    props = props.concat(item_props);
+                    $('.component_item.active').addClass('got_props');
+                } 
             }
         });
     }

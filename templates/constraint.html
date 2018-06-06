@@ -131,7 +131,7 @@
     function show_component_info(e) {
         e.preventDefault();
         $('.component_item.active').removeClass('active');
-        $(this).addClass('active');
+        $(this).addClass('active');        
         $.ajax({
             url: '/constraint/item',
             type: 'POST',
@@ -141,20 +141,24 @@
             }),
             success: function(resp) {
                 $('#tips_props').empty();
-                props = resp['propertys'];                
-                for(var i =0;i<props.length;i++){
-                    props[i] = JSON.parse(props[i]);     
-                    var prop = props[i]
-                    var dom_disp = prop['domin_display'].toString().split(',');
+                item_props = resp['propertys'];                
+                for(var i =0;i<item_props.length;i++){
+                    item_props[i] = JSON.parse(item_props[i]);     
+                    var prop = item_props[i]
+                    var dom_disp = prop['domin_display'];
                     var html = "\
                         <li class='prop_li' data-id="+prop['id']+"><span class='pname' id='pname_"+prop['id']+"'>"+prop['name']+"</span>\
                         <span class='pdom-list' id='pdom_"+prop['id']+"'>";
-                    for(var j=0; j<dom_disp.length;j++){
+                    for(var j=0; j<dom_disp.length;j++){                        
                         html += ("<span class='pdom'>"+dom_disp[j]+"</span><span class='punit'>"+prop['dataunit']+"</span>");
                     }
                     html += ("</span></li>");
                     $('#tips_props').append(html);
                 }
+                if(!($('.component_item.active').hasClass('got_props'))) {
+                    props = props.concat(item_props);
+                    $('.component_item.active').addClass('got_props');
+                }            
                 $('#cons_list').empty();
                 cons = resp['constraints'];
                 for(var j=0; j<cons.length; j++) {
