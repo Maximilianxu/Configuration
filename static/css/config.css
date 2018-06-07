@@ -253,7 +253,6 @@
     width: 23.4375rem /* 375/16 */;
     border-top: 3.5rem solid #fdf6e3;
     border-bottom: 2rem solid #fdf6e3;
-    overflow: auto;
 }
 .reqs-list::-webkit-scrollbar { 
     display: none; 
@@ -285,6 +284,8 @@
 .reqs-list ol{
     position: relative;
     list-style-position:inside;
+    overflow-y: auto;
+    height: 29rem;
 }
 .reqs-list li{
     font-style: italic;
@@ -293,7 +294,6 @@
     line-height: 2rem;
     padding-left: 1.5rem;
     width: 100% /* 200/16 */;
-    height:5rem /* 50/16 */;
     background-color: #cbf1f5;
     color: black;
     padding:1.5rem 0 1.5rem 2rem;
@@ -313,7 +313,7 @@
     border:none;
     font-family: monospace;
     font-size: 1rem;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     font-weight: bolder;
     position: relative;
     float:right;
@@ -336,7 +336,7 @@
     font-weight: bolder;
     position: absolute;
     left: 10rem;
-    top: 37rem;
+    top: 39rem;
     cursor: pointer;
     outline:none;
     font-family: monospace;

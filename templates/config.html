@@ -87,8 +87,8 @@
                 <br/>
                 <li class="operation">=&gt;</li>
                 <li class="operation">&lt;=&gt;</li>
-                <li class="operation">||</li>
-                <li class="operation">&amp;&amp;</li>
+                <li class="operation">or</li>
+                <li class="operation">and</li>
             </ul>
         </div>
     </div>
@@ -234,16 +234,17 @@
             prop = props[i];
             // 关于属性名字重复的小问题
             var start_ind = cons_expr.indexOf(prop['name']);
-            if (start_ind!=-1){
+            while (start_ind!=-1){
                 cons_expr = cons_expr.replace(prop['name'], '?');
                 vars.push(prop['id']);
                 for(var j =0;j<prop['domin_display'].length;j++){
                     var dom_start_ind = cons_expr.indexOf(prop['domin_display'][j], start_ind);
-                    if(dom_start_ind!=-1){
+                    if(dom_start_ind!=-1 && cons_expr[dom_start_ind-1]==' '){
                         cons_expr = cons_expr.substr(0,dom_start_ind)+j+
                             cons_expr.substr(dom_start_ind+prop['domin_display'][j].length);
                     }
                 }
+                start_ind = cons_expr.indexOf(prop['name']);
             }
         }
         reqs.push({

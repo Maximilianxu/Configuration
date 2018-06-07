@@ -142,10 +142,9 @@
     border-radius: 0.5rem;
 }
 #cons_inp {
-    padding-left: 1rem;
     height: 2.5rem /* 23/16 */;
-    width: 23.75rem /* 380/16 */;
-    font-size: 1.2rem;
+    width: 24rem;
+    font-size: 1.1rem;
     background: #fdf6e3;
     box-shadow: none;
     outline:none;
@@ -164,7 +163,7 @@
     border:none;
     font-family: monospace;
     font-size: 1.5rem;
-    margin-left: 1.5rem;
+    margin-left: 1rem;
     font-weight: bold;
 }
 
@@ -210,8 +209,8 @@
     background-color: #fdf6e3;
     position: relative;
     top:3.25rem;
-    left: 5.25rem;
-    width: 35rem;
+    left: 5rem;
+    width: 37rem;
     border: 0;
     border: 0.25rem solid #006d00;
     border-radius: 1.25rem;
@@ -258,7 +257,6 @@
     width: 23.4375rem /* 375/16 */;
     border-top: 3.5rem solid #fdf6e3;
     border-bottom: 2rem solid #fdf6e3;
-    overflow-y: auto;
 }
 .reqs-list::-webkit-scrollbar { 
     display: none; 
@@ -290,6 +288,8 @@
 .reqs-list ol{
     position: relative;
     list-style-position:inside;
+    overflow-y: auto;
+    height: 29rem;
 }
 .reqs-list li{
     font-weight: bold;
@@ -297,7 +297,6 @@
     line-height: 2rem;
     padding-left: 1.5rem;
     width: 100%;
-    height:5rem;
     background-color: #cbf1f5;
     color: black;
     padding:1rem 0 1rem 1rem;
@@ -317,7 +316,7 @@
     border:none;
     font-family: monospace;
     font-size: 1rem;
-    margin-right: 1rem;
+    margin-right: 0.5rem;
     font-weight: bolder;
     position: relative;
     float:right;
@@ -340,7 +339,7 @@
     font-weight: bolder;
     position: absolute;
     left: 10rem;
-    top: 37rem;
+    top: 39rem;
     cursor: pointer;
     outline:none;
     font-family: monospace;
