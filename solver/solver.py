@@ -221,13 +221,9 @@ class Solver:
 # v1 = Variable(1, Domain([1, 2, 3]))
 # v2 = Variable(4, Domain([4, 5, 6]))
 # # 'x < y <= z'
-# c1 = Constraint(0, '? == 1', [v1])
-# #  v3 == 4 -> v2=2
-# # 蕴含约束转换成逻辑表达式，等价约束表达成两个蕴含约束
-# c2 = Constraint(1, '? == 4', [v2])
-# c3 = Constraint(2, '? == 2', [v1])
-# c4 = Constraint(3, '? == 5', [v2])
-# task = Task([v1, v2], [c1, c2, c3, c4])
+# c1 = Constraint(0, '(not ? == 1 or ?==6) and (not ? == 6 or ?==1)', [v1,v2,v2,v1])
+
+# task = Task([v1, v2], [c1])
 # solver = Solver(task)
 
 # print('==============================================')
@@ -239,10 +235,6 @@ class Solver:
 #     for sol in sols:
 #         print(sol.vals_list)
 
-#     for var in solver.vars:
-#         for i in range(len(var.dom.vals_list)):
-#             print(var.is_valid(i))
-
 # print('==============================================')
 
 # if not is_solvable:
@@ -252,4 +244,3 @@ class Solver:
 #         print(con)
 
 # print('==============================================')
-                    

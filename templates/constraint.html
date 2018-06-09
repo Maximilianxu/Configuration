@@ -240,16 +240,28 @@
             cons_expr = 'not ' + left_expr + ' or ' + right_expr;
         }
         var expr_display = $('#cons_inp').val(); 
-        var vars = [];   
-        for(var i = 0;i<props.length;i++){
+        var vars = [];
+        var start_inds = [];
+        for(var i=0; i<props.length; i++){
             prop = props[i];
-            // 关于属性名字重复的小问题
             var start_ind = cons_expr.indexOf(prop['name']);
             while (start_ind!=-1){
+                //以下通过折半查找确定属性在约束中的位置，按照位置的先后顺序将属性id形成列表。
+                var low = 0, high = start_inds.length - 1 ;                
+                while(low<=high){
+                    var mid = parseInt((low + high) / 2);
+                    if(start_inds[mid]<start_ind) {
+                        low = mid + 1;
+                    }
+                    else {
+                        high = mid - 1;
+                    }
+                }
+                start_inds.splice(low, 0 ,start_ind);
+                vars.splice(low, 0, prop['id']);
+                //以下为属性名称和相应取值的替换
                 cons_expr = cons_expr.replace(prop['name'], '?');
-                vars.push(prop['id']);
-                for(var j =0;j<prop['domin_display'].length;j++){
-                    console.log(prop['domin_display'][j]);
+                for(var j=0; j<prop['domin_display'].length; j++){
                     var dom_start_ind = cons_expr.indexOf(prop['domin_display'][j], start_ind);
                     if(dom_start_ind!=-1 && cons_expr[dom_start_ind-1]==' '){                        
                         cons_expr = cons_expr.substr(0,dom_start_ind)+j+

@@ -1,10 +1,14 @@
+.nav-link {
+    margin-left:15%;
+}
+
 .order-wrapper{
     max-height:100%;
     margin-top: 6.25rem;
 }
 
 .orders-table{
-    min-width: 85%;
+    width: 90%;
     position: relative;
     left: 5%;
     background-color: #fdf6e3;
